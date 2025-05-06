@@ -1,10 +1,12 @@
-import Button from "./Button";
-import EditVideo from "./pages/EditVideo";
+import SignIn from './pages/SignIn';
+import Homepage from './pages/Home';
 
-export default function Home() {
+const Home = () => {
     return (
-        <div className="flex">
-            <EditVideo />
+        <div className="flex w-full h-full">
+            <Homepage />
         </div>
     );
-}
+};
+
+export default Home;

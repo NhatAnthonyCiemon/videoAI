@@ -1,0 +1,8 @@
+video::-webkit-media-controls {
+    display: none;
+}
+
+/* Hiển thị điều khiển khi hover vào video */
+.group:hover video::-webkit-media-controls {
+    display: block;
+}

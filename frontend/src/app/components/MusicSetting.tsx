@@ -28,7 +28,7 @@ const mockMusics = [
     },
 ];
 
-export default function MusicSetting() {
+export default function MusicSetting({ setTab }: { setTab: (tab: string) => void }) {
     const [musics, setMusics] = useState(mockMusics);
 
     const toggleEnable = (id: number) => {
@@ -46,7 +46,9 @@ export default function MusicSetting() {
     return (
         <div className="bg-white overflow-y-auto space-y-2 border-r-1 h-full border-gray-700 p-4">
             <div className="flex justify-between items-center mb-2 p-2">
-                <button className="text-xl font-medium border border-gray-700 rounded-lg p-2 bg-gray-50 hover:bg-gray-100 cursor-pointer">
+                <button className="text-xl font-medium border border-gray-700 rounded-lg p-2 bg-gray-50 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => setTab('music')}
+                >
                     + Nhạc nền
                 </button>
             </div>

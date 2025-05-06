@@ -10,17 +10,18 @@ import StickerSetting from "../components/StickerSetting";
 
 export default function EditVideo() {
     const [selectedTool, setSelectedTool] = useState("subtitles");
+    const [tab, setTab] = useState("sticker");
 
     return (
         <div className="flex h-screen w-screen">
             <SideBar selected={selectedTool} onSelect={setSelectedTool} />
             <div className="bg-white w-[400px]">
-                {selectedTool === "subtitles" && <SubtitleSetting />}
-                {selectedTool === "music" && <MusicSetting />}
-                {selectedTool === "sticker" && <StickerSetting />}
+                {selectedTool === "subtitles" && <SubtitleSetting/>}
+                {selectedTool === "music" && <MusicSetting setTab={setTab}/>}
+                {selectedTool === "sticker" && <StickerSetting setTab={setTab}/>}
             </div>
             <VideoPreview />
-            <FormatVideo />
+            <FormatVideo tab={tab} setTab={setTab}/>
         </div>
     );
 }

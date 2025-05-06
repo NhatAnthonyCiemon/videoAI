@@ -4,8 +4,7 @@ import TabText from "./TabText";
 import TabSticker from "./TabSticker";
 import TabMusic from "./TabMusic";
 
-export default function FormatVideo() {
-  const [tab, setTab] = useState("sticker");
+export default function FormatVideo({tab, setTab}: {tab: string, setTab: (tab: string) => void}) {
 
   return (
     <div className="w-[360px] h-full bg-white border-l-1 border-gray-700 flex flex-col">

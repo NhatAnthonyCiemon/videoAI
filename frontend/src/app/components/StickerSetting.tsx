@@ -23,7 +23,7 @@ const mockStickers = [
     },
 ];
 
-export default function StickerSetting() {
+export default function StickerSetting({ setTab }: { setTab: (tab: string) => void }) {
     const [stickers, setStickers] = useState(mockStickers);
 
     const toggleEnable = (id: number) => {
@@ -41,7 +41,9 @@ export default function StickerSetting() {
     return (
         <div className="bg-white overflow-y-auto space-y-2 border-r-1 h-full border-gray-700 p-4">
             <div className="flex justify-between items-center mb-2 p-2">
-                <button className="text-xl font-medium border border-gray-700 rounded-lg p-2 bg-gray-50 hover:bg-gray-100 cursor-pointer">
+                <button className="text-xl font-medium border border-gray-700 rounded-lg p-2 bg-gray-50 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => setTab('sticker')}
+                >
                     + Sticker
                 </button>
             </div>

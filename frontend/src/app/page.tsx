@@ -1,15 +1,12 @@
-import Button from "./Button";
+import SignIn from './pages/SignIn';
+import Homepage from './pages/Home';
 
-export default function Home() {
+const Home = () => {
     return (
-        <div className="flex">
-            {/* left side */}
-            <div className="w-1/2">
-                {/* video player */}
-                <div className="w-full h-full">
-                    <Button />
-                </div>
-            </div>
+        <div className="flex w-full h-full">
+            <Homepage />
         </div>
     );
-}
+};
+
+export default Home;

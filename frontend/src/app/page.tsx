@@ -7,7 +7,7 @@ export default function Home() {
             <div className="w-1/2">
                 {/* video player */}
                 <div className="w-full h-full">
-                    <Button />
+                    <Button />fasdf
                 </div>
             </div>
         </div>

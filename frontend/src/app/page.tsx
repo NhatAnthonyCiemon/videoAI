@@ -1,15 +1,10 @@
 import Button from "./Button";
+import EditVideo from "./pages/EditVideo";
 
 export default function Home() {
     return (
         <div className="flex">
-            {/* left side */}
-            <div className="w-1/2">
-                {/* video player */}
-                <div className="w-full h-full">
-                    <Button />
-                </div>
-            </div>
+            <EditVideo />
         </div>
     );
 }

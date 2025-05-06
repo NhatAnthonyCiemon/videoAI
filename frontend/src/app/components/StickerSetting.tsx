@@ -8,8 +8,8 @@ const mockStickers = [
         name: "Sticker vui nhộn",
         description: "Dán mặt cười ở góc dưới video",
         link: "https://res.cloudinary.com/dphytbuah/image/upload/v1746017853/Image_tiktok/t34tezoyfnqkdy1yqf75.webp",
-        start: "0:00:05",
-        end: "0:00:10",
+        start: "00:05",
+        end: "00:10",
         enabled: true,
     },
     {
@@ -17,8 +17,8 @@ const mockStickers = [
         name: "Ngôi sao",
         description: "Hiệu ứng lấp lánh khi bắt đầu",
         link: "https://res.cloudinary.com/dphytbuah/image/upload/v1746017853/Image_tiktok/t34tezoyfnqkdy1yqf75.webp",
-        start: "0:00:00",
-        end: "0:00:03",
+        start: "00:00",
+        end: "00:03",
         enabled: false,
     },
 ];
@@ -35,7 +35,7 @@ export default function StickerSetting() {
     };
 
     const deleteSticker = (id: number) => {
-        setStickers((prev) => prev.filter((s) => s.id !== id));
+        setStickers((prev) => prev.filter((sticker) => sticker.id !== id));
     };
 
     return (
@@ -58,11 +58,10 @@ export default function StickerSetting() {
                             <p className="text-xl font-semibold text-gray-800">{sticker.name}</p>
                             <p className="text-gray-600">{sticker.description}</p>
                         </div>
-                        
                     </div>
                     <div className="flex justify-between items-center mt-2 ml-5 mr-3">
                         <button onClick={() => deleteSticker(sticker.id)} className="text-red-500 hover:text-red-700">
-                            <Trash2 size={18} color="black" />
+                            <Trash2 size={18} color="black" className="cursor-pointer" />
                         </button>
                     </div>
                     <div className="flex flex-col justify-between ml-2">

@@ -98,14 +98,14 @@ export default function VideoPreview() {
                 </video>
 
                 {currentSubtitle && (
-                    <p className="absolute bottom-7 justify-center text-white text-sm bg-black bg-opacity-50 px-2 py-1 rounded">
+                    <p className="absolute bottom-7 justify-center text-white text-xl bg-black bg-opacity-50 px-2 py-1 p-4 rounded">
                         {currentSubtitle}
                     </p>
                 )}
 
                 {!isPlaying && (
                     <div
-                        className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 cursor-pointer"
+                        className="absolute inset-0 flex items-center justify-center bg-[rgba(31,41,55,0.56)] cursor-pointer"
                         onClick={togglePlay}
                     >
                         <Play size={40} className="text-white opacity-80" />
@@ -118,7 +118,7 @@ export default function VideoPreview() {
                     onClick={togglePlay}
                     className="text-blue-600 hover:scale-110 transition"
                 >
-                    {isPlaying ? <Pause size={24} /> : <Play size={24} />}
+                    {isPlaying ? <Pause size={24} className="cursor-pointer"/> : <Play size={24} className="cursor-pointer"/>}
                 </button>
 
                 <span className="text-base">{formatTime(currentTime)}</span>

@@ -1,4 +1,3 @@
-"use client";
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
 
@@ -7,24 +6,24 @@ const mockMusics = [
         id: 1,
         name: "Calm Piano",
         duration: "2:30",
-        start: "0:00:10",
-        end: "0:00:40",
+        start: "00:10",
+        end: "00:40",
         enabled: true,
     },
     {
         id: 2,
         name: "Ambient Background",
         duration: "1:45",
-        start: "0:00:05",
-        end: "0:00:20",
+        start: "00:05",
+        end: "00:20",
         enabled: false,
     },
     {
         id: 3,
         name: "Energetic Beat",
         duration: "3:10",
-        start: "0:00:00",
-        end: "0:00:25",
+        start: "00:00",
+        end: "00:25",
         enabled: true,
     },
 ];
@@ -54,8 +53,6 @@ export default function MusicSetting() {
 
             {musics.map((music) => (
                 <div key={music.id} className="p-2 flex rounded-md">
-
-
                     <div className="border rounded-md p-2 flex w-full">
                         <div className="flex-1 ">
                             <p className="text-xl font-semibold text-gray-800">{music.name}</p>
@@ -72,13 +69,14 @@ export default function MusicSetting() {
                                 <div className="w-11 h-6 bg-gray-300 peer-checked:bg-orange-500 rounded-full peer peer-focus:ring-2 peer-focus:ring-orange-300 transition duration-300 ease-in-out"></div>
                                 <div className="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow-md transform peer-checked:translate-x-full transition duration-300 ease-in-out"></div>
                             </label>
-
                         </div>
-
                     </div>
                     <div className="flex justify-between items-center mt-2 ml-5 mr-3">
-                        <button className="text-red-500 hover:text-red-700">
-                            <Trash2 size={18} color="black" />
+                        <button
+                            className="text-red-500 hover:text-red-700"
+                            onClick={() => deleteMusic(music.id)} // Thêm sự kiện onClick để gọi deleteMusic
+                        >
+                            <Trash2 size={18} color="black" className="cursor-pointer" />
                         </button>
                     </div>
                     <div className="flex flex-col justify-between ml-2">
@@ -91,8 +89,7 @@ export default function MusicSetting() {
                         </div>
                     </div>
                 </div>
-            ))
-            }
-        </div >
+            ))}
+        </div>
     );
 }

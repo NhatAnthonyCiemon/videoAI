@@ -45,12 +45,12 @@ export default function SubtitleSetting() {
                     <div className="border rounded-md p-2 flex flex-col bg-gray-50">
                         <p className="text-xl text-gray-700">{sub.text}</p>
                     </div>
-                    <div className="flex justify-between items-center mt-2 ml-3 mr-3">
+                    <div className="flex justify-between items-center mt-2 ml-5 mr-3">
                         <button className="text-red-500 hover:text-red-700">
                             <Trash2 size={18} color="black"/>
                         </button>
                     </div>
-                    <div className="flex flex-col justify-between ml-3">
+                    <div className="flex flex-col justify-between ml-2">
                         <div className="flex-1 border rounded-md p-1 bg-gray-50 w-[52px] text-center flex items-center justify-center">
                             {sub.start}
                         </div>

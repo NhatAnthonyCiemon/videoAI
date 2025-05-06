@@ -4,6 +4,9 @@ import SideBar from "../components/SideBar";
 import VideoPreview from "../components/VideoPreview";
 import FormatVideo from "../components/FormatVideo";
 import SubtitleSetting from "../components/SubtitleSetting";
+import MusicSetting from "../components/MusicSetting";
+import StickerSetting from "../components/StickerSetting";
+
 
 export default function EditVideo() {
     const [selectedTool, setSelectedTool] = useState("subtitles");
@@ -13,7 +16,8 @@ export default function EditVideo() {
             <SideBar selected={selectedTool} onSelect={setSelectedTool} />
             <div className="bg-white w-[400px]">
                 {selectedTool === "subtitles" && <SubtitleSetting />}
-                {selectedTool === "music" && <p>🎵 Music Settings Placeholder</p>}
+                {selectedTool === "music" && <MusicSetting />}
+                {selectedTool === "sticker" && <StickerSetting />}
             </div>
             <VideoPreview />
             <FormatVideo />

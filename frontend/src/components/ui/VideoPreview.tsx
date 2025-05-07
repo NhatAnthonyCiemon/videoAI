@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from "react";
 
 export default function VideoPreview() {
     const url =
-        "https://res.cloudinary.com/dphytbuah/video/upload/Video_tiktok/4a66e6c6-cc89-4e30-8ca6-1284f33fea9e.mp4";
+        "https://res.cloudinary.com/dphytbuah/video/upload/v1746602269/Video_tiktok/0f287953-3d2f-42a5-b1e0-0de5841e3440.mp4";
 
     const subtitles = [
         { start: 0, end: 5, text: "Xin chào, đây là một video mẫu." },
@@ -91,7 +91,7 @@ export default function VideoPreview() {
                     src={url}
                     onTimeUpdate={handleTimeUpdate}
                     onLoadedMetadata={handleLoadedMetadata}
-                    className="w-full object-cover h-[800px]"
+                    className="w-auto object-cover max-h-[500px]"
                     loop
                 >
                     Your browser does not support the video tag.

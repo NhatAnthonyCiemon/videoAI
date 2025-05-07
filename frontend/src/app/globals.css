@@ -3,6 +3,11 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@layer utilities {
+    .scrollbar-gutter-stable {
+        scrollbar-gutter: stable;
+    }
+}
 @theme inline {
     --color-background: var(--background);
     --color-foreground: var(--foreground);
@@ -47,7 +52,6 @@
 }
 html {
     font-size: 62.5%;
-    scrollbar-gutter: stable;
 }
 
 :root {

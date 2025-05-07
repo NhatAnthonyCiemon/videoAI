@@ -32,8 +32,8 @@ export default function TabSticker() {
   };
 
   return (
-    <div className="space-y-4 text-xl pt-4 bg-white overflow-y-auto p-4 h-full">
-      <h2 className="font-bold text-xl mb-5">Chọn nhãn dán</h2>
+    <div className="space-y-4 pt-4 bg-white overflow-y-auto p-4 h-full">
+      <h2 className="font-bold text-2xl mb-5">Chọn nhãn dán</h2>
       <div className="space-y-2">
         {stickers.map((sticker) => (
           <div
@@ -48,11 +48,11 @@ export default function TabSticker() {
             <img
               src={sticker.image}
               alt={sticker.name}
-              className="w-12 h-12 rounded object-cover"
+              className="w-12 h-12 rounded object-cover ml-1"
             />
             <div className="flex flex-col">
-              <span className="font-semibold text-xl">{sticker.name}</span>
-              <span className="text-gray-600">{sticker.description}</span>
+              <span className="font-semibold text-2xl">{sticker.name}</span>
+              <span className="text-gray-600 text-xl">{sticker.description}</span>
             </div>
           </div>
         ))}

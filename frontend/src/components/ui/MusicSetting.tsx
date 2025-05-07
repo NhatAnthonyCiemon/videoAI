@@ -46,7 +46,7 @@ export default function MusicSetting({ setTab }: { setTab: (tab: string) => void
     return (
         <div className="bg-white overflow-y-auto space-y-2 border-r-1 h-full border-gray-700 p-4">
             <div className="flex justify-between items-center mb-2 p-2">
-                <button className="text-xl font-medium border border-gray-700 rounded-lg p-2 bg-gray-50 hover:bg-gray-100 cursor-pointer"
+                <button className="text-2xl font-medium border border-gray-700 rounded-lg p-2 bg-gray-50 hover:bg-gray-100 cursor-pointer"
                     onClick={() => setTab('music')}
                 >
                     + Nhạc nền
@@ -57,8 +57,8 @@ export default function MusicSetting({ setTab }: { setTab: (tab: string) => void
                 <div key={music.id} className="p-2 flex rounded-md">
                     <div className="border rounded-md p-2 flex w-full">
                         <div className="flex-1 ">
-                            <p className="text-xl font-semibold text-gray-800">{music.name}</p>
-                            <p className=" text-gray-600">Thời lượng nhạc: {music.duration}</p>
+                            <p className="text-2xl font-semibold text-gray-800">{music.name}</p>
+                            <p className=" text-gray-600 text-xl">Thời lượng nhạc: {music.duration}</p>
                         </div>
                         <div className="flex items-center gap-2">
                             <label className="relative inline-flex items-center cursor-pointer">
@@ -81,7 +81,7 @@ export default function MusicSetting({ setTab }: { setTab: (tab: string) => void
                             <Trash2 size={18} color="black" className="cursor-pointer" />
                         </button>
                     </div>
-                    <div className="flex flex-col justify-between ml-2">
+                    <div className="flex flex-col justify-between ml-2 text-xl">
                         <div className="flex-1 border rounded-md p-1 bg-gray-50 w-[52px] text-center flex items-center justify-center">
                             {music.start}
                         </div>

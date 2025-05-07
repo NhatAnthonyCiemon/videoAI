@@ -50,7 +50,7 @@ export default function SubtitleSetting() {
             <div className="flex justify-between items-center p-2">
                 <button
                     onClick={() => setIsAdding(!isAdding)}
-                    className={`text-xl font-medium border border-gray-700 rounded-lg p-2 bg-gray-50 cursor-pointer active:bg-blue-100 ${
+                    className={`text-2xl font-medium border border-gray-700 rounded-lg p-2 bg-gray-50 cursor-pointer active:bg-blue-100 ${
                         isAdding ? "bg-gray-300" : "text-gray-700"}`}
                 >
                     + Phụ đề
@@ -108,7 +108,7 @@ export default function SubtitleSetting() {
             {subtitles.map((sub) => (
                 <div key={sub.id} className="p-2 flex">
                     <div className="border rounded-md p-2 flex flex-col bg-gray-50">
-                        <p className="text-xl text-gray-700">{sub.text}</p>
+                        <p className="text-2xl text-gray-700">{sub.text}</p>
                     </div>
                     <div className="flex justify-between items-center mt-2 ml-5 mr-3">
                         <button
@@ -118,7 +118,7 @@ export default function SubtitleSetting() {
                             <Trash2 size={18} color="black" className="cursor-pointer" />
                         </button>
                     </div>
-                    <div className="flex flex-col justify-between ml-2">
+                    <div className="flex flex-col justify-between ml-2 text-xl">
                         <div className="flex-1 border rounded-md p-1 bg-gray-50 w-[52px] text-center flex items-center justify-center">
                             {sub.start}
                         </div>

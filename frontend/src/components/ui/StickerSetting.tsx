@@ -41,7 +41,7 @@ export default function StickerSetting({ setTab }: { setTab: (tab: string) => vo
     return (
         <div className="bg-white overflow-y-auto space-y-2 border-r-1 h-full border-gray-700 p-4">
             <div className="flex justify-between items-center mb-2 p-2">
-                <button className="text-xl font-medium border border-gray-700 rounded-lg p-2 bg-gray-50 hover:bg-gray-100 cursor-pointer"
+                <button className="text-2xl font-medium border border-gray-700 rounded-lg p-2 bg-gray-50 hover:bg-gray-100 cursor-pointer"
                     onClick={() => setTab('sticker')}
                 >
                     + Sticker
@@ -57,8 +57,8 @@ export default function StickerSetting({ setTab }: { setTab: (tab: string) => vo
                             className="w-12 h-12 object-contain rounded"
                         />
                         <div className="flex-1">
-                            <p className="text-xl font-semibold text-gray-800">{sticker.name}</p>
-                            <p className="text-gray-600">{sticker.description}</p>
+                            <p className="text-2xl font-semibold text-gray-800">{sticker.name}</p>
+                            <p className="text-gray-600 text-xl">{sticker.description}</p>
                         </div>
                     </div>
                     <div className="flex justify-between items-center mt-2 ml-5 mr-3">
@@ -66,7 +66,7 @@ export default function StickerSetting({ setTab }: { setTab: (tab: string) => vo
                             <Trash2 size={18} color="black" className="cursor-pointer" />
                         </button>
                     </div>
-                    <div className="flex flex-col justify-between ml-2">
+                    <div className="flex flex-col justify-between ml-2 text-xl">
                         <div className="flex-1 border rounded-md p-1 bg-gray-50 w-[52px] text-center flex items-center justify-center">
                             {sticker.start}
                         </div>

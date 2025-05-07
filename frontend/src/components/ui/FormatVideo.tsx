@@ -12,9 +12,9 @@ export default function FormatVideo({
     setTab: (tab: string) => void;
 }) {
     return (
-        <div className="w-[360px] h-full bg-white border-l-1 border-gray-700 flex flex-col">
+        <div className="w-[400px] h-full bg-white border-l-1 border-gray-700 flex flex-col">
             <div className="bg-gray-300 pt-5 pb-3">
-                <div className="flex gap-2 text-xl justify-center pl-3 pr-3">
+                <div className="flex gap-2 text-2xl justify-center pl-3 pr-3">
                     <button
                         className={`w-full cursor-pointer h-12 p-1 rounded ${
                             tab === "text" ? "bg-white border" : ""

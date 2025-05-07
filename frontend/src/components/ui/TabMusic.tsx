@@ -58,14 +58,14 @@ export default function TabMusic() {
   };
 
   return (
-    <div className="space-y-4 text-xl pt-4 bg-white overflow-y-auto p-4">
+    <div className="space-y-4 text-2xl pt-4 bg-white overflow-y-auto p-4">
       <audio ref={audioRef} onEnded={() => setPlayingId(null)} />
 
       <div className="flex justify-between">
-        <h2 className="font-bold">Chọn nhạc nền</h2>
+        <h2 className="text-2xl font-bold">Chọn nhạc nền</h2>
         <button
           onClick={handleUpload}
-          className="text-xl cursor-pointer bg-gray-200 px-3 py-1 rounded hover:bg-gray-300 transition"
+          className="text-2xl cursor-pointer bg-gray-200 px-3 py-1 rounded hover:bg-gray-300 transition"
         >
           + Tải nhạc lên
         </button>
@@ -85,16 +85,16 @@ export default function TabMusic() {
                 type="checkbox"
                 checked={selectedIds.includes(music.id)}
                 onChange={() => toggleSelect(music.id)}
-                className="w-5 h-5 cursor-pointer mr-3"
+                className="w-5 h-5 cursor-pointer mr-4 ml-2"
               />
             <div className="flex-1 cursor-pointer" onClick={() => toggleSelect(music.id)}>
               <p className="font-semibold">{music.name}</p>
-              <p className="text-sm text-gray-600">{music.duration}</p>
+              <p className="text-xl text-gray-600">{music.duration}</p>
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => handlePlay(music.id, music.url)}
-                className="text-base bg-gray-100 px-2 py-1 rounded hover:bg-gray-200"
+                className="text-xl bg-gray-100 px-2 py-1 rounded hover:bg-gray-200"
               >
                 {playingId === music.id ? "⏸️ Pause" : "▶️ Play"}
               </button>

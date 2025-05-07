@@ -14,7 +14,7 @@ export default function TabText() {
     const [textColor, setTextColor] = useState("#000000");
 
     return (
-        <div className="space-y-4 text-xl pt-4 bg-white overflow-y-auto p-4">
+        <div className="space-y-4 text-2xl pt-4 bg-white overflow-y-auto p-4">
             <h2 className="font-bold">Subtitle Settings</h2>
 
             <div className="p-2">
@@ -81,13 +81,13 @@ export default function TabText() {
                             type="text"
                             value={textColor}
                             onChange={(e) => setTextColor(e.target.value)}
-                            className="border p-1 rounded w-[60px]"
+                            className="border p-1 rounded w-[70px]"
                         />
                     </div>
                 </div>
 
                 <div className="mt-10">
-                    <label className="block font-medium mb-1">Fill</label>
+                    <label className="block font-medium mb-1">Position</label>
                     <div className="flex gap-2 text-xl">
                         <button
                             className={`cursor-pointer btn w-30 h-12 border p-1 rounded ${textFill === 'top' ? "bg-gray-300" : ""}`}

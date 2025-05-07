@@ -12,7 +12,7 @@ export default function EditVideo() {
     const [tab, setTab] = useState("sticker");
 
     return (
-        <div className="flex h-screen w-screen">
+        <div className="flex h-full w-full">
             <SideBar selected={selectedTool} onSelect={setSelectedTool} />
             <div className="bg-white w-[400px]">
                 {selectedTool === "subtitles" && <SubtitleSetting />}
@@ -21,7 +21,9 @@ export default function EditVideo() {
                     <StickerSetting setTab={setTab} />
                 )}
             </div>
-            <VideoPreview />
+            <div className="flex-1 overflow-y-auto max-h-screen custom-scroll">
+                <VideoPreview />
+            </div>
             <FormatVideo tab={tab} setTab={setTab} />
         </div>
     );

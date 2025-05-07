@@ -91,7 +91,7 @@ export default function VideoPreview() {
                     src={url}
                     onTimeUpdate={handleTimeUpdate}
                     onLoadedMetadata={handleLoadedMetadata}
-                    className="w-full object-cover"
+                    className="w-full object-cover h-[800px]"
                     loop
                 >
                     Your browser does not support the video tag.
@@ -121,9 +121,9 @@ export default function VideoPreview() {
                     {isPlaying ? <Pause size={24} className="cursor-pointer"/> : <Play size={24} className="cursor-pointer"/>}
                 </button>
 
-                <span className="text-base">{formatTime(currentTime)}</span>
+                <span className="text-xl">{formatTime(currentTime)}</span>
                 <span>/</span>
-                <span className="text-base">{formatTime(duration)}</span>
+                <span className="text-xl">{formatTime(duration)}</span>
 
                 <input
                     type="range"
@@ -159,7 +159,7 @@ export default function VideoPreview() {
 
 
             <p className="mt-5 text-2xl font-semibold">Transcript</p>
-            <p className="text-xl text-gray-700 p-2">{content}</p>
+            <p className="text-2xl text-gray-700 p-2 pb-100">{content}</p>
         </div>
     );
 }

@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import SignInForm from "../components/SignInForm";
-import SignUpForm from "../components/SignUpForm";
-import Logo from '../components/Logo';
+import SignInForm from "../../components/ui/SignInForm";
+import SignUpForm from "../../components/ui/SignUpForm";
+import Logo from "../../components/ui/Logo";
 
 const SignInPage = () => {
     const [isSignUp, setIsSignUp] = useState(false); // Trạng thái để thay đổi form hiển thị

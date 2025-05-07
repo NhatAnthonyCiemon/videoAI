@@ -1,11 +1,12 @@
-import CreateTop from "./CreateTop";
-import CreateVideo from "./CreateVideo";
+import React from "react";
+import ContentPage from "./ContentPage";
+import Header from "@/components/layout/header";
 function Create() {
     return (
-        <div className="w-[1280px] mx-auto">
-            <CreateTop />
-            <CreateVideo />
-        </div>
+        <>
+            <Header />
+            <ContentPage />
+        </>
     );
 }
 

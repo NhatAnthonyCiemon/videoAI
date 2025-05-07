@@ -1,27 +1,16 @@
 export default function CreateImage() {
     return (
-        <div className="p-8 bg-gray-100 min-h-screen">
-            {/* Header */}
-            <h1 className="text-2xl font-bold mb-6 text-gray-800">Tạo Video AI</h1>
-
-            {/* Tabs */}
-            <div className="flex gap-4 mb-8">
-                <button className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400">
-                    Soạn kịch bản & chọn giọng đọc
-                </button>
-                <button className="px-4 py-2 bg-black text-white rounded-md">
-                    Tạo hình ảnh
-                </button>
-                <button className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400">
-                    Tạo Video
-                </button>
-            </div>
-
+        <div>
             {/* Image Sections */}
             <div className="flex flex-col gap-8">
                 {[1, 2, 3, 4].map((index) => (
-                    <div key={index} className="bg-white p-6 rounded-md shadow-md">
-                        <h2 className="text-lg font-semibold mb-4 text-gray-800">Ảnh {index}:</h2>
+                    <div
+                        key={index}
+                        className="bg-white p-6 rounded-md shadow-md"
+                    >
+                        <h2 className="text-lg font-semibold mb-4 text-gray-800">
+                            Ảnh {index}:
+                        </h2>
                         <div className="grid grid-cols-3 gap-4">
                             {/* Image Placeholder */}
                             <div className="col-span-1 bg-gray-300 h-40 rounded-md"></div>
@@ -29,17 +18,25 @@ export default function CreateImage() {
                             {/* Script and Prompt */}
                             <div className="col-span-2 flex flex-col gap-4">
                                 <div>
-                                    <p className="font-semibold text-gray-800">Script:</p>
+                                    <p className="font-semibold text-gray-800">
+                                        Script:
+                                    </p>
                                     <p className="text-gray-600">
-                                        Lorem ipsum arcu proin aliquam massa faucibus vitae dictum diam scelerisque
-                                        lobortis elementum semper et morbi et tincidunt sed turpis.
+                                        Lorem ipsum arcu proin aliquam massa
+                                        faucibus vitae dictum diam scelerisque
+                                        lobortis elementum semper et morbi et
+                                        tincidunt sed turpis.
                                     </p>
                                 </div>
                                 <div>
-                                    <p className="font-semibold text-gray-800">Prompt (Description):</p>
+                                    <p className="font-semibold text-gray-800">
+                                        Prompt (Description):
+                                    </p>
                                     <p className="text-gray-600">
-                                        Lorem ipsum arcu proin aliquam massa faucibus vitae dictum diam scelerisque
-                                        lobortis elementum semper et morbi et tincidunt sed turpis.
+                                        Lorem ipsum arcu proin aliquam massa
+                                        faucibus vitae dictum diam scelerisque
+                                        lobortis elementum semper et morbi et
+                                        tincidunt sed turpis.
                                     </p>
                                 </div>
                             </div>

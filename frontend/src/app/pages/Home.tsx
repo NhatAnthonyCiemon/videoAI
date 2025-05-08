@@ -7,6 +7,16 @@ import Header from "@/components/layout/header";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+function generateRandomString(length: number = 10): string {
+    const chars =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let result = "";
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * chars.length);
+        result += chars[randomIndex];
+    }
+    return result;
+}
 export default function HomePage() {
     type Platform = "Tiktok" | "YouTube" | "Twitter" | "Instagram";
     const router = useRouter();
@@ -82,7 +92,13 @@ export default function HomePage() {
                         </p>
                         <div className="pt-4 flex flex-wrap gap-4">
                             <Button
-                                onClick={() => router.push("/create")}
+                                onClick={() => {
+                                    {
+                                        const randomId =
+                                            generateRandomString(10);
+                                        router.push(`/create/${randomId}`);
+                                    }
+                                }}
                                 className="bg-green-500 hover:bg-green-600 text-white text-2xl px-8 py-9 rounded-xl"
                             >
                                 Bắt đầu ngay

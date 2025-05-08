@@ -7,9 +7,11 @@ import React from "react";
 function CreateTop({
     whichActive,
     setWhichActive,
+    whichStep,
 }: {
     whichActive: number;
     setWhichActive: (index: number) => void;
+    whichStep: number;
 }) {
     const buttonContent: string[] = [
         "Soạn kịch bản và chọn giọng đọc",
@@ -41,6 +43,7 @@ function CreateTop({
                                     ? classActive
                                     : classNotActive
                             )}
+                            disabled={index > whichStep}
                         >
                             {item}
                         </Button>

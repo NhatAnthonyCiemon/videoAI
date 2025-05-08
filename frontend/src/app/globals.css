@@ -147,3 +147,7 @@ html {
     display: none;
     /* Chrome, Safari */
 }
+.none_focus {
+    outline: none !important;
+    box-shadow: none !important;
+}

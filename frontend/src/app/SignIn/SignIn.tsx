@@ -1,12 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect  } from "react";
+import { useSearchParams } from "next/navigation";
 import SignInForm from "../../components/ui/SignInForm";
 import SignUpForm from "../../components/ui/SignUpForm";
 import Logo from "../../components/ui/Logo";
 
 const SignInPage = () => {
+    const searchParams = useSearchParams();
+    const mode = searchParams.get("mode");
+
     const [isSignUp, setIsSignUp] = useState(false); // Trạng thái để thay đổi form hiển thị
+
+    useEffect(() => {
+        if (mode === "signup") {
+            setIsSignUp(true);
+        }
+    }, [mode]);
 
     const toggleForm = () => setIsSignUp(!isSignUp); // Hàm chuyển đổi giữa SignIn và SignUp
 

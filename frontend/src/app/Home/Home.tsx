@@ -65,12 +65,12 @@ export default function HomePage() {
                 className="bg-gradient-to-r from-indigo-900 to-purple-800 text-white bg-cover bg-right bg-no-repeat py-50 md:py-80"
                 style={{ backgroundImage: "url(/img/robot.png)" }}
             >
-                <div className="w-full max-w-screen-lg xl:max-w-[70%] mx-auto px-4 flex flex-col md:flex-row items-center">
+                <div className="w-full mx-auto px-10 sm:px-20 flex flex-col md:flex-row items-center">
                     <div className="md:w-1/2 space-y-6">
                         <h1 className="text-5xl md:text-6xl xl:text-7xl font-bold leading-tight">
                             Biến ý tưởng thành video chỉ trong 1 phút!
                         </h1>
-                        <p className="text-4xl text-[#EE6767] opacity-90">
+                        <p className="text-4xl text-[#EE6767] opacity-90 font-bold">
                             Sáng tạo video ngắn với AI - nhanh chóng, đơn giản,
                             chuyên nghiệp
                         </p>

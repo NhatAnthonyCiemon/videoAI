@@ -1,4 +1,10 @@
-export default function CreateImage() {
+export default function CreateImage({
+    whichStep,
+    setWhichStep,
+}: {
+    whichStep: number;
+    setWhichStep: (step: number) => void;
+}) {
     return (
         <div>
             {/* Image Sections */}
@@ -8,17 +14,17 @@ export default function CreateImage() {
                         key={index}
                         className="bg-white p-6 rounded-md shadow-md"
                     >
-                        <h2 className="text-lg font-semibold mb-4 text-gray-800">
+                        <h2 className="text-2xl font-semibold mb-4 text-gray-800">
                             Ảnh {index}:
                         </h2>
-                        <div className="grid grid-cols-3 gap-4">
+                        <div className="grid grid-cols-3 gap-8">
                             {/* Image Placeholder */}
-                            <div className="col-span-1 bg-gray-300 h-40 rounded-md"></div>
+                            <div className="col-span-1 h-[100%] min-h-[200px] bg-gray-300 rounded-md"></div>
 
                             {/* Script and Prompt */}
-                            <div className="col-span-2 flex flex-col gap-4">
+                            <div className="col-span-2 text-2xl flex flex-col gap-4">
                                 <div>
-                                    <p className="font-semibold text-gray-800">
+                                    <p className="font-semibold text-gray-800 text-xl">
                                         Script:
                                     </p>
                                     <p className="text-gray-600">
@@ -29,7 +35,7 @@ export default function CreateImage() {
                                     </p>
                                 </div>
                                 <div>
-                                    <p className="font-semibold text-gray-800">
+                                    <p className="font-semibold text-gray-800 text-xl">
                                         Prompt (Description):
                                     </p>
                                     <p className="text-gray-600">
@@ -44,7 +50,7 @@ export default function CreateImage() {
 
                         {/* Regenerate Button */}
                         <div className="flex justify-end mt-4">
-                            <button className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400">
+                            <button className="px-4 py-4 cursor-pointer text-2xl bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400">
                                 Tạo lại
                             </button>
                         </div>
@@ -53,11 +59,11 @@ export default function CreateImage() {
             </div>
 
             {/* Footer Buttons */}
-            <div className="flex justify-end gap-4 mt-8">
-                <button className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400">
+            <div className="flex justify-end gap-8 my-10">
+                <button className="px-4 cursor-pointer py-4 text-2xl bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400">
                     Lưu bản nháp
                 </button>
-                <button className="px-4 py-2 bg-black text-white rounded-md">
+                <button className="px-4 cursor-pointer py-4 text-2xl bg-black text-white rounded-md hover:bg-gray-800">
                     Tạo Video
                 </button>
             </div>

@@ -13,4 +13,10 @@ type Video = {
     keyword: string;
 };
 
+type Image_video = {
+    content: string;
+    url: string;
+    prompt: string;
+};
 export default Video;
+export type { Image_video };

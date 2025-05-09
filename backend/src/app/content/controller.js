@@ -3,6 +3,8 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const key = process.env.GOOGLE_API_KEY;
+const pixaiToken =
+    "eyJhbGciOiJFUzUxMiIsInR5cCI6IkpXVCJ9.eyJsZ2EiOjE3NDY4MDQ5OTUsImlhdCI6MTc0NjgwNDk5NSwiZXhwIjoxNzQ3NDA5Nzk1LCJpc3MiOiJwaXhhaSIsInN1YiI6IjE4Nzc2MDM1ODMxNDIzNDk1NzMiLCJqdGkiOiIxODc3NjAzNTg0ODMyNjU0MTA2In0.ADncS_MethJOXVgwhk6uCXu9AzNEn_5xUZg1aB7LhfKa7gyaUj99_mMVDlYjPEtOSuot-NNH2h-kZkOL0GlV39h7AZr3XFgNHQe7ByU3FJEk_nDwQtbJ2fjSMQ9PZMEB1F-QJb94nY-O1yqULw6iSUS1oHP8GbL4NTKCo8MwjASgx_gs";
 const genAI = new GoogleGenerativeAI(key);
 
 async function enrichScriptWithImagePrompts(topic) {
@@ -66,7 +68,7 @@ async function generateScript(topic) {
     });
 
     const prompt = `
-Hãy tạo ra nội dung bài viết phải đạt 300 chữ:  một phân tích(nghị luận) hoặc truyện thật hấp dẫn(bạn hãy đọc và đánh giá chủ đề cho nó ví dụ như chủ đề về nỗi sợ AI thì là 1 bài phân tích có luận điểm, luận cứ rõ ràng, nếu người dùng mong muốn truyện thì hãy viết truyện, nếu người dùng đã viết kịch bản thì bạn hãy hoàn thiện nó giúp người dùng). Ngôn ngữ câu trả lời dựa theo ngôn ngữ của Chủ đề(ví dụ chủ đề được viết theo tiếng anh thì bạn trả về tiếng anh, tiếng viết thì bạn trả về tiếng việt) đầu vào.
+Hãy tạo ra nội dung bài viết phải đạt 20 chữ:  một phân tích(nghị luận) hoặc truyện thật hấp dẫn(bạn hãy đọc và đánh giá chủ đề cho nó ví dụ như chủ đề về nỗi sợ AI thì là 1 bài phân tích có luận điểm, luận cứ rõ ràng, nếu người dùng mong muốn truyện thì hãy viết truyện, nếu người dùng đã viết kịch bản thì bạn hãy hoàn thiện nó giúp người dùng). Ngôn ngữ câu trả lời dựa theo ngôn ngữ của Chủ đề(ví dụ chủ đề được viết theo tiếng anh thì bạn trả về tiếng anh, tiếng viết thì bạn trả về tiếng việt) đầu vào.
 Lưu ý rằng bạn chỉ cần viết nội dung mà không cần thêm bất kì từ ngữ gì khác(kiểu như "Sau đây là nội dung,..")
 Chủ đề: "${topic}"
 `;
@@ -80,6 +82,132 @@ Chủ đề: "${topic}"
         console.error("Lỗi:", error.message);
     }
 }
+async function generateImage(
+    prompt,
+    modelId,
+    token,
+    i,
+    content,
+    negativePrompt = "worst quality, low quality, easynegative, blurry, deformed, deformed hands, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, disfigured, extra limbs, missing limbs, floating limbs, disconnected limbs, malformed limbs, ugly, disgusting, bad anatomy, bad proportions, gross proportions, text, error, missing fingers, missing arms, missing legs, extra digit, fewer digits, cropped, jpeg artifacts, signature, watermark"
+) {
+    try {
+        // 1. Gửi yêu cầu tạo tác vụ tạo ảnh sử dụng GraphQL với variables
+        const query = `
+  mutation createGenerationTask($parameters: JSONObject!) {
+    createGenerationTask(parameters: $parameters) {
+      id
+      status
+      moderationAction {
+        promptsModerationAction
+      }
+    }
+  }
+`;
+
+        const variables = {
+            parameters: {
+                prompts: prompt,
+                negativePrompts: negativePrompt,
+                width: 512,
+                height: 768,
+                modelId: modelId,
+                cfgScale: 6,
+                samplingSteps: 25,
+                samplingMethod: "DPM++ 2M Karras",
+                seed: "",
+                clipSkip: 2,
+                controlNets: [],
+                extra: {},
+                priority: 1000,
+                lightning: false,
+            },
+        };
+
+        const createResponse = await fetch("https://api.pixai.art/graphql", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+                query,
+                variables,
+            }),
+        });
+
+        const createData = await createResponse.json();
+        console.log(createData);
+        const taskId = createData.data?.createGenerationTask?.id;
+        if (!taskId) throw new Error("Không tạo được task");
+
+        // 2. Kiểm tra trạng thái liên tục đến khi ảnh được tạo xong
+        let mediaUrl = null;
+        for (let i = 0; i < 100; i++) {
+            await new Promise((res) => setTimeout(res, 6000));
+            const statusRes = await fetch(
+                `https://api.pixai.art/v1/task/${taskId}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            const statusData = await statusRes.json();
+            console.log(statusData);
+            if (statusData.status === "completed" && statusData.outputs) {
+                mediaUrl = statusData.outputs.mediaUrls[0];
+                break;
+            }
+        }
+
+        if (!mediaUrl)
+            throw new Error("❌ Không thể lấy được ảnh sau 100 lần kiểm tra.");
+
+        return {
+            url: mediaUrl,
+            index: i,
+            prompt: prompt,
+            content: content,
+        };
+    } catch (error) {
+        return {
+            url: "",
+            index: i,
+            prompt: prompt,
+            content: content,
+        };
+    }
+}
+async function generateImagesFromSegments(segments, modelId, token) {
+    const tasks = [];
+    for (let i = 0; i < segments.length; i++) {
+        tasks.push(
+            generateImage(
+                segments[i].imagePrompt,
+                modelId,
+                token,
+                i,
+                segments[i].text
+            )
+        );
+    }
+    const res = await Promise.all(tasks);
+    console.log("ĐÃ XONG HÌNH ẢNH");
+    const images = [];
+    for (let i = 0; i < res.length; i++) {
+        if (res[i]) {
+            images.push(res[i]);
+        }
+    }
+    images.sort((a, b) => a.index - b.index);
+    const result = images.map(({ index, ...rest }) => rest);
+    console.log("KẾT QUẢ", result);
+    return result;
+}
+
 const contentController = {
     getContentData: async (req, res) => {
         const { topic } = req.body;
@@ -96,13 +224,38 @@ const contentController = {
         }
     },
     getContentDataWithImage: async (req, res) => {
-        const { topic } = req.body;
+        const { content } = req.body;
         try {
-            const imagePrompts = await enrichScriptWithImagePrompts(topic);
+            const imagePrompts = await enrichScriptWithImagePrompts(content);
+            const result = await generateImagesFromSegments(
+                imagePrompts,
+                "1648918127446573124",
+                pixaiToken
+            );
             res.json({
                 mes: "success",
                 status: 200,
-                data: imagePrompts,
+                data: result,
+            });
+        } catch (error) {
+            console.error("Error fetching content data:", error);
+            res.status(500).json({ error: "Internal Server Error" });
+        }
+    },
+    getReGenerateImage: async (req, res) => {
+        const { prompt, index, content } = req.body;
+        try {
+            const result = await generateImage(
+                prompt,
+                "1648918127446573124",
+                pixaiToken,
+                index,
+                content
+            );
+            res.json({
+                mes: "success",
+                status: 200,
+                data: result,
             });
         } catch (error) {
             console.error("Error fetching content data:", error);

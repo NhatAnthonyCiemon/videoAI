@@ -25,7 +25,7 @@ const DraftModal: React.FC<Props> = ({
     open,
     onClose,
 }) => {
-    const [isSave, setIsSave] = useState(false);
+    const [isSave, setIsSave] = useState(videoData.name !== "");
     const [isSavedDraft, setIsSavedDraft] = useState(false);
     const [isStatusSave, setStatusSave] = useState(0); // 0: default, 1: success, 2: fail
     const [isLoading, setIsLoading] = useState(false);
@@ -170,6 +170,7 @@ const DraftModal: React.FC<Props> = ({
                                     onClose();
                                     setStatusSave(0);
                                     setIsSavedDraft(false);
+                                    document.body.style.overflow = "auto";
                                 }}
                                 className="cursor-pointer text-xl px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
                             >

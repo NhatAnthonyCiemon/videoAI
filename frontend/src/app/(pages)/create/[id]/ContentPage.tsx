@@ -4,7 +4,6 @@ import CreateImage from "./CreateImage";
 import CreateScript from "./CreateScript";
 import CreateVideo from "./CreateVideo";
 import CreateTop from "./CreateTop";
-import { ContentGenerate } from "@/types/contentGenerate";
 import Video from "@/types/Video";
 function ContentPage({ video }: { video: Video }) {
     React.useEffect(() => {
@@ -15,8 +14,7 @@ function ContentPage({ video }: { video: Video }) {
             );
         };
     }, []);
-
-    const [whichActive, setWhichActive] = React.useState(0);
+    const [whichActive, setWhichActive] = React.useState(video.step);
     const [videoData, setVideoData] = React.useState<Video>(video);
     const [isPreparing, setIsPreparing] = React.useState(false);
     return (
@@ -37,7 +35,15 @@ function ContentPage({ video }: { video: Video }) {
                 />
             )}
             {((whichActive === 1 && videoData.step >= 1) ||
-                (isPreparing && videoData.step === 1)) && <CreateImage />}
+                (isPreparing && videoData.step === 1)) && (
+                <CreateImage
+                    setWhichActive={setWhichActive}
+                    videoData={videoData}
+                    setVideoData={setVideoData}
+                    isPreparing={isPreparing}
+                    setIsPreparing={setIsPreparing}
+                />
+            )}
 
             {whichActive === 2 && videoData.step >= 2 && <CreateVideo />}
         </div>

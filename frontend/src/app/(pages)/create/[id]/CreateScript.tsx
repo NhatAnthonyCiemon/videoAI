@@ -7,16 +7,14 @@ import fetchApi from "@/lib/api/fetch";
 import APIResponse from "@/types/apiResponse";
 import HttpMethod from "@/types/httpMethos";
 import LoadingIcon from "@/components/ui/LoadingIcon";
-import { ContentGenerate, ContentItem } from "@/types/contentGenerate";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import useOverlay from "@/hooks/useOverlay";
-import { useParams } from "next/navigation";
 import videoClass from "../../../../lib/Video";
 import Video from "@/types/Video";
 import DraftModal from "@/components/ui/DraftModal";
 import LoadingOverlay from "@/components/ui/LoadingOverlay";
-import { time } from "node:console";
+import { Image_video } from "@/types/Video";
 
 export default function CreateScript({
     setWhichActive,
@@ -104,19 +102,46 @@ export default function CreateScript({
             });
     };
     const handleNextStep = async () => {
+        if (videoData.step === 1) {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth",
+            });
+            const newVideoData = videoClass.updateVideo(
+                videoData,
+                "image_video",
+                []
+            );
+            setVideoData(videoClass.updateVideo(newVideoData, "step", 0));
+        }
         setIsPreparing(true);
         setWhichActive(1);
         window.scrollTo({
             top: 0,
             behavior: "smooth",
         });
-        // Gửi videoData lên server
-        //set isPreparing(false) sau khi nhận phản hồi từ server
-        //set videoData với dữ liệu mới từ server nếu cần thiết
-        //giả sử
-        setTimeout(() => {
+
+        const res = await fetchApi<Image_video[]>(
+            `http://localhost:4000/content/getcontentimage`,
+            HttpMethod.POST,
+            videoData
+        );
+        if (res.mes === "success") {
+            const newVideoData = videoClass.updateVideo(
+                videoData,
+                "image_video",
+                res.data
+            );
+            const newVideoData2 = videoClass.updateVideo(
+                newVideoData,
+                "step",
+                1
+            );
+            setVideoData(newVideoData2);
             setIsPreparing(false);
-        }, 2000);
+        } else {
+            throw new Error("Invalid response format");
+        }
     };
 
     return (

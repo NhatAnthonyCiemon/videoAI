@@ -5,7 +5,8 @@ import CreateScript from "./CreateScript";
 import CreateVideo from "./CreateVideo";
 import CreateTop from "./CreateTop";
 import { ContentGenerate } from "@/types/contentGenerate";
-function ContentPage() {
+import Video from "@/types/Video";
+function ContentPage({ video }: { video: Video }) {
     React.useEffect(() => {
         document.documentElement.classList.add("scrollbar-gutter-stable");
         return () => {
@@ -16,40 +17,29 @@ function ContentPage() {
     }, []);
 
     const [whichActive, setWhichActive] = React.useState(0);
-    const [whichStep, setWhichStep] = React.useState(0);
-    const [contentVideo, setContentVideo] = React.useState<ContentGenerate>({
-        fullContent: "",
-        keyword: "",
-        arrayContent: [],
-    });
+    const [videoData, setVideoData] = React.useState<Video>(video);
+    const [isPreparing, setIsPreparing] = React.useState(false);
     return (
         <div className="w-[1280px] mx-auto overflow-hidden">
             <CreateTop
                 whichActive={whichActive}
                 setWhichActive={setWhichActive}
-                whichStep={whichStep}
+                videoData={videoData}
             />
-            {whichActive === 0 && whichStep >= 0 && (
+            {((whichActive === 0 && videoData.step >= 0) ||
+                (isPreparing && videoData.step === 0)) && (
                 <CreateScript
-                    whichStep={whichStep}
-                    setWhichStep={setWhichStep}
                     setWhichActive={setWhichActive}
-                    contentVideo={contentVideo}
-                    setContentVideo={setContentVideo}
+                    videoData={videoData}
+                    setVideoData={setVideoData}
+                    isPreparing={isPreparing}
+                    setIsPreparing={setIsPreparing}
                 />
             )}
-            {whichActive === 1 && whichStep >= 1 && (
-                <CreateImage
-                    whichStep={whichStep}
-                    setWhichStep={setWhichStep}
-                />
-            )}
-            {whichActive === 2 && whichStep >= 2 && (
-                <CreateVideo
-                    whichStep={whichStep}
-                    setWhichStep={setWhichStep}
-                />
-            )}
+            {((whichActive === 1 && videoData.step >= 1) ||
+                (isPreparing && videoData.step === 1)) && <CreateImage />}
+
+            {whichActive === 2 && videoData.step >= 2 && <CreateVideo />}
         </div>
     );
 }

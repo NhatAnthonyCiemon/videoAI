@@ -92,6 +92,7 @@ model videos {
   content     String?
   url         String?
   step        Int
+  keyword     String?
   image_video image_video[]
   music       music[]
   subtitles   subtitles[]

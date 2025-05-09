@@ -8,6 +8,7 @@ const Store = {
         category,
         step,
         content,
+        keyword,
         url = "",
         view = 0
     ) => {
@@ -21,6 +22,7 @@ const Store = {
                     category: category,
                     step: step,
                     content: content,
+                    keyword: keyword,
                 },
             });
         }
@@ -34,6 +36,7 @@ const Store = {
             step: step,
             content: content,
             url: url,
+            keyword: keyword,
         };
         const result = await prisma.videos.create({
             data: data,

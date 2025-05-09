@@ -1,10 +1,4 @@
-export default function CreateImage({
-    whichStep,
-    setWhichStep,
-}: {
-    whichStep: number;
-    setWhichStep: (step: number) => void;
-}) {
+export default function CreateImage() {
     return (
         <div>
             {/* Image Sections */}

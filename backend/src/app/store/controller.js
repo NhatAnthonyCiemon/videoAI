@@ -2,7 +2,8 @@ const store = require("./service");
 
 const storeController = {
     saveFullContentData: async (req, res) => {
-        const { id, user_id, name, category, step, content } = req.body;
+        const { id, user_id, name, category, step, content, keyword } =
+            req.body;
         console.log(req.body);
         if (
             !id ||
@@ -10,7 +11,8 @@ const storeController = {
             !name ||
             !category ||
             step === undefined ||
-            !content
+            !content ||
+            !keyword
         ) {
             console.log("Missing required fields");
             return res.status(400).json({
@@ -41,7 +43,8 @@ const storeController = {
                 name,
                 category,
                 step,
-                content
+                content,
+                keyword
             );
             if (!result) {
                 return res.status(500).json({

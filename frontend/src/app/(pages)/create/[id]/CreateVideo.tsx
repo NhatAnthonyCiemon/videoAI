@@ -1,12 +1,6 @@
 import { Button } from "@/components/ui/button";
 
-function CreateVideo({
-    whichStep,
-    setWhichStep,
-}: {
-    whichStep: number;
-    setWhichStep: (step: number) => void;
-}) {
+function CreateVideo({}: {}) {
     return (
         <div className="flex h-[500px] gap-[20px]">
             <div className="flex-grow h-full bg-[#171C31]">

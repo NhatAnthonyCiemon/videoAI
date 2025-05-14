@@ -1,5 +1,11 @@
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-const dotenv = require("dotenv");
+// const { GoogleGenerativeAI } = require("@google/generative-ai");
+import { GoogleGenerativeAI } from "@google/generative-ai";
+// const { Client } = require("@gradio/client");
+import { Client } from "@gradio/client";
+// const axios = require("axios");
+import axios from "axios";
+// const dotenv = require("dotenv");
+import dotenv from "dotenv";
 dotenv.config();
 
 const key = process.env.GOOGLE_API_KEY;
@@ -13,27 +19,40 @@ async function enrichScriptWithImagePrompts(topic) {
     });
 
     const prompt = `
-Hãy dựa vào bài viết "${topic}" bạn hãy tạo ra câu trả lời
-Tuân thủ yêu cầu sau:
-1. Tách bài viết thành đoạn 1 câu, 2 câu hoặc 3 câu có nghĩa và dễ mô tả bằng ảnh kiểu như câu đó có thể dễ dàng miêu tả bằng 1 tấm ảnh
-2. Gợi ý prompt hình ảnh phù hợp (nội dung ảnh, cảm xúc, background, tông màu...).
-3. Đảm bảo tất cả các ảnh tuân theo 1 bố cục thống nhất (ví dụ: cổ điển, nhân vật giống nhau qua các tấm ảnh, màu nâu vintage, ánh sáng mềm, nền mờ nhẹ,, kiểu tranh vẽ hoặc 3D animation...).
-4. Bạn hãy viết trước promt về các nhân vật, các đồ vật, cây cối, động vật để truyền nó vào mọi imagePrompt mà các sự vật có liên quan được nhắc đến. Vì tôi sẽ sử dụng từng imagePrompt riêng biệt để tạo từng ảnh nên tôi cần nhắc lại các hình ảnh của sự vật liên quan ở mọi imagePrompt để tạo ảnh đồng nhất(phần nội dung thì không cần miêu tả kĩ chỉ cần làm như bình thường chỉ phần imagePrompt mới miêu tả thật kĩ). Mỗi lần nhắc tên nhân vật đồ vật, con vật đều mở ngoặc () để ghi chú đặc điểm ví dụ young man(tall, blue eyes, white skin, skinny, handsome, young, ...) tôi muốn bạn miêu tả thật kĩ những đặc điểm của con người như họ mặc áo mặc quần gì(thật cụ thể nhất là màu sắc, kiểu dáng), vóc dáng, tóc, mắt. 
+Mục tiêu:
+Tôi đang phát triển một ứng dụng tạo video bằng cách ghép các ảnh tĩnh lại với nhau. Mỗi ảnh sẽ được tạo dựa trên một câu ngắn mô tả nội dung và một image prompt đầy đủ chi tiết. Vì tôi tạo từng ảnh một cách riêng biệt và không lưu lịch sử, mỗi prompt phải hoàn chỉnh, độc lập và có tính đồng nhất xuyên suốt các ảnh.
 
-Trả về kết quả dạng JSON array(bắt buộc phải là array JSON không được khác, bắt buộc phải bắt đầu bằng [ và kết thúc bằng ] ) với mỗi phần tử có cấu trúc:
+Yêu cầu cụ thể:
+Phân tách ${topic} thành các đoạn nhỏ, mỗi đoạn dài 2 đến 3 câu, có ý nghĩa rõ ràng và có thể dễ dàng mô tả bằng một bức ảnh.
+
+Với mỗi đoạn nội dung đó, tạo một imagePrompt phù hợp, bao gồm:
+
+Cảnh vật chính.
+
+Cảm xúc hoặc hành động nếu có.
+
+Màu sắc, phong cách, ánh sáng, phông nền (background), bố cục tổng thể.
+
+Nhấn mạnh vào sự đồng nhất xuyên suốt các ảnh: cùng nhân vật, cùng phong cách tạo hình (ví dụ: hoạt hình 3D, tranh vẽ cổ điển, màu vintage, nền mờ nhẹ...).
+
+Tạo trước mô tả chi tiết cho các nhân vật, sự vật xuất hiện xuyên suốt ảnh như người, cây cối, động vật, đồ vật...
+
+Khi nhắc đến các nhân vật, luôn mô tả kỹ trong ngoặc: giới tính, độ tuổi, màu da, vóc dáng, kiểu tóc, màu mắt, trang phục (kiểu dáng, màu sắc), cảm xúc khuôn mặt...
+
+Mỗi ảnh đều phải lặp lại mô tả này để đảm bảo các ảnh có thể tạo độc lập mà vẫn đồng nhất hình ảnh.
+
+Kết quả trả về:
+Trả về kết quả là một JSON array, bắt buộc phải bắt đầu bằng [ và kết thúc bằng ]. Mỗi phần tử trong mảng có cấu trúc như sau:
 {
-  "text": "đây là nội dung của bước tranh được lấy nguyên bản từ phần nội dung tôi gửi cho bạn, bạn TUYỆT ĐỐI không được thay đổi nội dung này",
-  "imagePrompt": "prompt để tạo ảnh thật chỉnh chu nếu là câu miêu tả hành động thì nhớ miêu tả thật kĩ, thật chi tiết. Các nhân vật thì phải miêu tả kĩ ngoại hình, ở mọi tấm ảnh đều phải miêu tả lại cho thật kĩ lưỡng chi tiết, nam hay nữ và đồng nhất qua các tấm ảnh. Trong các đoạn văn thì nhắc lại ví dụ(chỉ là ví dụ , không liên quan đến phần nội dung) nhân vật Tom, đàn ông, tuổi trẻ, cao, mắt xanh, da trắng, đô con, vạm vỡ. Bà Hat cao tuổi, tóc đen dài, mắt xanh, thấp người,... Phải miêu tả như vậy"
+  "text": "đây là nội dung nguyên gốc từ topic tôi cung cấp, tuyệt đối KHÔNG được thay đổi",
+  "imagePrompt": "prompt bằng tiếng anh tạo ảnh thật chi tiết. Mỗi nhân vật, đồ vật phải miêu tả kỹ lưỡng từng đặc điểm về ngoại hình, trang phục, vóc dáng,... Lặp lại các mô tả này ở mọi ảnh nếu nhân vật/sự vật vẫn còn xuất hiện. Phải đồng nhất về bối cảnh, ánh sáng, phong cách (ví dụ: tranh vẽ cổ điển, hoạt hình 3D, ánh sáng mềm, màu nâu vintage, nền mờ nhẹ...)"
 }
-
 `;
 
     try {
         const result = await model.generateContent(prompt);
         const response = await result.response;
         const rawText = response.text();
-        console.log(rawText);
-
         // Trích xuất JSON từ response
         let match = rawText.match(/```json\s*([\s\S]*?)\s*```/);
         let jsonText = "";
@@ -68,7 +87,7 @@ async function generateScript(topic) {
     });
 
     const prompt = `
-Hãy tạo ra nội dung bài viết phải đạt 20 chữ:  một phân tích(nghị luận) hoặc truyện thật hấp dẫn(bạn hãy đọc và đánh giá chủ đề cho nó ví dụ như chủ đề về nỗi sợ AI thì là 1 bài phân tích có luận điểm, luận cứ rõ ràng, nếu người dùng mong muốn truyện thì hãy viết truyện, nếu người dùng đã viết kịch bản thì bạn hãy hoàn thiện nó giúp người dùng). Ngôn ngữ câu trả lời dựa theo ngôn ngữ của Chủ đề(ví dụ chủ đề được viết theo tiếng anh thì bạn trả về tiếng anh, tiếng viết thì bạn trả về tiếng việt) đầu vào.
+Hãy tạo ra nội dung bài viết phải đạt 100 chữ:  một phân tích(nghị luận) hoặc truyện thật hấp dẫn(bạn hãy đọc và đánh giá chủ đề cho nó ví dụ như chủ đề về nỗi sợ AI thì là 1 bài phân tích có luận điểm, luận cứ rõ ràng, nếu người dùng mong muốn truyện thì hãy viết truyện, nếu người dùng đã viết kịch bản thì bạn hãy hoàn thiện nó giúp người dùng). Ngôn ngữ câu trả lời dựa theo ngôn ngữ của Chủ đề(ví dụ chủ đề được viết theo tiếng anh thì bạn trả về tiếng anh, tiếng viết thì bạn trả về tiếng việt). Chú ý rằng bạn nên viết sao cho nội dung được gom nhóm theo kiểu 2 ~ 3 câu sao cho dễ miêu tả thành 1 bức tranh(tôi làm ứng dụng tạo ảnh từ nội dung) 
 Lưu ý rằng bạn chỉ cần viết nội dung mà không cần thêm bất kì từ ngữ gì khác(kiểu như "Sau đây là nội dung,..")
 Chủ đề: "${topic}"
 `;
@@ -181,17 +200,59 @@ async function generateImage(
         };
     }
 }
+
+async function generateImageVer2(prompt, i, content) {
+    try {
+        // Kết nối tới Gradio client
+        const client = await Client.connect("Nymbo/Serverless-ImgGen-Hub");
+        prompt += " With anime style";
+        // Gọi API tạo ảnh (các tham số khác bạn có thể tuỳ chỉnh hoặc truyền thêm nếu muốn)
+        const result = await client.predict("/query", {
+            prompt,
+            model: "FLUX.1 [Schnell]",
+            custom_lora: "",
+            is_negative:
+                "(deformed, distorted, disfigured), poorly drawn, bad anatomy, wrong anatomy, extra limb, missing limb, floating limbs, (mutated hands and fingers), disconnected limbs, mutation, mutated, ugly, disgusting, blurry, amputation, misspellings, typos",
+            steps: 4,
+            cfg_scale: 7,
+            sampler: "DPM++ 2M Karras",
+            seed: -1,
+            strength: 0.75,
+            width: 1080,
+            height: 1920,
+        });
+
+        const images = result.data[0];
+        const imageUrl = images.url;
+        return {
+            url: imageUrl, // hoặc base64Image nếu muốn trả về base64
+            index: i,
+            prompt,
+            content,
+        };
+    } catch (error) {
+        console.error("Gradio image error:", error);
+        return {
+            url: "",
+            index: i,
+            prompt,
+            content,
+        };
+    }
+}
+
 async function generateImagesFromSegments(segments, modelId, token) {
     const tasks = [];
     for (let i = 0; i < segments.length; i++) {
         tasks.push(
-            generateImage(
-                segments[i].imagePrompt,
-                modelId,
-                token,
-                i,
-                segments[i].text
-            )
+            // generateImage(
+            //     segments[i].imagePrompt,
+            //     modelId,
+            //     token,
+            //     i,
+            //     segments[i].text
+            // )
+            generateImageVer2(segments[i].imagePrompt, i, segments[i].text)
         );
     }
     const res = await Promise.all(tasks);
@@ -204,7 +265,6 @@ async function generateImagesFromSegments(segments, modelId, token) {
     }
     images.sort((a, b) => a.index - b.index);
     const result = images.map(({ index, ...rest }) => rest);
-    console.log("KẾT QUẢ", result);
     return result;
 }
 
@@ -245,13 +305,14 @@ const contentController = {
     getReGenerateImage: async (req, res) => {
         const { prompt, index, content } = req.body;
         try {
-            const result = await generateImage(
-                prompt,
-                "1648918127446573124",
-                pixaiToken,
-                index,
-                content
-            );
+            // const result = await generateImage(
+            //     prompt,
+            //     "1648918127446573124",
+            //     pixaiToken,
+            //     index,
+            //     content
+            // );
+            const result = await generateImageVer2(prompt, index, content);
             res.json({
                 mes: "success",
                 status: 200,
@@ -264,4 +325,5 @@ const contentController = {
     },
 };
 
-module.exports = contentController;
+// module.exports = contentController;
+export default contentController;

@@ -1,6 +1,9 @@
-const express = require("express");
+// const express = require("express");
+import express from "express";
 const router = express.Router();
-const trendController = require("./controller");
+import trendController from "./controller.js";
 
-router.post("/", trendController.getTrendData);
-module.exports = router;
+router.post("/AI", trendController.getTrendDataAI);
+router.post("/google", trendController.getTrendDataGoogle);
+
+export default router;

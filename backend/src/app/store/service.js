@@ -1,5 +1,5 @@
-const prisma = require("../../config/database/db.config");
-
+// const prisma = require("../../config/database/db.config");
+import prisma from "../../config/database/db.config.js";
 const Store = {
     saveData: async (
         id,
@@ -114,4 +114,4 @@ const Store = {
     },
 };
 
-module.exports = Store;
+export default Store;

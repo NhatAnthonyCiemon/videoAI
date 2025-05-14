@@ -1,4 +1,4 @@
-const prisma = require("../../config/database/db.config");
+import prisma from "../../config/database/db.config.js";
 const Video = {
     getById: async (id) => {
         const video = await prisma.videos.findUnique({
@@ -17,4 +17,4 @@ const Video = {
     },
 };
 
-module.exports = Video;
+export default Video;

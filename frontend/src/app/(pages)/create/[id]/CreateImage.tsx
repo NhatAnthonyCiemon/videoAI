@@ -7,6 +7,7 @@ import DraftModal from "@/components/ui/DraftModal";
 import videoClass from "@/lib/Video";
 import fetchApi from "@/lib/api/fetch";
 import { Image_video } from "@/types/Video";
+import { Button } from "@/components/ui/button";
 import HttpMethod from "@/types/httpMethos";
 
 function showErrorToast(message: string) {
@@ -139,12 +140,59 @@ export default function CreateImage({
                                     </p>
                                 </div>
                                 <div>
-                                    <p className="font-semibold text-gray-800 text-xl">
+                                    <p className="w-[150px] relative font-semibold text-gray-800 text-xl">
                                         Prompt (Description):
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="size-6 absolute top-[50%] right-0 translate-y-[-50%]"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
+                                            />
+                                        </svg>
                                     </p>
-                                    <p className="text-gray-600">
-                                        {img.prompt}
-                                    </p>
+                                    <textarea
+                                        ref={(el) => {
+                                            if (el) {
+                                                el.style.height = "auto";
+                                                el.style.height =
+                                                    el.scrollHeight + "px";
+                                            }
+                                        }}
+                                        className="text-gray-600 w-full rounded-md py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-gray-400 transition resize-none"
+                                        style={{
+                                            border: "none",
+                                            minHeight: "32px",
+                                            height: "auto",
+                                            overflow: "hidden",
+                                        }}
+                                        value={img.prompt}
+                                        onChange={(e) => {
+                                            const textarea = e.target;
+                                            textarea.style.height = "auto"; // reset trước
+                                            textarea.style.height =
+                                                textarea.scrollHeight + "px"; // set lại theo nội dung
+
+                                            const image_video = [
+                                                ...videoData.image_video,
+                                            ];
+                                            image_video[index].prompt =
+                                                e.target.value;
+                                            setVideoData(
+                                                videoClass.updateVideo(
+                                                    videoData,
+                                                    "image_video",
+                                                    image_video
+                                                )
+                                            );
+                                        }}
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -167,15 +215,15 @@ export default function CreateImage({
 
             {/* Footer Buttons */}
             <div className="flex justify-end gap-8 my-10">
-                <button
+                <Button
                     onClick={openModal}
-                    className="px-4 cursor-pointer py-4 text-2xl bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
+                    className="cursor-pointer text-2xl h-[40px] py-4 min-w-[100px] bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
                 >
                     Lưu bản nháp
-                </button>
-                <button className="px-4 cursor-pointer py-4 text-2xl bg-black text-white rounded-md hover:bg-gray-800">
+                </Button>
+                <Button className="cursor-pointer text-2xl px-4 h-[40px] min-w-[100px] bg-green-600 text-white rounded-md hover:bg-green-700">
                     Tạo Video
-                </button>
+                </Button>
             </div>
             <DraftModal
                 videoData={videoData}

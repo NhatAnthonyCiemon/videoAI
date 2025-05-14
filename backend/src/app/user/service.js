@@ -1,4 +1,4 @@
-const prisma = require("../../config/database/db.config");
+import prisma from "../../config/database/db.config.js";
 const User = {
     getAll: async () => {
         const users = await prisma.user.findMany();

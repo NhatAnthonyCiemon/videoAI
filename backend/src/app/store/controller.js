@@ -1,5 +1,6 @@
-const store = require("./service");
+// const store = require("./service");
 
+import store from "./service.js";
 const storeController = {
     saveFullContentData: async (req, res) => {
         const { id, user_id, name, category, step, content, keyword } =
@@ -143,4 +144,4 @@ const storeController = {
     },
 };
 
-module.exports = storeController;
+export default storeController;

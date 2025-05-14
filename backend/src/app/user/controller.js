@@ -1,4 +1,5 @@
 //const User = require("./service");
+import User from "./service.js";
 const userController = {
     // getAllUsers: async (req, res) => {
     //     const users = await User.getAll();
@@ -6,4 +7,4 @@ const userController = {
     // },
 };
 
-module.exports = userController;
+export default userController;

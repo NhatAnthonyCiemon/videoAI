@@ -1,7 +1,7 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const videoController = require("./controller");
+import videoController from "./controller.js";
 
 router.get("/:id", videoController.getVideoById);
 
-module.exports = router;
+export default router;

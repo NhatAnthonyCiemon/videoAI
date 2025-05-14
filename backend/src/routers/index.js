@@ -1,11 +1,9 @@
-const userRouter = require("../app/user/route");
-const trendRouter = require("../app/trend/route");
-const contentRouter = require("../app/content/route");
-const storeRouter = require("../app/store/route");
-const videoRouter = require("../app/video/route");
+import trendRouter from "../app/trend/route.js";
+import contentRouter from "../app/content/route.js";
+import storeRouter from "../app/store/route.js";
+import videoRouter from "../app/video/route.js";
 
 function route(app) {
-    app.use("/user", userRouter);
     app.use("/trend", trendRouter);
     app.use("/content", contentRouter);
     app.use("/store", storeRouter);
@@ -15,4 +13,4 @@ function route(app) {
     });
 }
 
-module.exports = route;
+export default route;

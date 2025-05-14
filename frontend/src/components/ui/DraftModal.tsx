@@ -100,6 +100,7 @@ const DraftModal: React.FC<Props> = ({
                                                 "Draft"
                                             )
                                         );
+                                        document.body.style.overflow = "auto";
                                     }}
                                     disabled={isLoading}
                                     className={`cursor-pointer text-xl px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 ${

@@ -15,6 +15,8 @@ import Video from "@/types/Video";
 import DraftModal from "@/components/ui/DraftModal";
 import LoadingOverlay from "@/components/ui/LoadingOverlay";
 import { Image_video } from "@/types/Video";
+import CustomCheckBox from "@/components/ui/CheckBoxCustom";
+import { platform } from "os";
 
 export default function CreateScript({
     setWhichActive,
@@ -32,6 +34,7 @@ export default function CreateScript({
     const [disabled, setDisabled] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isGenerate, setIsGenerate] = useState(false);
+    const [isSearch, setIsSearch] = useState(false);
     const [isShowSuggestions, setIsShowSuggestions] = useState(false);
     const debouncedValue = useDebounce(videoData.keyword, 500);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -46,10 +49,15 @@ export default function CreateScript({
     }, [isModalOpen]);
     useEffect(() => {
         if (debouncedValue.length > 0) {
+            const url =
+                isSearch === true
+                    ? `http://localhost:4000/trend/google`
+                    : `http://localhost:4000/trend/AI`;
+            console.log("url", url);
             setIsLoading(true);
-            fetchApi<string[]>(`http://localhost:4000/trend`, HttpMethod.POST, {
+            fetchApi<string[]>(url, HttpMethod.POST, {
                 keyword: debouncedValue,
-                flatform: videoData.category,
+                platform: videoData.category,
             })
                 .then((res: APIResponse<string[]>) => {
                     if ((res.mes = "success")) {
@@ -66,7 +74,7 @@ export default function CreateScript({
         } else {
             setIsShowSuggestions(false);
         }
-    }, [debouncedValue]);
+    }, [debouncedValue, isSearch, videoData.category]);
     const handleGenerateScript = () => {
         if (videoData.keyword.length === 0) return;
         setIsLoading(true);
@@ -182,9 +190,16 @@ export default function CreateScript({
                                 ))}
                             </div>
                             <div className="mb-6">
-                                <label className="block text-2xl font-medium mb-2 text-gray-800">
-                                    Từ khóa/ Xu hướng (Optional)
-                                </label>
+                                <div className="flex items-center justify-between mb-2">
+                                    <label className="block text-2xl font-medium mb-2 text-gray-800">
+                                        Từ khóa/ Xu hướng (Optional)
+                                    </label>
+                                    <CustomCheckBox
+                                        isChecked={isSearch}
+                                        handleChange={setIsSearch}
+                                        label="Tìm kiếm trên mạng"
+                                    />
+                                </div>
                                 <div className="flex gap-2 relative">
                                     <Popover.Root
                                         open={
@@ -260,10 +275,11 @@ export default function CreateScript({
                                                     e.preventDefault()
                                                 }
                                             >
-                                                {suggestions.map((s) => (
+                                                {suggestions.map((s, index) => (
                                                     <div
-                                                        key={s}
-                                                        className="w-full px-4 py-4 text-gray-700 hover:bg-gray-100 hover:text-black transition-colors duration-150 cursor-pointer rounded-md text-2xl"
+                                                        key={index}
+                                                        className="w-full px-4 py-4 text-gray-700 hover:bg-gray-100 hover:text-black transition-colors duration-150 cursor-pointer rounded-md text-2xl
+                                                            "
                                                         onClick={() => {
                                                             setVideoData(
                                                                 videoClass.updateVideo(
@@ -277,7 +293,9 @@ export default function CreateScript({
                                                             );
                                                         }}
                                                     >
-                                                        {s}
+                                                        <p className="overflow-hidden truncate-2-lines">
+                                                            {s}
+                                                        </p>
                                                     </div>
                                                 ))}
                                             </Popover.Content>

@@ -1,4 +1,4 @@
-const Video = require("./service");
+import Video from "./service.js";
 const videoController = {
     getVideoById: async (req, res) => {
         const { id } = req.params;
@@ -51,4 +51,4 @@ const videoController = {
     },
 };
 
-module.exports = videoController;
+export default videoController;

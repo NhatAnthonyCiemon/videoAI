@@ -9,5 +9,8 @@ router.use("/google/callback", authController.googleCallBack);
 router.use("/google", authController.googleSignup);
 router.use("/github/callback", authController.githubCallBack);
 router.use("/github", authController.githubSignup);
+router.use("/sendreset", authController.sendResetPassword);
+router.use("/reset/:token", authController.resetPassword);
+router.use("/updatepassword", authController.updatePassword);
 
 export default router;

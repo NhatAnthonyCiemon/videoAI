@@ -340,11 +340,11 @@ export default function HomePage() {
                                 key={i}
                                 className="aspect-video bg-black rounded-2xl overflow-hidden shadow-lg relative group"
                             >
-                                <video
+                                {/* <video
                                     src="/sample-video.mp4"
                                     className="w-full h-full object-cover group-hover:controls-visible"
                                     controls
-                                />
+                                /> */}
                             </div>
                         ))}
                     </div>

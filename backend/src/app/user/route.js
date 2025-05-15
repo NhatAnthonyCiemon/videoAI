@@ -1,8 +1,9 @@
 import express from "express";
 const router = express.Router();
-import contentController from "./controller.js";
+import userController from "./controller.js";
+import middleware from "../../middleware/index.js";
 
-//router.get('/', contentController.getAllUsers)
+router.get("/", middleware.isAuthenticated, userController.getUser);
 //router.get("/login", contentController.login);
 //router.get("/register", contentController.register);
 

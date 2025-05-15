@@ -5,7 +5,7 @@ import User from "../app/auth/service.js";
 import dotenv from "dotenv";
 dotenv.config();
 
-const passport = require("passport");
+import passport from "passport";
 
 const opts = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

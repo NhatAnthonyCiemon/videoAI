@@ -2,12 +2,13 @@ import Video from "./service.js";
 const videoController = {
     getVideoById: async (req, res) => {
         const { id } = req.params;
+        const user = req.user;
         try {
             const video = await Video.getById(id);
             if (!video) {
                 const newVideo = {
                     id: id,
-                    user_id: 1,
+                    user_id: user.id,
                     name: "",
                     category: "Tiktok",
                     content: "",
@@ -21,6 +22,13 @@ const videoController = {
                     data: newVideo,
                 });
             } else {
+                if (video.user_id !== user.id) {
+                    return res.status(403).json({
+                        mes: "fail",
+                        status: 403,
+                        data: null,
+                    });
+                }
                 const image_video = video.image_video.map((item) => {
                     return {
                         content: item.content,

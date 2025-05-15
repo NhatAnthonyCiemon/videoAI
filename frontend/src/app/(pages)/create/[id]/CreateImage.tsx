@@ -62,7 +62,7 @@ export default function CreateImage({
         );
 
         if (res.mes === "success") {
-            const newImage = res.data;
+            const newImage = res.data!!;
             image_video[index].url = newImage.url;
             setVideoData(
                 videoClass.updateVideo(videoData, "image_video", image_video)
@@ -91,7 +91,7 @@ export default function CreateImage({
                         <h2 className="text-2xl font-semibold mb-4 text-gray-800">
                             Ảnh {index + 1}:
                         </h2>
-                        <div className="grid grid-cols-3 gap-8">
+                        <div className="grid grid-cols-3 gap-9">
                             {/* Image Placeholder */}
                             <div className="col-span-1 h-[100%] min-h-[200px] bg-gray-300 rounded-md relative">
                                 {loadingIndexes.has(index) && (
@@ -139,8 +139,8 @@ export default function CreateImage({
                                         {img.content}
                                     </p>
                                 </div>
-                                <div>
-                                    <p className="w-[150px] relative font-semibold text-gray-800 text-xl">
+                                <div className="ml-[-5px]">
+                                    <p className="w-[150px] ml-[5px] relative font-semibold text-gray-800 text-xl">
                                         Prompt (Description):
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -165,7 +165,7 @@ export default function CreateImage({
                                                     el.scrollHeight + "px";
                                             }
                                         }}
-                                        className="text-gray-600 w-full rounded-md py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-gray-400 transition resize-none"
+                                        className="text-gray-600 px-[5px] w-full rounded-md py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-gray-400 transition resize-none"
                                         style={{
                                             border: "none",
                                             minHeight: "32px",

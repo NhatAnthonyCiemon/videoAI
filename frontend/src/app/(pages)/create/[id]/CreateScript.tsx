@@ -62,7 +62,7 @@ export default function CreateScript({
                 .then((res: APIResponse<string[]>) => {
                     if ((res.mes = "success")) {
                         //chỉ lấy tối đa 8 gợi ý
-                        setSuggestions(res.data.slice(0, 8));
+                        setSuggestions(res.data!!.slice(0, 8));
                         if (!isGenerate) setIsLoading(false);
                     } else {
                         throw new Error("Invalid response format");
@@ -88,7 +88,7 @@ export default function CreateScript({
                     const newVideoData = videoClass.updateVideo(
                         videoData,
                         "content",
-                        res.data
+                        res.data!!
                     );
                     setVideoData(newVideoData);
                     setIsLoading(false);
@@ -138,7 +138,7 @@ export default function CreateScript({
             const newVideoData = videoClass.updateVideo(
                 videoData,
                 "image_video",
-                res.data
+                res.data!!
             );
             const newVideoData2 = videoClass.updateVideo(
                 newVideoData,

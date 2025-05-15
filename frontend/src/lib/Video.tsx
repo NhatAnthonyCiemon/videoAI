@@ -1,22 +1,21 @@
 import Video from "@/types/Video";
+import fetchApi from "./api/fetchServer";
 import HttpMethod from "@/types/httpMethos";
-import fetchApi from "@/lib/api/fetch";
-
 const videoClass = {
-    generateVideo: async (id: string) => {
+    generateVideo: async (id: string, token: string) => {
         try {
             const response = await fetchApi<Video>(
                 `http://localhost:4000/video/${id}`,
-                HttpMethod.GET
+                HttpMethod.GET,
+                token
             );
             if (response.status === 200) {
-                const video = response.data;
-                return video;
+                return response.data;
+            } else {
+                return null;
             }
-            throw new Error("Failed to fetch video data");
         } catch (error) {
-            console.error("Error fetching video:", error);
-            throw error;
+            throw new Error("Unauthorized");
         }
     },
     updateVideo: <K extends keyof Video>(

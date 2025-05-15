@@ -9,13 +9,13 @@ datasource db {
 
 model users {
   id                Int      @id @default(autoincrement())
-  email             String?
+  email             String?  @unique(map: "unique_email")
   username          String?
   password          String?
-  social_id         String?
+  social_id         String?  @unique(map: "unique_social_id")
   is_verify         Boolean? @default(false)
   image             String?
-  verificationtoken String?
+  verificationtoken String?  @unique(map: "unique_verificationtoken")
   type              String?
   videos            videos[]
 }

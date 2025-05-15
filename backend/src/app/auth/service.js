@@ -15,6 +15,20 @@ const User = {
         });
         return user;
     },
+    getUserById: async (id) => {
+        const user = await prisma.users.findUnique({
+            where: { id },
+        });
+        return user;
+    },
+    updatePassword: async (id, password) => {
+        const hashedPassword = bcrypt.hashSync(password, 10);
+        const user = await prisma.users.update({
+            where: { id },
+            data: { password: hashedPassword },
+        });
+        return user;
+    },
     createUserGoogle: async (fullName, socialId, email, image) => {
         const user = await prisma.users.create({
             data: {
@@ -50,7 +64,7 @@ const User = {
                 email,
                 username,
                 password: hashedPassword,
-                verificationToken: Token,
+                verificationtoken: Token,
                 type: "local",
                 image: "/img/avatar_placeholder.png",
                 is_verify: false,
@@ -72,6 +86,27 @@ const User = {
         }
 
         return null;
+    },
+    getById: async (id) => {
+        const user = await prisma.users.findUnique({
+            where: { id },
+        });
+        return user;
+    },
+    verifyUser: async (Token) => {
+        const user = await prisma.users.findUnique({
+            where: { verificationtoken: Token },
+        });
+        if (!user) {
+            return null;
+        }
+        const updatedUser = await prisma.users.update({
+            where: { id: user.id },
+            data: {
+                is_verify: true,
+            },
+        });
+        return updatedUser;
     },
 };
 

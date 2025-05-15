@@ -1,5 +1,4 @@
-import SignIn from './pages/SignIn';
-import Homepage from './pages/Home';
+import Homepage from "./pages/Home";
 
 const Home = () => {
     return (

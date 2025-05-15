@@ -87,7 +87,7 @@ async function generateScript(topic) {
     });
 
     const prompt = `
-Hãy tạo ra nội dung bài viết phải đạt 100 chữ:  một phân tích(nghị luận) hoặc truyện thật hấp dẫn(bạn hãy đọc và đánh giá chủ đề cho nó ví dụ như chủ đề về nỗi sợ AI thì là 1 bài phân tích có luận điểm, luận cứ rõ ràng, nếu người dùng mong muốn truyện thì hãy viết truyện, nếu người dùng đã viết kịch bản thì bạn hãy hoàn thiện nó giúp người dùng). Ngôn ngữ câu trả lời dựa theo ngôn ngữ của Chủ đề(ví dụ chủ đề được viết theo tiếng anh thì bạn trả về tiếng anh, tiếng viết thì bạn trả về tiếng việt). Chú ý rằng bạn nên viết sao cho nội dung được gom nhóm theo kiểu 2 ~ 3 câu sao cho dễ miêu tả thành 1 bức tranh(tôi làm ứng dụng tạo ảnh từ nội dung) 
+Hãy tạo ra nội dung bài viết phải đạt 200 chữ:  một phân tích(nghị luận) hoặc truyện thật hấp dẫn(bạn hãy đọc và đánh giá chủ đề cho nó ví dụ như chủ đề về nỗi sợ AI thì là 1 bài phân tích có luận điểm, luận cứ rõ ràng, nếu người dùng mong muốn truyện thì hãy viết truyện, nếu người dùng đã viết kịch bản thì bạn hãy hoàn thiện nó giúp người dùng). Ngôn ngữ câu trả lời dựa theo ngôn ngữ của Chủ đề(ví dụ chủ đề được viết theo tiếng anh thì bạn trả về tiếng anh, tiếng viết thì bạn trả về tiếng việt). Chú ý rằng bạn nên viết sao cho nội dung được gom nhóm theo kiểu 2 ~ 3 câu sao cho dễ miêu tả thành 1 bức tranh(tôi làm ứng dụng tạo ảnh từ nội dung) 
 Lưu ý rằng bạn chỉ cần viết nội dung mà không cần thêm bất kì từ ngữ gì khác(kiểu như "Sau đây là nội dung,..")
 Chủ đề: "${topic}"
 `;

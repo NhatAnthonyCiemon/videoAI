@@ -119,7 +119,7 @@ export default function CreateImage({
                                     </div>
                                 )}
                                 <img
-                                    src={img.url}
+                                    src={img.url || undefined}
                                     alt="Image"
                                     className={`w-full h-full object-cover rounded-md ${
                                         loadingIndexes.has(index)

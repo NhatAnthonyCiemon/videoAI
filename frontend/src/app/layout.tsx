@@ -6,6 +6,30 @@ import InitToken from "./InitToken";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+function decodeJWTPayload(token: string): any | null {
+    try {
+        const parts = token.split(".");
+        if (parts.length !== 3) {
+            throw new Error("Invalid JWT format");
+        }
+
+        const payload = parts[1];
+
+        // Chuyển từ base64url sang base64
+        const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
+        const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4);
+
+        // Giải mã và chuyển từ base64 thành UTF-8 JSON string
+        const decodedAscii = atob(padded);
+        const decodedUtf8 = decodeURIComponent(escape(decodedAscii));
+
+        return JSON.parse(decodedUtf8);
+    } catch (error) {
+        console.error("Failed to decode JWT payload:", error);
+        return null;
+    }
+}
+
 import { UserProvider } from "@/app/UserProvider";
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -34,13 +58,14 @@ export default async function RootLayout({
     let user = null;
     try {
         if (token) {
-            const decodedToken = JSON.parse(atob(token.split(".")[1]));
+            const decodedToken = decodeJWTPayload(token);
             user = {
                 id: decodedToken.id,
                 username: decodedToken.username,
                 email: decodedToken.email,
                 image: decodedToken.image,
             };
+            console.log(decodedToken);
         }
     } catch (error) {
         console.log("Error decoding token:", error);

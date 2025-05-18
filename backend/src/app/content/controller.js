@@ -2,13 +2,14 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 // const { Client } = require("@gradio/client");
 import { Client } from "@gradio/client";
-// const axios = require("axios");
-import axios from "axios";
+import { Runware } from "@runware/sdk-js";
 // const dotenv = require("dotenv");
 import dotenv from "dotenv";
 dotenv.config();
 
 const key = process.env.GOOGLE_API_KEY;
+const token_runware =
+    process.env.RUNWARE_API_KEY || "jBAUzI5npXcITqnHAXlzihkPIrDBb6Wd";
 const pixaiToken =
     "eyJhbGciOiJFUzUxMiIsInR5cCI6IkpXVCJ9.eyJsZ2EiOjE3NDY4MDQ5OTUsImlhdCI6MTc0NjgwNDk5NSwiZXhwIjoxNzQ3NDA5Nzk1LCJpc3MiOiJwaXhhaSIsInN1YiI6IjE4Nzc2MDM1ODMxNDIzNDk1NzMiLCJqdGkiOiIxODc3NjAzNTg0ODMyNjU0MTA2In0.ADncS_MethJOXVgwhk6uCXu9AzNEn_5xUZg1aB7LhfKa7gyaUj99_mMVDlYjPEtOSuot-NNH2h-kZkOL0GlV39h7AZr3XFgNHQe7ByU3FJEk_nDwQtbJ2fjSMQ9PZMEB1F-QJb94nY-O1yqULw6iSUS1oHP8GbL4NTKCo8MwjASgx_gs";
 const genAI = new GoogleGenerativeAI(key);
@@ -35,9 +36,11 @@ Màu sắc, phong cách, ánh sáng, phông nền (background), bố cục tổn
 
 Nhấn mạnh vào sự đồng nhất xuyên suốt các ảnh: cùng nhân vật, cùng phong cách tạo hình (ví dụ: hoạt hình 3D, tranh vẽ cổ điển, màu vintage, nền mờ nhẹ...).
 
-Tạo trước mô tả chi tiết cho các nhân vật, sự vật xuất hiện xuyên suốt ảnh như người, cây cối, động vật, đồ vật...
+(Bắt buộc) Tạo trước mô tả chi tiết cho các nhân vật, sự vật xuất hiện xuyên suốt ảnh như người, cây cối, động vật, đồ vật... đảm bảo mọi chi tiết như áo quần(màu sắc quần áo, kiểu dáng quần áo), ngoại hình(cao, thấp, gầy, mập), màu tóc, màu mắt, độ tuổi, giới tính, cảm xúc khuôn mặt... đều được mô tả rõ ràng.
 
-Khi nhắc đến các nhân vật, luôn mô tả kỹ trong ngoặc: giới tính, độ tuổi, màu da, vóc dáng, kiểu tóc, màu mắt, trang phục (kiểu dáng, màu sắc), cảm xúc khuôn mặt...
+(Bắt buộc) Khi nhắc đến các nhân vật, luôn mô tả kỹ trong ngoặc: giới tính, độ tuổi, màu da, vóc dáng, kiểu tóc, màu mắt, trang phục (kiểu dáng, màu sắc), cảm xúc khuôn mặt...
+
+(Bắt buộc) Các chú thích mô tả kỹ trong ngoặc phải giống nhau cho tất cả các ảnh có cùng nhân vật/sự vật. Ví dụ: nếu có một nhân vật nữ tóc vàng, mắt xanh, mặc áo đỏ trong ảnh đầu tiên, thì trong ảnh thứ hai cũng phải miêu tả giống như vậy (nếu không có sự thay đổi nào về ngoại hình). Điều này giúp tạo ra sự đồng nhất và dễ nhận diện cho nhân vật/sự vật xuyên suốt các ảnh.
 
 Mỗi ảnh đều phải lặp lại mô tả này để đảm bảo các ảnh có thể tạo độc lập mà vẫn đồng nhất hình ảnh.
 
@@ -201,6 +204,54 @@ async function generateImage(
     }
 }
 
+async function generateImageVer3(
+    prompt,
+    i,
+    content,
+    negativePrompt = "(deformed, distorted, disfigured), poorly drawn, bad anatomy, wrong anatomy, extra limb, missing limb, floating limbs, (mutated hands and fingers), disconnected limbs, mutation, mutated, ugly, disgusting, blurry, amputation, misspellings, typos"
+) {
+    try {
+        // 1. Khởi tạo SDK
+        const runware = new Runware({ apiKey: token_runware });
+        const prompt_2 = prompt + " With anime style";
+        negativePrompt +=
+            ", fused fingers, bad hands, malformed limbs, poorly drawn hands, lowres, too many fingers";
+        // 2. Gửi yêu cầu tạo ảnh
+        const images = await runware.requestImages({
+            positivePrompt: prompt_2,
+            negativePrompt: negativePrompt,
+            model: "runware:100@1",
+            height: 768,
+            width: 1024,
+            steps: 4,
+            CFGScale: 6,
+            numberResults: 1,
+        });
+
+        // 3. Trích xuất URL ảnh
+        if (!images || !images.length) {
+            throw new Error("❌ Không nhận được ảnh.");
+        }
+
+        const imageUrl = images[0].imageURL;
+
+        return {
+            url: imageUrl,
+            index: i,
+            prompt: prompt,
+            content: content,
+        };
+    } catch (error) {
+        console.error("Lỗi tạo ảnh:", error);
+        return {
+            url: "",
+            index: i,
+            prompt: prompt,
+            content: content,
+        };
+    }
+}
+
 async function generateImageVer2(prompt, i, content) {
     try {
         // Kết nối tới Gradio client
@@ -252,7 +303,7 @@ async function generateImagesFromSegments(segments, modelId, token) {
             //     i,
             //     segments[i].text
             // )
-            generateImageVer2(segments[i].imagePrompt, i, segments[i].text)
+            generateImageVer3(segments[i].imagePrompt, i, segments[i].text)
         );
     }
     const res = await Promise.all(tasks);
@@ -312,7 +363,7 @@ const contentController = {
             //     index,
             //     content
             // );
-            const result = await generateImageVer2(prompt, index, content);
+            const result = await generateImageVer3(prompt, index, content);
             res.json({
                 mes: "success",
                 status: 200,

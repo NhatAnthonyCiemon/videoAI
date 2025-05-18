@@ -14,20 +14,20 @@ type PageProps = {
 
 async function Create({ params }: PageProps) {
     const { id } = await params;
-    try {
-        if (!id || id.length !== 10) {
-            redirect("/");
-        }
-        const cookieStore = await cookies();
-        let token = cookieStore.get("access_token")?.value as string;
+    if (!id || id.length !== 10) {
+        redirect("/");
+    }
+    const cookieStore = await cookies();
+    let token = cookieStore.get("access_token")?.value as string;
 
-        if (!token) {
-            redirect("/");
-        }
-        let video: Video | null = await videoClass.generateVideo(id, token);
-        if (!video) {
-            redirect("/");
-        }
+    if (!token) {
+        redirect("/");
+    }
+    let video: Video | null = await videoClass.generateVideo(id, token);
+    if (!video) {
+        redirect("/");
+    }
+    try {
         return (
             <div className="relative">
                 <Header />

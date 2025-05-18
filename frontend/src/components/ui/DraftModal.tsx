@@ -51,9 +51,6 @@ const DraftModal: React.FC<Props> = ({
             } else {
                 setStatusSave(2);
                 setIsSavedDraft(false);
-                setVideoData(
-                    VideoClass.updateVideo(videoData, "name", "Draft")
-                );
             }
             setIsLoading(false);
         });

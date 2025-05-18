@@ -76,7 +76,10 @@ const SignInForm = () => {
                         setUser(res.data!!.user);
                         router.push("/");
                     } else {
-                        showErrorToast("Đăng nhập thất bại");
+                        if (res.mes === "Email not verified") {
+                            showErrorToast("Email chưa được xác thực");
+                            setEmailError("Email chưa được xác thực");
+                        } else showErrorToast("Đăng nhập thất bại");
                     }
                 });
             }

@@ -22,7 +22,7 @@ const Store = {
                     category: category,
                     step: step,
                     content: content,
-                    keyword: keyword,
+                    keyword: keyword || "",
                 },
             });
         }

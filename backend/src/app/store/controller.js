@@ -11,8 +11,7 @@ const storeController = {
             !name ||
             !category ||
             step === undefined ||
-            !content ||
-            !keyword
+            !content
         ) {
             console.log("Missing required fields");
             return res.status(400).json({
@@ -20,6 +19,10 @@ const storeController = {
                 status: false,
                 data: null,
             });
+        }
+        let newkeyword = keyword;
+        if (!keyword) {
+            newkeyword = "";
         }
         try {
             const user = await store.findUserId(user_id);
@@ -44,7 +47,7 @@ const storeController = {
                 category,
                 step,
                 content,
-                keyword
+                newkeyword
             );
             if (!result) {
                 return res.status(500).json({
@@ -85,7 +88,6 @@ const storeController = {
             !category ||
             step === undefined ||
             !content ||
-            !keyword ||
             image_video === undefined
         ) {
             console.log("Missing required fields");
@@ -94,6 +96,10 @@ const storeController = {
                 status: false,
                 data: null,
             });
+        }
+        let newkeyword = keyword;
+        if (!keyword) {
+            newkeyword = "";
         }
         try {
             const user = await store.findUserId(user_id);
@@ -118,7 +124,7 @@ const storeController = {
                 category,
                 step,
                 content,
-                keyword,
+                newkeyword,
                 image_video
             );
             if (!result) {

@@ -24,7 +24,7 @@ export function middleware(req: NextRequest) {
 
     // Nếu user chưa đăng nhập mà vào trang cần bảo vệ thì redirect về signin
     if (isProtectedPath && !token) {
-        return NextResponse.redirect(new URL("/", req.url));
+        return NextResponse.redirect(new URL("/signin", req.url));
     }
     return NextResponse.next();
 }

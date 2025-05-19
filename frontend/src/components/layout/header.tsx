@@ -56,8 +56,7 @@ export default function HeaderWithPlaceholder() {
                                 <span>AI Short Video Creator</span>
                             </span>
                         </Link>
-                    </div>
-
+                    </div>     
                     {/* Center: Navigation */}
                     <nav className="hidden md:flex items-center gap-6 lg:gap-12 text-base md:text-xl">
                         <Link href="#" className="hover:text-fuchsia-600 hover:scale-105 transition-all duration-300 ease-in-out">

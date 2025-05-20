@@ -167,13 +167,13 @@ const SignUpForm = () => {
                     error={errorConfirmPassword}
                 />
 
-                <Button
-                    onClick={handleRegister}
-                    className="w-full py-5 md:py-6 text-lg md:text-xl font-semibold bg-fuchsia-600 hover:bg-fuchsia-700 text-white rounded-full"
-                >
-                    Register
-                </Button>
             </div>
+            <Button
+                onClick={handleRegister}
+                className="cursor-pointer w-full py-5 md:py-7 text-lg md:text-2xl font-semibold bg-fuchsia-600 hover:bg-fuchsia-700 text-white rounded-full"
+            >
+                Register
+            </Button>
         </div>
     );
 };
@@ -192,7 +192,7 @@ function InputField({
     return (
         <div className="space-y-2">
             <label htmlFor={id}>{label}</label>
-            <div className="relative">
+            <div className="relative py-1">
                 <div className="absolute inset-y-0 left-3 flex items-center">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -216,9 +216,8 @@ function InputField({
                     value={value}
                     onChange={onChange}
                     placeholder={placeholder}
-                    className={`pl-12 py-5 md:py-6 text-sm md:text-[16px] bg-white text-black border-gray-800 focus:border-fuchsia-500 ${
-                        error ? "border-red-500" : ""
-                    }`}
+                    className={`pl-12 py-5 md:py-6 text-sm md:text-[16px] bg-white text-black border-gray-800 focus:border-fuchsia-500 ${error ? "border-red-500" : ""
+                        }`}
                 />
             </div>
             {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
@@ -239,7 +238,7 @@ function PasswordInput({
     return (
         <div className="space-y-2">
             <label htmlFor={id}>{label}</label>
-            <div className="relative">
+            <div className="relative py-1">
                 <div className="absolute inset-y-0 left-3 flex items-center">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -263,9 +262,8 @@ function PasswordInput({
                     value={value}
                     onChange={onChange}
                     placeholder={placeholder}
-                    className={`pl-12 pr-10 py-5 md:py-6 text-sm md:text-[16px] bg-white text-black border-gray-800 focus:border-fuchsia-500 ${
-                        error ? "border-red-500" : ""
-                    }`}
+                    className={`pl-12 pr-10 py-5 md:py-6 text-sm md:text-[16px] bg-white text-black border-gray-800 focus:border-fuchsia-500 ${error ? "border-red-500" : ""
+                        }`}
                 />
                 <button
                     type="button"

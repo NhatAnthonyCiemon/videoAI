@@ -217,9 +217,23 @@ const SignInForm = () => {
                 {/* Email input */}
                 <div className="space-y-3">
                     <label htmlFor="email">Email</label>
-                    <div className="relative">
+                    <div className="relative py-1">
                         <div className="absolute inset-y-0 left-3 flex items-center">
-                            {/* ...icon... */}
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="18"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="text-gray-400"
+                            >
+                                <rect width="20" height="16" x="2" y="4" rx="2" />
+                                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                            </svg>
                         </div>
                         <Input
                             id="email"
@@ -230,9 +244,8 @@ const SignInForm = () => {
                                 setEmailError("");
                             }}
                             placeholder="Enter your email address"
-                            className={`pl-12 py-5 md:py-6 text-sm md:text-[16px] bg-gray-900 border-gray-800 focus:border-fuchsia-500 ${
-                                emailError ? "border-red-500" : ""
-                            }`}
+                            className={`pl-12 py-5 md:py-6 text-sm md:text-[16px] bg-gray-900 border-gray-800 focus:border-fuchsia-500 ${emailError ? "border-red-500" : ""
+                                }`}
                         />
                     </div>
                     {emailError && (
@@ -257,7 +270,10 @@ const SignInForm = () => {
                             id="remember"
                             checked={remember}
                             onClick={() => setRemember(!remember)}
-                            className="cursor-pointer border-gray-600 data-[state=checked]:bg-fuchsia-500 data-[state=checked]:border-fuchsia-500"
+                            className="w-5 h-5 bg-white border-2 border-gray-600 rounded-sm 
+                                    data-[state=checked]:bg-fuchsia-500 
+                                    data-[state=checked]:border-fuchsia-500 
+                                    cursor-pointer"
                         />
                         <label
                             htmlFor="remember"
@@ -281,7 +297,7 @@ const SignInForm = () => {
                 {/* Login button */}
                 <Button
                     onClick={handleSubmitLogin}
-                    className="cursor-pointer w-full py-5 md:py-6 text-lg md:text-xl font-semibold bg-fuchsia-600 hover:bg-fuchsia-700 text-white rounded-full"
+                    className="cursor-pointer w-full py-5 md:py-7 text-lg md:text-2xl font-semibold bg-fuchsia-600 hover:bg-fuchsia-700 text-white rounded-full"
                 >
                     Login
                 </Button>
@@ -334,9 +350,8 @@ const SignInForm = () => {
                                 setForgotError("");
                             }}
                             placeholder="Nhập email của bạn"
-                            className={`mt-2 text-black ${
-                                forgotError ? "border-red-500" : ""
-                            }`}
+                            className={`mt-2 text-black ${forgotError ? "border-red-500" : ""
+                                }`}
                         />
                         {forgotError && (
                             <p className="text-red-500 text-sm mt-1">
@@ -423,17 +438,30 @@ function PasswordInput({
     return (
         <div className="space-y-2">
             <label htmlFor="password">Password</label>
-            <div className="relative">
+            <div className="relative py-1">
                 <div className="absolute inset-y-0 left-3 flex items-center">
-                    {/* ...icon... */}
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="text-gray-400"
+                    >
+                        <path d="M2 18v3c0 .6.4 1 1 1h4v-3h3v-3h2l1.4-1.4a6.5 6.5 0 1 0-4-4Z" />
+                        <circle cx="16.5" cy="7.5" r=".5" />
+                    </svg>
                 </div>
                 <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your Password"
-                    className={`pl-12 pr-10 py-5 md:py-6 text-sm md:text-[16px] bg-gray-900 border-gray-800 focus:border-fuchsia-500 ${
-                        error ? "border-red-500" : ""
-                    }`}
+                    className={`pl-12 pr-10 py-5 md:py-6 text-sm md:text-[16px] bg-gray-900 border-gray-800 focus:border-fuchsia-500 ${error ? "border-red-500" : ""
+                        }`}
                     value={password}
                     onChange={(e) => {
                         setPassword(e.target.value);

@@ -8,7 +8,7 @@ const SignInPage = () => {
                 <Logo />
             </div>
 
-            <div className="bg-black text-white flex items-center justify-center p-6 w-full md:max-w-[50%]">
+            <div className="bg-black text-white flex items-center justify-center p-6 w-full md:max-w-[45%]">
                 <SignInForm />
             </div>
         </div>

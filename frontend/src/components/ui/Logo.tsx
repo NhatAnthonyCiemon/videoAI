@@ -63,6 +63,7 @@ const Logo = () => {
                 ref={videoRef}
                 autoPlay
                 muted
+                loop
                 playsInline
                 src="https://res.cloudinary.com/dphytbuah/video/upload/Video_tiktok/4a66e6c6-cc89-4e30-8ca6-1284f33fea9e.mp4"
                 className="w-full h-full object-cover"

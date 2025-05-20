@@ -31,12 +31,20 @@ export default function SubtitleSetting({
     return (
         <div className="bg-white overflow-y-auto space-y-2 border-r-1 h-full border-gray-700 p-4">
             <div className="flex justify-between items-center p-2">
-                <button
-                    onClick={() => setIsAdding(!isAdding)}
-                    className={`text-2xl font-medium border border-gray-700 rounded-lg p-2 bg-gray-50 cursor-pointer active:bg-blue-100 ${isAdding ? "bg-gray-300" : "text-gray-700"}`}
-                >
-                    + Phụ đề
-                </button>
+                {isAdding ?
+                    <button
+                        onClick={() => setIsAdding(!isAdding)}
+                        className={`text-2xl font-medium border border-gray-700 rounded-lg p-2 bg-gray-50 cursor-pointer active:bg-blue-100 ${isAdding ? "bg-gray-300" : "text-gray-700"}`}
+                    >
+                        - Phụ đề
+                    </button> : 
+                    <button
+                        onClick={() => setIsAdding(!isAdding)}
+                        className={`text-2xl font-medium border border-gray-700 rounded-lg p-2 bg-gray-50 cursor-pointer active:bg-blue-100 ${isAdding ? "bg-gray-300" : "text-gray-700"}`}
+                    >
+                        + Phụ đề
+                    </button>
+                }
             </div>
 
             {/* Form thêm phụ đề */}
@@ -55,7 +63,7 @@ export default function SubtitleSetting({
                             <div className="flex-1 border rounded-md p-1 bg-gray-50 w-[52px] text-center flex items-center justify-center">
                                 <input
                                     type="text"
-                                    placeholder="Thời gian bắt đầu"
+                                    placeholder="start"
                                     value={newSubtitle.start}
                                     onChange={(e) => setNewSubtitle({ ...newSubtitle, start: e.target.value })}
                                     className="bg-transparent border-none w-full text-center focus:outline-none focus:ring-0"
@@ -65,7 +73,7 @@ export default function SubtitleSetting({
                             <div className="flex-1 border rounded-md p-1 bg-gray-50 w-[52px] text-center flex items-center justify-center">
                                 <input
                                     type="text"
-                                    placeholder="Thời gian kết thúc"
+                                    placeholder="end"
                                     value={newSubtitle.end}
                                     onChange={(e) => setNewSubtitle({ ...newSubtitle, end: e.target.value })}
                                     className="bg-transparent border-none w-full text-center focus:outline-none focus:ring-0"
@@ -76,7 +84,11 @@ export default function SubtitleSetting({
                     </div>
                     <div className="flex justify-start p-2">
                         <button
-                            onClick={() => onAdd(newSubtitle.text)}
+                            onClick={() => {
+                                onAdd(newSubtitle.text);
+                                setIsAdding(false);
+                                setNewSubtitle({ ...newSubtitle, text: "" })
+                            }}
                             className="text-blue-500 hover:text-blue-700 border border-blue-500 rounded-lg p-2 bg-gray-50 hover:bg-gray-100 cursor-pointer active:bg-blue-100"
                         >
                             Thêm phụ đề

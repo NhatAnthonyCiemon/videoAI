@@ -1,7 +1,7 @@
 type APIResponse<T = any> = {
     mes: string;
     status: number;
-    data: T;
+    data: T | null;
 };
 
 export default APIResponse;

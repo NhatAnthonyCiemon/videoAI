@@ -1,19 +1,14 @@
 import express from "express";
 import route from "./routers/index.js";
 import dotenv from "dotenv";
-import cors from "cors"; // Import middleware CORS
+import cors from "cors";
+import passport from "./config/passport.js";
 
 dotenv.config();
 
 const app = express();
-
-// Cấu hình CORS
-app.use(cors({
-    origin: "*", // Cho phép tất cả các domain (có thể thay bằng domain cụ thể)
-    methods: ["GET", "POST", "PUT", "DELETE"], // Các phương thức được phép
-    allowedHeaders: ["Content-Type", "Authorization"], // Các header được phép
-}));
-
+app.use(passport.initialize());
+app.use(cors());
 app.use(express.static("./src/public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

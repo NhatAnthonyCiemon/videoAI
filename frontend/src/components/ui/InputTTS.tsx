@@ -20,12 +20,14 @@ export default function VoiceSelector({
         "xin chào bạn, tôi là một giọng nói AI. Tôi có thể giúp gì cho bạn hôm nay?"
     );
     const [hasData, setHasData] = useState(false);
+    const [loading, setLoading] = useState(false);
     const audioRef = useRef<HTMLAudioElement>(null);
 
     const handlePlay = async () => {
         if (text.length === 0) {
             return;
         }
+        setLoading(true); // Bắt đầu loading
         setHasData(false);
         const res = await fetchApi<string>(
             "http://localhost:4000/user/api_voice",
@@ -37,7 +39,6 @@ export default function VoiceSelector({
                 pitch: videoData?.voice_info.pitch,
             }
         );
-        console.log(res);
         if (res.mes === "success") {
             setHasData(true);
             if (audioRef.current) {
@@ -52,6 +53,7 @@ export default function VoiceSelector({
                     "https://res.cloudinary.com/dasqsts9r/video/upload/v1746943227/output_audio_y7osuo.mp3";
             }
         }
+        setLoading(false); // Kết thúc loading
     };
     return (
         <div>
@@ -181,12 +183,19 @@ export default function VoiceSelector({
 
             {/* Nút nghe thử */}
             <div>
-                <button
-                    onClick={handlePlay}
-                    className="bg-blue-600 mb-2 cursor-pointer text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-                >
-                    Nghe thử
-                </button>
+                <div>
+                    <button
+                        onClick={handlePlay}
+                        disabled={loading}
+                        className={`bg-blue-600 mb-2 cursor-pointer text-white px-4 py-2 rounded-lg transition ${
+                            loading
+                                ? "opacity-60 cursor-not-allowed"
+                                : "hover:bg-blue-700"
+                        }`}
+                    >
+                        {loading ? "Đang tải ..." : "Nghe thử"}
+                    </button>
+                </div>
             </div>
 
             {/* Audio element ẩn để phát */}

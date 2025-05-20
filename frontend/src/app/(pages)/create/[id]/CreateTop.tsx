@@ -3,13 +3,16 @@ import { clsx } from "clsx";
 import { Button } from "@/components/ui/button";
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import React from "react";
+import Video from "@/types/Video";
 
 function CreateTop({
     whichActive,
     setWhichActive,
+    videoData,
 }: {
     whichActive: number;
     setWhichActive: (index: number) => void;
+    videoData: Video;
 }) {
     const buttonContent: string[] = [
         "Soạn kịch bản và chọn giọng đọc",
@@ -41,6 +44,9 @@ function CreateTop({
                                     ? classActive
                                     : classNotActive
                             )}
+                            disabled={
+                                index > videoData.step && whichActive !== index
+                            }
                         >
                             {item}
                         </Button>

@@ -8,6 +8,8 @@ import { toast } from "sonner";
 import fetchApi from "@/lib/api/fetch";
 import HttpMethod from "@/types/httpMethos";
 
+import "@/app/signin_style.css";
+
 const SignUpForm = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -216,11 +218,11 @@ function InputField({
                     value={value}
                     onChange={onChange}
                     placeholder={placeholder}
-                    className={`pl-12 py-5 md:py-6 text-sm md:text-[16px] bg-white text-black border-gray-800 focus:border-fuchsia-500 ${error ? "border-red-500" : ""
+                    className={`custom-input pl-12 py-5 md:py-6 text-sm md:text-[16px] bg-white text-black border-gray-800 focus:border-fuchsia-500 ${error ? "border-red-500" : ""
                         }`}
                 />
             </div>
-            {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+            {error && <p className="text-red-500 text-xl mt-1">{error}</p>}
         </div>
     );
 }
@@ -262,7 +264,7 @@ function PasswordInput({
                     value={value}
                     onChange={onChange}
                     placeholder={placeholder}
-                    className={`pl-12 pr-10 py-5 md:py-6 text-sm md:text-[16px] bg-white text-black border-gray-800 focus:border-fuchsia-500 ${error ? "border-red-500" : ""
+                    className={`custom-input pl-12 pr-10 py-5 md:py-6 text-sm md:text-[16px] bg-white text-black border-gray-800 focus:border-fuchsia-500 ${error ? "border-red-500" : ""
                         }`}
                 />
                 <button
@@ -277,7 +279,7 @@ function PasswordInput({
                     )}
                 </button>
             </div>
-            {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+            {error && <p className="text-red-500 text-xl mt-1">{error}</p>}
         </div>
     );
 }

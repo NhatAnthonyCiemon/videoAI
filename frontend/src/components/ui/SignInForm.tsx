@@ -14,6 +14,8 @@ import { jwtDecode } from "jwt-decode";
 import { useUser } from "@/app/UserProvider";
 import { FaEye, FaEyeSlash, FaGoogle, FaGithub } from "react-icons/fa";
 
+import "@/app/signin_style.css";
+
 function showErrorToast(message: string) {
     toast.error(message, {
         duration: 4000,
@@ -216,7 +218,7 @@ const SignInForm = () => {
             <div className="space-y-8">
                 {/* Email input */}
                 <div className="space-y-3">
-                    <label htmlFor="email">Email</label>
+                    <label htmlFor="email" className="text-white">Email</label>
                     <div className="relative py-1">
                         <div className="absolute inset-y-0 left-3 flex items-center">
                             <svg
@@ -244,12 +246,11 @@ const SignInForm = () => {
                                 setEmailError("");
                             }}
                             placeholder="Enter your email address"
-                            className={`pl-12 py-5 md:py-6 text-sm md:text-[16px] bg-gray-900 border-gray-800 focus:border-fuchsia-500 ${emailError ? "border-red-500" : ""
-                                }`}
+                            className={`custom-input pl-12 pr-10 py-5 md:py-6 text-xl md:text-[16px] text-white ${emailError ? "border-red-500" : ""}`}
                         />
                     </div>
                     {emailError && (
-                        <p className="text-red-500 text-sm mt-1">
+                        <p className="text-red-500 text-xl mt-1">
                             {emailError}
                         </p>
                     )}
@@ -350,11 +351,10 @@ const SignInForm = () => {
                                 setForgotError("");
                             }}
                             placeholder="Nhập email của bạn"
-                            className={`mt-2 text-black ${forgotError ? "border-red-500" : ""
-                                }`}
+                            className={`mt-2 text-white border-0 border-b-2 border-black focus:border-fuchsia-500 ${forgotError ? "border-red-500" : ""}`}
                         />
                         {forgotError && (
-                            <p className="text-red-500 text-sm mt-1">
+                            <p className="text-red-500 text-xl mt-1">
                                 {forgotError}
                             </p>
                         )}
@@ -437,7 +437,7 @@ function PasswordInput({
 
     return (
         <div className="space-y-2">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password" className="text-white">Password</label>
             <div className="relative py-1">
                 <div className="absolute inset-y-0 left-3 flex items-center">
                     <svg
@@ -460,8 +460,7 @@ function PasswordInput({
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your Password"
-                    className={`pl-12 pr-10 py-5 md:py-6 text-sm md:text-[16px] bg-gray-900 border-gray-800 focus:border-fuchsia-500 ${error ? "border-red-500" : ""
-                        }`}
+                    className={`custom-input pl-12 pr-10 py-5 md:py-6 text-xl md:text-[16px] text-white ${error ? "border-red-500" : ""}`}
                     value={password}
                     onChange={(e) => {
                         setPassword(e.target.value);
@@ -482,7 +481,7 @@ function PasswordInput({
                     )}
                 </button>
             </div>
-            {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+            {error && <p className="text-red-500 text-xl mt-1">{error}</p>}
         </div>
     );
 }

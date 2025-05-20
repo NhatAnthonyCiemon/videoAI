@@ -52,7 +52,14 @@ export default function Header() {
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                             >
-                                <rect x="2" y="6" width="16" height="12" rx="2" ry="2" />
+                                <rect
+                                    x="2"
+                                    y="6"
+                                    width="16"
+                                    height="12"
+                                    rx="2"
+                                    ry="2"
+                                />
                                 <path d="M22 8.5v7L18 12l4-3.5z" />
                             </svg>
                             <span className="flex flex-col md:flex-row leading-tight md:leading-normal font-bold text-indigo-700 text-lg sm:text-xl md:text-3xl lg:text-4xl">
@@ -62,16 +69,28 @@ export default function Header() {
                     </div>
                     {/* Center: Navigation */}
                     <nav className="hidden md:flex items-center gap-6 lg:gap-12 text-lg md:text-2xl">
-                        <Link href="#" className="hover:text-fuchsia-600 hover:scale-105 transition-all duration-300 ease-in-out">
+                        <Link
+                            href="#"
+                            className="hover:text-fuchsia-600 hover:scale-105 transition-all duration-300 ease-in-out"
+                        >
                             Trang chủ
                         </Link>
-                        <Link href="#" className="hover:text-fuchsia-600 hover:scale-105 transition-all duration-300 ease-in-out">
+                        <Link
+                            href="#"
+                            className="hover:text-fuchsia-600 hover:scale-105 transition-all duration-300 ease-in-out"
+                        >
                             Tạo video
                         </Link>
-                        <Link href="#" className="hover:text-fuchsia-600 hover:scale-105 transition-all duration-300 ease-in-out">
+                        <Link
+                            href="#"
+                            className="hover:text-fuchsia-600 hover:scale-105 transition-all duration-300 ease-in-out"
+                        >
                             Video của tôi
                         </Link>
-                        <Link href="#" className="hover:text-fuchsia-600 hover:scale-105 transition-all duration-300 ease-in-out">
+                        <Link
+                            href="#"
+                            className="hover:text-fuchsia-600 hover:scale-105 transition-all duration-300 ease-in-out"
+                        >
                             Hướng dẫn
                         </Link>
                     </nav>

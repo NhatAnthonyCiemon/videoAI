@@ -119,7 +119,10 @@ export default function HomePage() {
     ];
 
     // State quản lý video đang mở popup
-    const [popupVideo, setPopupVideo] = useState<{ url: string; subtitle: string } | null>(null);
+    const [popupVideo, setPopupVideo] = useState<{
+        url: string;
+        subtitle: string;
+    } | null>(null);
 
     return (
         <main className="w-full min-h-screen bg-black text-white overflow-x-hidden text-[19px] md:text-[20px] lg:text-[21px] leading-relaxed">
@@ -377,8 +380,12 @@ export default function HomePage() {
             {/* Featured Videos */}
             <section className="bg-blue-50 py-24 px-6 text-black">
                 <div className="w-full max-w-screen-lg xl:max-w-[70%] mx-auto text-center space-y-12">
-                    <h2 className="text-5xl lg:text-6xl font-bold">Video Nổi Bật</h2>
-                    <p className="text-gray-600 text-2xl">Khám phá các video ngắn hấp dẫn</p>
+                    <h2 className="text-5xl lg:text-6xl font-bold">
+                        Video Nổi Bật
+                    </h2>
+                    <p className="text-gray-600 text-2xl">
+                        Khám phá các video ngắn hấp dẫn
+                    </p>
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                         {videos.map(({ url, subtitle }, i) => (

@@ -5,23 +5,24 @@ import path from "path";
 
 // Hàm tải các file mp3 từ mảng urls, trả về mảng tên file mp3 đã tải về
 async function downloadMp3Files(urls) {
-  const filenames = [];
-  for (let i = 0; i < urls.length; i++) {
+  const downloadPromises = urls.map((url, i) => {
     const filename = `temp_audio_${i}.mp3`;
     const writer = fs.createWriteStream(filename);
-    const response = await axios({
-      url: urls[i],
+
+    return axios({
+      url,
       method: "GET",
       responseType: "stream",
-    });
-    response.data.pipe(writer);
-    await new Promise((resolve, reject) => {
-      writer.on("finish", resolve);
-      writer.on("error", reject);
-    });
-    filenames.push(filename);
-  }
-  return filenames;
+    }).then(response => {
+      return new Promise((resolve, reject) => {
+        response.data.pipe(writer);
+        writer.on("finish", () => resolve());
+        writer.on("error", reject);
+      });
+    }).then(() => filename);
+  });
+
+  return Promise.all(downloadPromises);
 }
 
 export async function mergeMp3Files(urls, output = "merged.mp3") {

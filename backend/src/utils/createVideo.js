@@ -11,30 +11,13 @@ ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
 const isRender = process.env.ENV === "render"; // Kiểm tra xem có phải chạy trên Render không
 
-function wrapText(text, maxWidth = 600 + 460, fontSize = 20) {
-    const words = text.split(" ");
-    let lines = [];
-    let currentLine = "";
-
-    words.forEach((word) => {
-        if ((currentLine + " " + word).length * fontSize <= maxWidth) {
-            currentLine += " " + word;
-        } else {
-            lines.push(currentLine);
-            currentLine = word;
-        }
-    });
-    if (currentLine) lines.push(currentLine);
-
-    return lines.join("\n");
-}
 
 // Bỏ text trong video
 async function createVideoSegments(images, durations) {
     const promises = images.map((image, index) => {
         const duration = durations[index];
         const output = `clip_${index}.mp4`;
-        const { width, height } = { width: 768, height: 1024 };
+        const { width, height } = { width: 1024, height: 768 };
         const sValue = `${width}x${height}`;
         let fps = 120;
         if (isRender) {
@@ -125,32 +108,32 @@ async function createFullVideo(
     try {
         if (isRender) {
             console.log("🔹 Đang tạo video từng clip một... (Render)");
-            const clips = [];
-            for (let i = 0; i < images.length; i++) {
-                const clip = await createVideoSegments(
-                    [images[i]],
-                    [durations[i]]
-                );
-                clips.push(clip[0]);
-                console.log(`Clip ${i} đã hoàn thành`);
-            }
+            // const clips = [];
+            // for (let i = 0; i < images.length; i++) {
+            //     const clip = await createVideoSegments(
+            //         [images[i]],
+            //         [durations[i]]
+            //     );
+            //     clips.push(clip[0]);
+            //     console.log(`Clip ${i} đã hoàn thành`);
+            // }
 
-            console.log("🔹 Đang nối các clip lại... (Render)");
-            const mergedVideo = await concatVideoSegments(clips);
+            // console.log("🔹 Đang nối các clip lại... (Render)");
+            // const mergedVideo = await concatVideoSegments(clips);
 
-            console.log("🔹 Đang ghép với âm thanh... (Render)");
-            const finalOutput = await mergeWithAudio(
-                mergedVideo,
-                audioPath,
-                outputPath
-            );
+            // console.log("🔹 Đang ghép với âm thanh... (Render)");
+            // const finalOutput = await mergeWithAudio(
+            //     mergedVideo,
+            //     audioPath,
+            //     outputPath
+            // );
 
-            console.log("✅ Video đã hoàn thành:", finalOutput);
-            clips.forEach((file) => fs.unlinkSync(file));
-            fs.unlinkSync(mergedVideo);
-            fs.unlinkSync("video_list.txt");
+            // console.log("✅ Video đã hoàn thành:", finalOutput);
+            // clips.forEach((file) => fs.unlinkSync(file));
+            // fs.unlinkSync(mergedVideo);
+            // fs.unlinkSync("video_list.txt");
 
-            return finalOutput;
+            // return finalOutput;
         } else {
             // Chạy song song ở local
             console.log("🔹 Đang tạo từng clip từ ảnh... (Local)");

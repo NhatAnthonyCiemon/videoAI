@@ -17,6 +17,7 @@ function ContentPage({ video }: { video: Video }) {
     const [whichActive, setWhichActive] = React.useState(video.step);
     const [videoData, setVideoData] = React.useState<Video>(video);
     const [isPreparing, setIsPreparing] = React.useState(false);
+    const [isCreateAgain, setIsCreateAgain] = React.useState(false);
     return (
         <div className="w-[1280px] mx-auto overflow-hidden">
             <CreateTop
@@ -50,6 +51,8 @@ function ContentPage({ video }: { video: Video }) {
                 <CreateVideo
                     videoData={videoData}
                     setVideoData={setVideoData}
+                    isCreateAgain = {isCreateAgain}
+                    setIsCreateAgain ={setIsCreateAgain}
                 />
             )}
         </div>

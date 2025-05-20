@@ -29,7 +29,16 @@ export default function TabText({
 
                     <div className="p-2">
                         <div className="flex flex-col justify-between mb-5">
-                            <span>Text Alignment</span>
+                            <label className="block font-medium mt-1">Width</label>
+                            <div className="flex mt-2 mb-5">
+                                <input
+                                    type="number"
+                                    value={subtitle.style.width || 300}
+                                    onChange={(e) => updateStyle({ width: parseInt(e.target.value) })}
+                                    className="border p-1 rounded w-[100px]"
+                                />
+                            </div>
+                            <label className="block font-medium mb-1 mt-5">Text Alignment</label>
                             <div className="flex gap-2 mt-2">
                                 <AlignLeft
                                     className={`border cursor-pointer rounded-md p-1 ${subtitle.style.alignment === "left" ? "bg-gray-300" : ""}`}

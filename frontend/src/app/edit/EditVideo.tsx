@@ -73,10 +73,11 @@ export default function EditVideo() {
     const handleAddSubtitle = (text: string) => {
         const newSubtitle = AddNewSubtitle(text, subtitles);
         setSubtitles([...subtitles, newSubtitle]);
+        setIdxText(idxText + 1);
     };
 
     const handleUpdateSubtitle = (updatedSubtitle: any) => {
-        console.log(updatedSubtitle)
+        // console.log(updatedSubtitle)
         const updatedList = [...subtitles];
         updatedList[idxText] = updatedSubtitle;
         setSubtitles(updatedList);

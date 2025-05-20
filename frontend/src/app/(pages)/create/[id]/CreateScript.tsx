@@ -17,11 +17,14 @@ import DraftModal from "@/components/ui/DraftModal";
 import LoadingOverlay from "@/components/ui/LoadingOverlay";
 import { Image_video } from "@/types/Video";
 import CustomCheckBox from "@/components/ui/CheckBoxCustom";
-import { platform } from "os";
 
-const voices = ["vi-VN-HoaiMyNeural (vi-VN, Female)", "Giọng B", "Giọng C"];
-const demoMp3Url =
-    "https://res.cloudinary.com/dasqsts9r/video/upload/v1746943227/output_audio_y7osuo.mp3"; // URL mp3 API trả về
+const voices = [
+    "vi-VN-HoaiMyNeural (vi-VN, Female)",
+    "vi-VN-NamMinhNeural (vi-VN, Male)",
+    "en-US-BrianNeural (en-US, Male)",
+    "en-US-EmmaNeural (en-US, Female)",
+];
+
 export default function CreateScript({
     setWhichActive,
     videoData,
@@ -348,9 +351,9 @@ export default function CreateScript({
                         <div className="border border-gray-300 rounded-3xl p-4">
                             <VoiceSelector
                                 voices={voices}
-                                demoMp3Url={demoMp3Url}
+                                videoData={videoData}
+                                setVideoData={setVideoData}
                             />
-                            ;
                         </div>
                     </div>
 
@@ -371,7 +374,7 @@ export default function CreateScript({
                             disabled={videoData.content.length === 0}
                             className="cursor-pointer text-2xl px-4 h-[40px] min-w-[100px] bg-green-600 text-white rounded-md hover:bg-green-700"
                         >
-                            {videoData.step === 0 ? "Tiếp theo" : "Tạo lại"}
+                            {videoData.step === 0 ? "Tạo ảnh" : "Tạo lại"}
                         </Button>
                     </div>
                 </div>

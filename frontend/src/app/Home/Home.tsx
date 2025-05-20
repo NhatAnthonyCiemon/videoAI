@@ -150,7 +150,11 @@ export default function HomePage() {
                         </p>
                         <div className="pt-4 flex flex-wrap gap-4">
                             <Button
-                                onClick={() => router.push("/create")}
+                                onClick={() =>
+                                    router.push(
+                                        "/create/" + generateRandomString()
+                                    )
+                                }
                                 className="bg-green-500 hover:bg-green-600 text-white text-2xl px-8 py-9 rounded-xl cursor-pointer"
                             >
                                 Bắt đầu ngay

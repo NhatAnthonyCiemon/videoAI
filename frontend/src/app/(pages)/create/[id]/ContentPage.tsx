@@ -45,7 +45,13 @@ function ContentPage({ video }: { video: Video }) {
                 />
             )}
 
-            {whichActive === 2 && videoData.step >= 2 && <CreateVideo />}
+            {((whichActive === 2 && videoData.step >= 2) ||
+                (isPreparing && videoData.step === 2)) && (
+                <CreateVideo
+                    videoData={videoData}
+                    setVideoData={setVideoData}
+                />
+            )}
         </div>
     );
 }

@@ -1,3 +1,4 @@
+import { url } from "inspector";
 import Video from "./service.js";
 const videoController = {
     getVideoById: async (req, res) => {
@@ -15,6 +16,12 @@ const videoController = {
                     image_video: [],
                     step: 0,
                     keyword: "",
+                    voice_info: {
+                        voice: "vi-VN-HoaiMyNeural (vi-VN, Female)",
+                        rate: 0,
+                        pitch: 0,
+                    },
+                    url: "",
                 };
                 res.json({
                     mes: "success",
@@ -36,6 +43,12 @@ const videoController = {
                         prompt: item.prompt,
                     };
                 });
+                // Lấy thông tin voice_info từ video
+                const voice_info = {
+                    voice: video.voice_info.voice,
+                    rate: video.voice_info.rate,
+                    pitch: video.voice_info.pitch,
+                };
                 const newVideo = {
                     id: video.id,
                     user_id: video.user_id,
@@ -45,6 +58,8 @@ const videoController = {
                     image_video: image_video,
                     step: video.step,
                     keyword: video.keyword,
+                    voice_info: voice_info,
+                    url: video.url,
                 };
                 res.json({
                     mes: "success",

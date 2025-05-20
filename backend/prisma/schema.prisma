@@ -55,26 +55,34 @@ model music {
 }
 
 model subtitles {
-  id         Int       @id @default(autoincrement())
-  video_id   String?   @db.Char(10)
-  start_time DateTime? @db.Time(6)
-  end_time   DateTime? @db.Time(6)
-  content    String?
-  align      String?
-  position   String?
-  font       String?
-  fill       String?
-  effect     String?
-  videos     videos?   @relation(fields: [video_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id               Int       @id @default(autoincrement())
+  video_id         String?   @db.Char(10)
+  start_time       DateTime? @db.Time(6)
+  end_time         DateTime? @db.Time(6)
+  content          String?
+  align            String?
+  position         String?
+  font             String?
+  color            String?
+  effect           String?
+  font_size        String?
+  font_style       String?
+  background_color String?
+  videos           videos?   @relation(fields: [video_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model ticker {
-  id         Int       @id @default(autoincrement())
-  video_id   String?   @db.Char(10)
-  start_time DateTime? @db.Time(6)
-  end_time   DateTime? @db.Time(6)
-  content    String?
-  videos     videos?   @relation(fields: [video_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id             Int             @id @default(autoincrement())
+  video_id       String?         @db.Char(10)
+  start_time     DateTime?       @db.Time(6)
+  end_time       DateTime?       @db.Time(6)
+  id_sticker     Int?
+  width          Int?            @default(100)
+  height         Int?            @default(100)
+  po_x           Int?            @default(0)
+  po_y           Int?            @default(0)
+  sticker_system sticker_system? @relation(fields: [id_sticker], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  videos         videos?         @relation(fields: [video_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model video_info {
@@ -106,9 +114,14 @@ model videos {
 
 model voice_info {
   video_id String  @id @db.Char(10)
-  voice_id String?
-  tone     String?
-  speed    Float?
   pitch    Float?
+  rate     Float?
+  voice    String?
   videos   videos  @relation(fields: [video_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model sticker_system {
+  id     Int      @id @default(autoincrement())
+  url    String
+  ticker ticker[]
 }

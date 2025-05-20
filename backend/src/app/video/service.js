@@ -11,6 +11,13 @@ const Video = {
                         prompt: true,
                     },
                 },
+                voice_info: {
+                    select: {
+                        voice: true,
+                        rate: true,
+                        pitch: true,
+                    },
+                },
             },
         });
         return video;

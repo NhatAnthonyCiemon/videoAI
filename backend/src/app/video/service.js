@@ -9,6 +9,7 @@ const Video = {
                         content: true,
                         url: true,
                         prompt: true,
+                        ordinal_number: true,
                     },
                 },
                 voice_info: {

@@ -45,7 +45,7 @@ export default function Header() {
                         <Link href="/" className="flex items-center gap-2">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
-                                className="hidden md:inline w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10"
+                                className="hidden md:inline w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-9"
                                 fill="none"
                                 stroke="#4F46E5"
                                 strokeWidth="2"

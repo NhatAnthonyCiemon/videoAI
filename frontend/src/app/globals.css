@@ -142,16 +142,19 @@ html {
     -ms-overflow-style: none;
     /* IE/Edge */
 }
+
 .truncate-2-lines {
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
+
 .custom-scroll::-webkit-scrollbar {
     display: none;
     /* Chrome, Safari */
 }
+
 .none_focus {
     outline: none !important;
     box-shadow: none !important;

@@ -117,7 +117,7 @@ export default function CreateScript({
             });
     };
     const handleNextStep = async () => {
-        if (videoData.step === 1) {
+        if (videoData.step !== 0) {
             window.scrollTo({
                 top: 0,
                 behavior: "smooth",

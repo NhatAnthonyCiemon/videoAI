@@ -65,7 +65,6 @@ export default async function RootLayout({
                 email: decodedToken.email,
                 image: decodedToken.image,
             };
-            console.log(decodedToken);
         }
     } catch (error) {
         console.log("Error decoding token:", error);

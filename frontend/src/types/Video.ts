@@ -11,6 +11,8 @@ type Video = {
     }[];
     step: number;
     keyword: string;
+    voice_info: Voice_info;
+    url: string;
 };
 
 type Image_video = {
@@ -18,5 +20,10 @@ type Image_video = {
     url: string;
     prompt: string;
 };
+type Voice_info = {
+    voice: string;
+    rate: number;
+    pitch: number;
+};
 export default Video;
-export type { Image_video };
+export type { Image_video, Voice_info };

@@ -1,4 +1,3 @@
-import { url } from "inspector";
 import Video from "./service.js";
 const videoController = {
     getVideoById: async (req, res) => {
@@ -36,13 +35,23 @@ const videoController = {
                         data: null,
                     });
                 }
-                const image_video = video.image_video.map((item) => {
+                const image_video_raw = video.image_video.map((item) => {
                     return {
                         content: item.content,
                         url: item.url,
                         prompt: item.prompt,
+                        ordinal_number: item.ordinal_number,
                     };
                 });
+                const image_video = image_video_raw
+                    .sort((a, b) => a.ordinal_number - b.ordinal_number)
+                    .map((item) => {
+                        return {
+                            content: item.content,
+                            url: item.url,
+                            prompt: item.prompt,
+                        };
+                    });
                 // Lấy thông tin voice_info từ video
                 const voice_info = {
                     voice: video.voice_info.voice,

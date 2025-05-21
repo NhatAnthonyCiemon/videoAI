@@ -378,7 +378,7 @@ export default function EditVideo() {
     };
 
     return (
-        <div className="flex h-full w-full pt-24">
+        <div className="flex h-full w-full">
             <SideBar selected={selectedTool} onSelect={setSelectedTool} />
             <div className="bg-white w-[400px]">
                 {selectedTool === "subtitles" && (
@@ -415,7 +415,7 @@ export default function EditVideo() {
                 )}
             </div>
             <div className="flex-1 overflow-y-auto max-h-screen custom-scroll">
-                <div className="pl-4 text-2xl flex gap-2">
+                <div className="pl-4 text-2xl flex gap-4 pt-3">
                     <div>
                         <button
                             onClick={handleExport}
@@ -443,20 +443,22 @@ export default function EditVideo() {
                     musics={musics}
                 />
             </div>
-            <FormatVideo
-                tab={selectedTool}
-                setTab={setSelectedTool}
-                musics_system={musics_system}
-                onAddMusic={handleAddMusic}
-                stickers_system={stickers_system}
-                onAddSticker={handleAddSticker}
-                subtitle={subtitles[idxText]}
-                music={musics[idxMusic]}
-                sticker={stickers[idxSticker]}
-                onUpdateSubtitle={handleUpdateSubtitle}
-                onUpdateMusic={handleUpdateMusic}
-                onUpdateSticker={handleUpdateSticker}
-            />
+            <div className="pb-30">
+                <FormatVideo
+                    tab={selectedTool}
+                    setTab={setSelectedTool}
+                    musics_system={musics_system}
+                    onAddMusic={handleAddMusic}
+                    stickers_system={stickers_system}
+                    onAddSticker={handleAddSticker}
+                    subtitle={subtitles[idxText]}
+                    music={musics[idxMusic]}
+                    sticker={stickers[idxSticker]}
+                    onUpdateSubtitle={handleUpdateSubtitle}
+                    onUpdateMusic={handleUpdateMusic}
+                    onUpdateSticker={handleUpdateSticker}
+                />
+            </div>
         </div>
     );
 }

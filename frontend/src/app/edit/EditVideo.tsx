@@ -241,6 +241,7 @@ export default function EditVideo() {
         const updatedList = [...subtitles];
         updatedList[idxText] = updatedSubtitle;
         setSubtitles(updatedList);
+        console.log(updatedSubtitle)
     };
 
     const handleDeleteSubtitle = (index: number) => {
@@ -377,7 +378,7 @@ export default function EditVideo() {
     };
 
     return (
-        <div className="flex h-full w-full pt-30">
+        <div className="flex h-full w-full pt-24">
             <SideBar selected={selectedTool} onSelect={setSelectedTool} />
             <div className="bg-white w-[400px]">
                 {selectedTool === "subtitles" && (
@@ -414,16 +415,26 @@ export default function EditVideo() {
                 )}
             </div>
             <div className="flex-1 overflow-y-auto max-h-screen custom-scroll">
-                <div className="p-4">
-                    <button
-                        onClick={handleExport}
-                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-                    >
-                        Export Video
-                    </button>
-                    {exportStatus && (
-                        <p className="mt-2 text-xl">{exportStatus}</p>
-                    )}
+                <div className="pl-4 text-2xl flex gap-2">
+                    <div>
+                        <button
+                            onClick={handleExport}
+                            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                        >
+                            Export Video
+                        </button>
+                        {exportStatus && (
+                            <p className="mt-2 text-xl">{exportStatus}</p>
+                        )}
+                    </div>
+                    <div>
+                        <button
+                            onClick={handleExport}
+                            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                        >
+                            Lưu tiến trình
+                        </button>
+                    </div>
                 </div>
                 <VideoPreview
                     url={url}

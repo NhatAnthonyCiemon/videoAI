@@ -28,6 +28,10 @@ export default function SubtitleSetting({
         onUpdate({ ...subtitles[idxText], text });
     }
 
+    const updateSubtitle = (index: number, field: "start" | "end", value: string) => {
+        onUpdate({ ...subtitles[index], [field]: value });
+    };
+
     return (
         <div className="bg-white overflow-y-auto space-y-2 border-r-1 h-full border-gray-700 p-4">
             <div className="flex justify-between items-center p-2">
@@ -129,11 +133,21 @@ export default function SubtitleSetting({
                     </div>
                     <div className="flex flex-col justify-between ml-2 text-xl">
                         <div className="flex-1 border rounded-md p-1 bg-gray-50 w-[52px] text-center flex items-center justify-center">
-                            {sub.start}
+                            <input
+                                type="text"
+                                value={sub.start}
+                                onChange={(e) => updateSubtitle(idx, "start", e.target.value)}
+                                className="bg-transparent border-none w-full text-center focus:outline-none focus:ring-0"
+                            />
                         </div>
                         <div className="min-h-3"></div>
                         <div className="flex-1 border rounded-md p-1 bg-gray-50 w-[52px] text-center flex items-center justify-center">
-                            {sub.end}
+                            <input
+                                type="text"
+                                value={sub.end}
+                                onChange={(e) => updateSubtitle(idx, "end", e.target.value)}
+                                className="bg-transparent border-none w-full text-center focus:outline-none focus:ring-0"
+                            />
                         </div>
                     </div>
                 </div>

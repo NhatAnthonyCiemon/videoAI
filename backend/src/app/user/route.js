@@ -1,9 +1,16 @@
-const express = require("express");
+import express from "express";
+import userController from "./controller.js";
+
+import middleware from "../../middleware/index.js";
+
 const router = express.Router();
-const userController = require("./controller");
 
-//router.get('/', userController.getAllUsers)
-//router.get("/login", userController.login);
-//router.get("/register", userController.register);
+router.post(
+    "/api_voice",
+    middleware.isAuthenticated,
+    userController.textToSpeech
+);
 
-module.exports = router;
+router.get("/", middleware.isAuthenticated, userController.getUser);
+
+export default router;

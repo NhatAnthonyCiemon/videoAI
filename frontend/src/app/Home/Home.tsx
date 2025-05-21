@@ -6,6 +6,8 @@ import "../homepage_style.css";
 import Header from "@/components/layout/header";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import VideoPopup from "@/components/ui/videoPopup";
+import generateRandomString from "@/lib/generateRandomString";
 
 export default function HomePage() {
     type Platform = "Tiktok" | "YouTube" | "Twitter" | "Instagram";
@@ -56,25 +58,82 @@ export default function HomePage() {
 
     const [selected, setSelected] = useState<Platform>("Tiktok");
 
+    const videos = [
+        {
+            url: "https://www.youtube.com/embed/MbJ72KO5khs",
+            subtitle: "Video 1 - Hướng dẫn sử dụng",
+        },
+        {
+            url: "https://www.youtube.com/embed/hOHKltAiKXQ",
+            subtitle: "Video 2 - Giới thiệu sản phẩm",
+        },
+        {
+            url: "https://www.youtube.com/embed/6acS2vOxmRI",
+            subtitle: "Video 3 - Video demo",
+        },
+        {
+            url: "https://www.youtube.com/embed/fnlJw9H0xAM",
+            subtitle: "Video 4 - Tạo video nhanh",
+        },
+        {
+            url: "https://www.youtube.com/embed/NlC3tRmQrP0",
+            subtitle: "Video 5 - Mẹo hay",
+        },
+        {
+            url: "https://www.youtube.com/embed/5rFMFgv81YU",
+            subtitle: "Video 6 - Hướng dẫn chi tiết",
+        },
+        {
+            url: "https://www.youtube.com/embed/QX9Ox5-_GTw",
+            subtitle: "Video 7 - Giới thiệu tính năng",
+        },
+        {
+            url: "https://www.youtube.com/embed/Wo2G9740xyE",
+            subtitle: "Video 8 - Xu hướng mới",
+        },
+        {
+            url: "https://www.youtube.com/embed/7XPGU7dmZXg",
+            subtitle: "Video 9 - Mẫu video",
+        },
+        {
+            url: "https://www.youtube.com/embed/fHI8X4OXluQ",
+            subtitle: "Video 10 - Thủ thuật tạo video",
+        },
+        {
+            url: "https://www.youtube.com/embed/u6lihZAcy4s",
+            subtitle: "Video 11 - Video nổi bật",
+        },
+        {
+            url: "https://www.youtube.com/embed/KZoipAb2fo4",
+            subtitle: "Video 12 - Tổng hợp video",
+        },
+    ];
+
+    // State quản lý video đang mở popup
+    const [popupVideo, setPopupVideo] = useState<{
+        url: string;
+        subtitle: string;
+    } | null>(null);
+
     return (
         <main className="w-full min-h-screen bg-black text-white overflow-x-hidden text-[19px] md:text-[20px] lg:text-[21px] leading-relaxed">
             <Header />
 
             {/* Hero */}
             <section
-                className="bg-gradient-to-r from-indigo-900 to-purple-800 text-white bg-cover bg-right bg-no-repeat py-50 md:py-80"
+                className="bg-gradient-to-r from-indigo-900 to-purple-800 text-white bg-cover bg-right bg-no-repeat py-50 md:py-60"
                 style={{ backgroundImage: "url(/img/robot.png)" }}
             >
                 <div className="w-full mx-auto px-10 sm:px-20 flex flex-col md:flex-row items-center">
-                    <div className="md:w-1/2 space-y-6">
-                        <h1 className="text-5xl md:text-6xl xl:text-7xl font-bold leading-tight">
+                    <div className="md:w-1/3 space-y-6">
+                        <h1 className="text-3xl md:text-6xl xl:text-6xl font-bold leading-tight">
                             Biến ý tưởng thành video chỉ trong 1 phút!
                         </h1>
-                        <p className="text-4xl text-[#EE6767] opacity-90 font-bold">
+                        <p className="text-3xl text-[#EE6767] opacity-90 font-bold">
                             Sáng tạo video ngắn với AI - nhanh chóng, đơn giản,
                             chuyên nghiệp
                         </p>
-                        <p className="text-4xl opacity-90">
+                        <p className="text-3xl opacity-90">
                             Khám phá cách tạo ra những video Tiktok, Instagram,
                             Youtube Shorts đỉnh cao từ từ khóa xu hướng, AI tự
                             động sinh kịch bản, giọng đọc và video hoàn chỉnh
@@ -82,14 +141,18 @@ export default function HomePage() {
                         </p>
                         <div className="pt-4 flex flex-wrap gap-4">
                             <Button
-                                onClick={() => router.push("/create")}
-                                className="bg-green-500 hover:bg-green-600 text-white text-2xl px-8 py-9 rounded-xl"
+                                onClick={() =>
+                                    router.push(
+                                        "/create/" + generateRandomString()
+                                    )
+                                }
+                                className="bg-green-500 hover:bg-green-600 text-white text-2xl px-8 py-9 rounded-xl cursor-pointer"
                             >
                                 Bắt đầu ngay
                             </Button>
                             <Button
                                 variant="link"
-                                className="text-white text-2xl p-9"
+                                className="text-white text-2xl p-9 cursor-pointer"
                             >
                                 Xem thử video mẫu
                             </Button>
@@ -318,25 +381,39 @@ export default function HomePage() {
                     <p className="text-gray-600 text-2xl">
                         Khám phá các video ngắn hấp dẫn
                     </p>
+
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                        {Array.from({ length: 12 }).map((_, i) => (
+                        {videos.map(({ url, subtitle }, i) => (
                             <div
                                 key={i}
-                                className="aspect-video bg-black rounded-2xl overflow-hidden shadow-lg relative group"
+                                className="aspect-video bg-black rounded-2xl overflow-hidden shadow-lg relative cursor-pointer"
+                                onClick={() => setPopupVideo({ url, subtitle })}
                             >
-                                <video
-                                    src="/sample-video.mp4"
-                                    className="w-full h-full object-cover group-hover:controls-visible"
-                                    controls
+                                <iframe
+                                    src={url}
+                                    title={`YouTube video ${i}`}
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                    className="w-full h-full pointer-events-none" // để không click iframe mà click div
                                 />
                             </div>
                         ))}
                     </div>
+
                     <Button className="mt-10 px-12 py-8 bg-fuchsia-600 hover:bg-fuchsia-700 text-white rounded-full text-xl">
                         Xem thêm video
                     </Button>
                 </div>
             </section>
+
+            {/* Popup video */}
+            {popupVideo && (
+                <VideoPopup
+                    url={popupVideo.url}
+                    subtitle={popupVideo.subtitle}
+                    onClose={() => setPopupVideo(null)}
+                />
+            )}
 
             {/* CTA */}
             <section className="bg-black text-white text-center py-32 px-6">

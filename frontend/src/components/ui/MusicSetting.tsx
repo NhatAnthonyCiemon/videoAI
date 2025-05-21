@@ -79,7 +79,7 @@ export default function MusicSetting({
             </div>
 
             {musics.map((music, index) => (
-                <div key={music.id || index} className="p-2 flex" onClick={() => setIdxMusic(index)}>
+                <div key={index} className="p-2 flex" onClick={() => setIdxMusic(index)}>
                     <div className="flex items-center mr-3">
                         <input
                             type="checkbox"

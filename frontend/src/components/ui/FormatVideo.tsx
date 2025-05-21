@@ -7,9 +7,30 @@ import TabMusic from "@/components/ui/TabMusic";
 export default function FormatVideo({
     tab,
     setTab,
+    musics_system,
+    onAddMusic,
+    stickers_system,
+    onAddSticker,
+
+    subtitle,
+    music,
+    sticker,
+    onUpdateSubtitle,
+    onUpdateMusic,
+    onUpdateSticker
 }: {
     tab: string;
     setTab: (tab: string) => void;
+    musics_system: any[];
+    onAddMusic: (id: number, name: string, data: string) => void;
+    stickers_system: any[];
+    onAddSticker: (id: number, name: string, data: string) => void;
+    subtitle: any;
+    onUpdateSubtitle: (sub: any) => void;
+    music: any;
+    onUpdateMusic: (sub: any) => void;
+    sticker: any;
+    onUpdateSticker: (sub: any) => void;
 }) {
     return (
         <div className="w-[400px] h-full bg-white border-l-1 border-gray-700 flex flex-col">
@@ -17,19 +38,11 @@ export default function FormatVideo({
                 <div className="flex gap-2 text-2xl justify-center pl-3 pr-3">
                     <button
                         className={`w-full cursor-pointer h-12 p-1 rounded ${
-                            tab === "text" ? "bg-white border" : ""
+                            tab === "subtitles" ? "bg-white border" : ""
                         }`}
-                        onClick={() => setTab("text")}
+                        onClick={() => setTab("subtitles")}
                     >
                         Text
-                    </button>
-                    <button
-                        className={`w-full cursor-pointer h-12 p-1 rounded ${
-                            tab === "sticker" ? "bg-white border" : ""
-                        }`}
-                        onClick={() => setTab("sticker")}
-                    >
-                        Sticker
                     </button>
                     <button
                         className={`w-full cursor-pointer h-12 p-1 rounded ${
@@ -39,12 +52,20 @@ export default function FormatVideo({
                     >
                         Music
                     </button>
+                    <button
+                        className={`w-full cursor-pointer h-12 p-1 rounded ${
+                            tab === "sticker" ? "bg-white border" : ""
+                        }`}
+                        onClick={() => setTab("sticker")}
+                    >
+                        Sticker
+                    </button>
                 </div>
             </div>
 
-            {tab === "text" && <TabText />}
-            {tab === "sticker" && <TabSticker />}
-            {tab === "music" && <TabMusic />}
+            {tab === "subtitles" && <TabText subtitle={subtitle} onUpdate={onUpdateSubtitle}/>}
+            {tab === "music" && <TabMusic musics_system={musics_system} music={music} onAddMusic={onAddMusic} onUpdateMusic={onUpdateMusic}/>}
+            {tab === "sticker" && <TabSticker stickers_system={stickers_system} sticker={sticker} onAddSticker={onAddSticker} onUpdateSticker={onUpdateSticker}/>}
         </div>
     );
 }

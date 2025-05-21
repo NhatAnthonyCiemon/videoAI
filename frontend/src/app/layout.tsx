@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import CustomScrollbar from "@/components/ui/CustomScrollbar";
 import InitToken from "./InitToken";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -74,7 +75,9 @@ export default async function RootLayout({
             <body>
                 <Toaster />
                 <UserProvider user={user}>
-                    <InitToken token={token}>{children}</InitToken>
+                    <InitToken token={token}>
+                        <CustomScrollbar>{children}</CustomScrollbar>
+                    </InitToken>
                 </UserProvider>
             </body>
         </html>

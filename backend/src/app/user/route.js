@@ -10,11 +10,7 @@ router.post(
     middleware.isAuthenticated,
     userController.textToSpeech
 );
-router.post(
-    "/api_video",
-    middleware.isAuthenticated,
-    userController.handleVideoController
-);
+
 router.get("/", middleware.isAuthenticated, userController.getUser);
 
 export default router;

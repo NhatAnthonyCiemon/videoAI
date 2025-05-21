@@ -16,6 +16,7 @@ interface Sticker {
             y: number;
         };
     };
+    status: boolean;
 }
 
 export default function TabSticker({

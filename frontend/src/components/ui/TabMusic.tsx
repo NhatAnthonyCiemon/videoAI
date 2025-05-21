@@ -16,13 +16,13 @@ export default function TabMusic({
   const [playingId, setPlayingId] = useState<number | null>(null);
   const [playingCurrent, setPlayingCurrent] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Đồng bộ volume của audioRef với music.volume khi nghe thử nhạc đang chọn
   useEffect(() => {
-    if (audioRef.current && playingCurrent && music) {
-      audioRef.current.volume = music.volume || 0.5;
+    if (audioRef.current) {
+      audioRef.current.volume = 0.5;
     }
-  }, [music, playingCurrent]);
+  }, []);
 
   const toggleSelect = (id: number) => {
     setSelectedIds((prev) =>
@@ -37,7 +37,6 @@ export default function TabMusic({
     } else {
       if (audioRef.current) {
         audioRef.current.src = url;
-        audioRef.current.volume = 0.5; // Cố định volume 0.5 cho musics_system
         audioRef.current.play();
         setPlayingId(id);
         setPlayingCurrent(false);
@@ -53,7 +52,6 @@ export default function TabMusic({
     } else {
       if (audioRef.current) {
         audioRef.current.src = url;
-        audioRef.current.volume = music?.volume || 0.5; // Sử dụng music.volume cho nhạc đang chọn
         audioRef.current.play();
         setPlayingCurrent(true);
         setPlayingId(null);
@@ -62,9 +60,17 @@ export default function TabMusic({
   };
 
   const handleUpload = () => {
-    const uploadedUrl = prompt("Nhập URL nhạc tải lên:");
-    if (uploadedUrl) {
-      onAddMusic(-1, "Không xác định", uploadedUrl);
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith("audio/")) {
+      const fileUrl = URL.createObjectURL(file);
+      onAddMusic(-1, file.name || "Không xác định", fileUrl);
+      e.target.value = ""; // Reset input file để có thể chọn lại cùng file
+    } else {
+      alert("Vui lòng chọn file âm thanh hợp lệ!");
     }
   };
 
@@ -78,15 +84,19 @@ export default function TabMusic({
     const volume = parseFloat(e.target.value);
     if (music) {
       onUpdateMusic({ ...music, volume });
-      if (audioRef.current && playingCurrent) {
-        audioRef.current.volume = volume; // Cập nhật volume khi nghe thử
-      }
     }
   };
 
   return (
     <div className="space-y-4 text-2xl pt-4 bg-white overflow-y-auto p-4">
       <audio ref={audioRef} onEnded={() => { setPlayingId(null); setPlayingCurrent(false); }} />
+      <input
+        type="file"
+        ref={fileInputRef}
+        accept="audio/*"
+        onChange={handleFileChange}
+        className="hidden"
+      />
 
       <div className="flex justify-between">
         <h2 className="text-2xl font-bold">Chọn nhạc nền</h2>

@@ -1,5 +1,6 @@
 {
     "dependencies": {
+        "@gradio/client": "^1.15.0",
         "@prisma/client": "^6.6.0",
         "bcryptjs": "^3.0.2",
         "dotenv": "^16.5.0",

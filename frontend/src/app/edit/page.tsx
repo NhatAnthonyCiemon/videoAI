@@ -2,9 +2,11 @@ import Header from "@/components/layout/header";
 import EditVideo from "./EditVideo";
 function Edit() {
     return (
-        <div className="flex flex-col h-screen w-screen overflow-hidden">
+        <div className="overflow-hidden h-screen">
             <Header />
-            <EditVideo />
+            <div className="flex flex-col h-screen w-screen overflow-hidden">
+                <EditVideo />
+            </div>
         </div>
     );
 }

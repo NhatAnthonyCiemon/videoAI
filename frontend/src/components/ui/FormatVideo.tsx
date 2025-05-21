@@ -9,6 +9,8 @@ export default function FormatVideo({
     setTab,
     musics_system,
     onAddMusic,
+    stickers_system,
+    onAddSticker,
 
     subtitle,
     music,
@@ -21,6 +23,8 @@ export default function FormatVideo({
     setTab: (tab: string) => void;
     musics_system: any[];
     onAddMusic: (id: number, name: string, data: string) => void;
+    stickers_system: any[];
+    onAddSticker: (id: number, name: string, data: string) => void;
     subtitle: any;
     onUpdateSubtitle: (sub: any) => void;
     music: any;
@@ -61,7 +65,7 @@ export default function FormatVideo({
 
             {tab === "subtitles" && <TabText subtitle={subtitle} onUpdate={onUpdateSubtitle}/>}
             {tab === "music" && <TabMusic musics_system={musics_system} music={music} onAddMusic={onAddMusic} onUpdateMusic={onUpdateMusic}/>}
-            {tab === "sticker" && <TabSticker />}
+            {tab === "sticker" && <TabSticker stickers_system={stickers_system} sticker={sticker} onAddSticker={onAddSticker} onUpdateSticker={onUpdateSticker}/>}
         </div>
     );
 }

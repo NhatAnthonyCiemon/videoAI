@@ -33,6 +33,7 @@ interface Sticker {
             y: number;
         };
     };
+    status: boolean;
 }
 
 interface Subtitle {
@@ -161,7 +162,8 @@ const InitialStickers: Sticker[] = [
                 x: 200,
                 y: 200
             }
-        }
+        },
+        status: true
     },
 ];
 
@@ -183,7 +185,8 @@ function AddNewSticker(id: number, name: string, data: string, currentList: Stic
                 x: 200,
                 y: 200
             }
-        }
+        },
+        status: true
     };
 }
 
@@ -197,6 +200,19 @@ const musics_system = [
         id: 1,
         name: "Lullaby",
         data: "https://res.cloudinary.com/dphytbuah/video/upload/v1747737999/nh%E1%BA%A1c_n%E1%BB%81n_mp3cut.net_rdtjlc.mp3"
+    },
+];
+
+const stickers_system = [
+    {
+        id: 0,
+        name: "Chim cánh cụt",
+        data: "https://res.cloudinary.com/dphytbuah/image/upload/v1747738119/images-removebg-preview_y36zfk.png"
+    },
+    {
+        id: 1,
+        name: "Chim cánh cụt",
+        data: "https://res.cloudinary.com/dphytbuah/image/upload/v1747738119/images-removebg-preview_y36zfk.png"
     },
 ];
 
@@ -228,7 +244,7 @@ export default function EditVideo() {
         setIdxText(updatedList.length > 0 ? updatedList.length - 1 : -1);
     };
 
-    const handleAddMusic = (id: number, name: string, data: string, ) => {
+    const handleAddMusic = (id: number, name: string, data: string,) => {
         const newMusic = AddNewMusic(id, name, data, musics);
         setMusics([...musics, newMusic]);
         setIdxMusic(musics.length);
@@ -246,7 +262,7 @@ export default function EditVideo() {
         setIdxMusic(updatedList.length > 0 ? updatedList.length - 1 : -1);
     };
 
-    const handleAddSticker = (id: number, name: string, data: string, ) => {
+    const handleAddSticker = (id: number, name: string, data: string,) => {
         const newSticker = AddNewSticker(id, name, data, stickers);
         setStickers([...stickers, newSticker]);
         setIdxSticker(stickers.length);
@@ -308,8 +324,11 @@ export default function EditVideo() {
                 tab={selectedTool}
                 setTab={setSelectedTool}
                 musics_system={musics_system}
-                
+
                 onAddMusic={handleAddMusic}
+
+                stickers_system={stickers_system}
+                onAddSticker={handleAddSticker}
 
 
 

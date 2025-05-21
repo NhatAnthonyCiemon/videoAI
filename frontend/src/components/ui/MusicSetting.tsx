@@ -9,7 +9,7 @@ interface Music {
     start: number;
     end: number;
     volume: number;
-    duration: number; // Thêm duration vào interface
+    duration: number;
     status: boolean;
 }
 
@@ -34,6 +34,16 @@ export default function MusicSetting({
         const music = musics[index];
         if (music) {
             onUpdate({ ...music, status: !music.status });
+        }
+    };
+
+    const updateMusic = (index: number, field: "start" | "end", value: string) => {
+        const music = musics[index];
+        if (music) {
+            const numValue = parseFloat(value);
+            if (!isNaN(numValue)) {
+                onUpdate({ ...music, [field]: numValue });
+            }
         }
     };
 
@@ -68,9 +78,8 @@ export default function MusicSetting({
                 </button>
             </div>
 
-            {/* Danh sách nhạc hiện tại */}
             {musics.map((music, index) => (
-                <div key={music.id || index} className="p-2 flex">
+                <div key={music.id || index} className="p-2 flex" onClick={() => setIdxMusic(index)}>
                     <div className="flex items-center mr-3">
                         <input
                             type="checkbox"
@@ -80,9 +89,7 @@ export default function MusicSetting({
                         />
                     </div>
                     <div className="border w-full rounded-md p-2 flex flex-col bg-gray-50">
-                        <p className="text-2xl font-semibold">
-                            {music.name}
-                        </p>
+                        <p className="text-2xl font-semibold">{music.name}</p>
                         <p className="text-gray-600 text-xl">
                             Thời lượng: {music.duration ? music.duration.toFixed(2) : (music.end - music.start).toFixed(2)}s
                         </p>
@@ -97,11 +104,21 @@ export default function MusicSetting({
                     </div>
                     <div className="flex flex-col justify-between ml-2 text-xl">
                         <div className="flex-1 border rounded-md p-1 bg-gray-50 w-[52px] text-center flex items-center justify-center">
-                            {music.start.toFixed(2)}
+                            <input
+                                type="text"
+                                value={music.start.toFixed(2)}
+                                onChange={(e) => updateMusic(index, "start", e.target.value)}
+                                className="bg-transparent border-none w-full text-center focus:outline-none focus:ring-0"
+                            />
                         </div>
                         <div className="min-h-3"></div>
                         <div className="flex-1 border rounded-md p-1 bg-gray-50 w-[52px] text-center flex items-center justify-center">
-                            {music.end.toFixed(2)}
+                            <input
+                                type="text"
+                                value={music.end.toFixed(2)}
+                                onChange={(e) => updateMusic(index, "end", e.target.value)}
+                                className="bg-transparent border-none w-full text-center focus:outline-none focus:ring-0"
+                            />
                         </div>
                     </div>
                     <div className="flex items-center ml-3">

@@ -195,6 +195,17 @@ export default function VideoPreview({ url, subtitles, stickers, musics }: Video
         return color;
     };
 
+    const getColor = (color: string) => {
+        if (color.includes("@")) {
+            const [hex, opacity = "0.5"] = color.split("@");
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            return `rgba(${r}, ${g}, ${b}, ${parseFloat(opacity) || 1})`;
+        }
+        return color;
+    };
+
     const getSubtitlePosition = (alignment: string) => {
         const videoWidth = videoRef.current?.clientWidth || 1;
         const containerWidth = videoContainerRef.current?.clientWidth || 1;
@@ -253,7 +264,7 @@ export default function VideoPreview({ url, subtitles, stickers, musics }: Video
                             <p
                                 style={{
                                     fontSize: `${scaleY(sub.style.fontSize)}px`,
-                                    color: sub.style.fontColor,
+                                    color: getColor(sub.style.fontColor),
                                     backgroundColor: getBackgroundColor(sub.style.backgroundColor),
                                     fontWeight: sub.style.fontStyle.includes("bold") ? "bold" : "normal",
                                     fontStyle: sub.style.fontStyle.includes("italic") ? "italic" : "normal",

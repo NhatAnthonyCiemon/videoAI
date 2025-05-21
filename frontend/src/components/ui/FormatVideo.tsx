@@ -7,13 +7,26 @@ import TabMusic from "@/components/ui/TabMusic";
 export default function FormatVideo({
     tab,
     setTab,
+    musics_system,
+    onAddMusic,
+
     subtitle,
-    onUpdate
+    music,
+    sticker,
+    onUpdateSubtitle,
+    onUpdateMusic,
+    onUpdateSticker
 }: {
     tab: string;
     setTab: (tab: string) => void;
+    musics_system: any[];
+    onAddMusic: (id: number, name: string, data: string) => void;
     subtitle: any;
-    onUpdate: (sub: any) => void;
+    onUpdateSubtitle: (sub: any) => void;
+    music: any;
+    onUpdateMusic: (sub: any) => void;
+    sticker: any;
+    onUpdateSticker: (sub: any) => void;
 }) {
     return (
         <div className="w-[400px] h-full bg-white border-l-1 border-gray-700 flex flex-col">
@@ -46,8 +59,8 @@ export default function FormatVideo({
                 </div>
             </div>
 
-            {tab === "subtitles" && <TabText subtitle={subtitle} onUpdate={onUpdate}/>}
-            {tab === "music" && <TabMusic />}
+            {tab === "subtitles" && <TabText subtitle={subtitle} onUpdate={onUpdateSubtitle}/>}
+            {tab === "music" && <TabMusic musics_system={musics_system} music={music} onAddMusic={onAddMusic} onUpdateMusic={onUpdateMusic}/>}
             {tab === "sticker" && <TabSticker />}
         </div>
     );

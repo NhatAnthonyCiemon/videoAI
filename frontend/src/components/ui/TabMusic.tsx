@@ -1,31 +1,28 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
-const mockMusicList = [
-  {
-    id: 1,
-    name: "Peaceful Morning",
-    duration: "2:10",
-    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-  },
-  {
-    id: 2,
-    name: "Energetic Beat",
-    duration: "3:00",
-    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-  },
-  {
-    id: 3,
-    name: "Soft Piano",
-    duration: "1:45",
-    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
-  },
-];
-
-export default function TabMusic() {
+export default function TabMusic({
+  musics_system,
+  music,
+  onAddMusic,
+  onUpdateMusic,
+}: {
+  musics_system: { id: number; name: string; data: string }[];
+  music: any;
+  onAddMusic: (id: number, name: string, data: string) => void;
+  onUpdateMusic: (music: any) => void;
+}) {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [playingId, setPlayingId] = useState<number | null>(null);
+  const [playingCurrent, setPlayingCurrent] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = 0.5;
+    }
+  }, []);
 
   const toggleSelect = (id: number) => {
     setSelectedIds((prev) =>
@@ -33,7 +30,7 @@ export default function TabMusic() {
     );
   };
 
-  const handlePlay = (id: number, url: string) => {
+  const handlePlaySystem = (id: number, url: string) => {
     if (playingId === id) {
       audioRef.current?.pause();
       setPlayingId(null);
@@ -42,24 +39,64 @@ export default function TabMusic() {
         audioRef.current.src = url;
         audioRef.current.play();
         setPlayingId(id);
+        setPlayingCurrent(false);
+      }
+    }
+  };
+
+  const handlePlayCurrent = (url: string) => {
+    if (playingCurrent) {
+      audioRef.current?.pause();
+      setPlayingCurrent(false);
+      setPlayingId(null);
+    } else {
+      if (audioRef.current) {
+        audioRef.current.src = url;
+        audioRef.current.play();
+        setPlayingCurrent(true);
+        setPlayingId(null);
       }
     }
   };
 
   const handleUpload = () => {
-    alert("Tải nhạc lên...");
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith("audio/")) {
+      const fileUrl = URL.createObjectURL(file);
+      onAddMusic(-1, file.name || "Không xác định", fileUrl);
+      e.target.value = ""; // Reset input file để có thể chọn lại cùng file
+    } else {
+      alert("Vui lòng chọn file âm thanh hợp lệ!");
+    }
   };
 
   const handleSave = () => {
-    const selectedMusic = mockMusicList.filter((m) =>
-      selectedIds.includes(m.id)
-    );
-    console.log("Đã chọn:", selectedMusic);
+    const selectedMusic = musics_system.filter((m) => selectedIds.includes(m.id));
+    selectedMusic.forEach((m) => onAddMusic(m.id, m.name, m.data));
+    setSelectedIds([]);
+  };
+
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const volume = parseFloat(e.target.value);
+    if (music) {
+      onUpdateMusic({ ...music, volume });
+    }
   };
 
   return (
     <div className="space-y-4 text-2xl pt-4 bg-white overflow-y-auto p-4">
-      <audio ref={audioRef} onEnded={() => setPlayingId(null)} />
+      <audio ref={audioRef} onEnded={() => { setPlayingId(null); setPlayingCurrent(false); }} />
+      <input
+        type="file"
+        ref={fileInputRef}
+        accept="audio/*"
+        onChange={handleFileChange}
+        className="hidden"
+      />
 
       <div className="flex justify-between">
         <h2 className="text-2xl font-bold">Chọn nhạc nền</h2>
@@ -72,7 +109,7 @@ export default function TabMusic() {
       </div>
 
       <div className="space-y-2 mt-3">
-        {mockMusicList.map((music) => (
+        {musics_system.map((music) => (
           <div
             key={music.id}
             className={`p-3 border rounded-md flex justify-between items-center transition ${
@@ -82,18 +119,20 @@ export default function TabMusic() {
             }`}
           >
             <input
-                type="checkbox"
-                checked={selectedIds.includes(music.id)}
-                onChange={() => toggleSelect(music.id)}
-                className="w-5 h-5 cursor-pointer mr-4 ml-2"
-              />
-            <div className="flex-1 cursor-pointer" onClick={() => toggleSelect(music.id)}>
+              type="checkbox"
+              checked={selectedIds.includes(music.id)}
+              onChange={() => toggleSelect(music.id)}
+              className="w-5 h-5 cursor-pointer mr-4 ml-2"
+            />
+            <div
+              className="flex-1 cursor-pointer"
+              onClick={() => toggleSelect(music.id)}
+            >
               <p className="font-semibold">{music.name}</p>
-              <p className="text-xl text-gray-600">{music.duration}</p>
             </div>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => handlePlay(music.id, music.url)}
+                onClick={() => handlePlaySystem(music.id, music.data)}
                 className="text-xl bg-gray-100 px-2 py-1 rounded hover:bg-gray-200"
               >
                 {playingId === music.id ? "⏸️ Pause" : "▶️ Play"}
@@ -111,6 +150,36 @@ export default function TabMusic() {
           >
             Thêm nhạc nền
           </button>
+        </div>
+      )}
+
+      {music && (
+        <div className="pt-4 border-t mt-4">
+          <h3 className="text-2xl font-bold">Nhạc đang chọn</h3>
+          <div className="mt-2">
+            <p className="text-2xl">Tên: {music.name}</p>
+            <div className="mt-2 flex items-center gap-2">
+              <button
+                onClick={() => handlePlayCurrent(music.data)}
+                className="text-2xl bg-gray-100 px-2 py-1 rounded hover:bg-gray-200"
+              >
+                {playingCurrent ? "⏸️ Pause" : "▶️ Play"}
+              </button>
+            </div>
+            <div className="mt-2">
+              <label className="text-2xl">Âm lượng: </label>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.1"
+                value={music.volume || 0.5}
+                onChange={handleVolumeChange}
+                className="w-full"
+              />
+              <span>{(music.volume * 100).toFixed(0)}%</span>
+            </div>
+          </div>
         </div>
       )}
     </div>

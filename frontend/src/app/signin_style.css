@@ -1,0 +1,43 @@
+input.custom-input,
+input.custom-input:-webkit-autofill,
+input.custom-input:-webkit-autofill:hover,
+input.custom-input:-webkit-autofill:focus,
+input.custom-input:-webkit-autofill:active {
+    font-size: 16px !important;
+    -webkit-text-fill-color: white !important;
+    caret-color: white !important;
+    background-color: transparent !important;
+    transition: background-color 9999s ease-in-out 0s !important;
+}
+
+/* Custom input styles */
+.custom-input {
+    border: none !important;
+    border-bottom: 2px solid white !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
+    color: white !important;
+    caret-color: white !important;
+}
+
+/* Focus state */
+.custom-input:focus {
+    border-bottom: 2px solid #d946ef !important;
+    /* Tailwind's fuchsia-500 */
+    box-shadow: none !important;
+    outline: none !important;
+    color: white !important;
+}
+
+/* Invalid state */
+.custom-input[aria-invalid="true"] {
+    border-bottom: 2px solid #ef4444 !important;
+    /* Tailwind's red-500 */
+}
+
+/* Placeholder styles */
+.custom-input::placeholder {
+    color: #6b7280 !important;
+    /* Tailwind's gray-400, more visible */
+}

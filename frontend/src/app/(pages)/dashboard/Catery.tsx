@@ -1,6 +1,8 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import CategorySelect from "./CaterySelect";
+import Router from "next/navigation";
+import generateRandomString from "@/lib/generateRandomString";
 
 type HandleSelect<T> = {
     [key: string]: (params: T) => void;
@@ -15,6 +17,7 @@ const objectHandleSelect: HandleSelect<string> = {
     },
 };
 function Catery() {
+    const router = Router.useRouter();
     return (
         <div className="flex mt-[40px] items-center">
             <svg
@@ -55,7 +58,12 @@ function Catery() {
                 selectedCategory="Hoàn thiện"
                 onSelect={objectHandleSelect.xuly2}
             />
-            <Button className="ml-auto text-2xl py-[25px] cursor-pointer self-stretch !px-[30px]">
+            <Button
+                onClick={() => {
+                    router.push("/create/" + generateRandomString());
+                }}
+                className="ml-auto text-2xl py-[25px] cursor-pointer self-stretch !px-[30px]"
+            >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"

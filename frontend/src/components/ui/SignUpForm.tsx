@@ -1,29 +1,110 @@
 "use client";
-
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { toast } from "sonner";
+import fetchApi from "@/lib/api/fetch";
+import HttpMethod from "@/types/httpMethos";
 
-interface SignUpFormProps {
-    toggleForm: () => void; // Định nghĩa kiểu cho toggleForm là một hàm
-}
+import "@/app/signin_style.css";
 
-const SignUpForm: React.FC<SignUpFormProps> = ({ toggleForm }) => {
+const SignUpForm = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+
+    // State cho lỗi
+    const [errorEmail, setErrorEmail] = useState("");
+    const [errorUsername, setErrorUsername] = useState("");
+    const [errorPassword, setErrorPassword] = useState("");
+    const [errorConfirmPassword, setErrorConfirmPassword] = useState("");
+
+    const router = useRouter();
+
+    // Validate hàm
+    function validateEmail(email: string) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+    function validateUsername(username: string) {
+        return username.length >= 3;
+    }
+    function validatePassword(password: string) {
+        return password.length >= 6;
+    }
+
+    const handleRegister = async () => {
+        let valid = true;
+
+        if (!validateEmail(email)) {
+            setErrorEmail("Email không hợp lệ.");
+            valid = false;
+        } else {
+            setErrorEmail("");
+        }
+
+        if (!validateUsername(username)) {
+            setErrorUsername("Username phải có ít nhất 3 ký tự.");
+            valid = false;
+        } else {
+            setErrorUsername("");
+        }
+
+        if (!validatePassword(password)) {
+            setErrorPassword("Mật khẩu phải có ít nhất 6 ký tự.");
+            valid = false;
+        } else {
+            setErrorPassword("");
+        }
+
+        if (password !== confirmPassword) {
+            setErrorConfirmPassword("Mật khẩu xác nhận không khớp.");
+            valid = false;
+        } else {
+            setErrorConfirmPassword("");
+        }
+
+        if (!valid) return;
+
+        const res = await fetchApi<number>(
+            "http://localhost:4000/auth/register",
+            HttpMethod.POST,
+            {
+                email,
+                username,
+                password,
+            }
+        );
+        if (res.mes !== "success") {
+            toast.error("Đăng ký không thành công. Vui lòng thử lại.", {
+                duration: 4000,
+                position: "top-center",
+            });
+            return;
+        }
+        console.log(res);
+        toast.success(
+            "Đăng ký thành công! Vui lòng kiểm tra email để xác nhận tài khoản.",
+            { duration: 4000, position: "top-center" }
+        );
+    };
 
     return (
         <div className="w-full max-w-[90%] md:max-w-[70%] space-y-10 text-base md:text-[17px]">
             <div className="space-y-3">
                 <h1 className="text-4xl md:text-5xl font-bold">Sign up</h1>
-                <p className="text-gray-400">If you already have an account register</p>
+                <p className="text-gray-400">
+                    If you already have an account register
+                </p>
                 <p>
                     You can{" "}
                     <button
-                        onClick={toggleForm} // Sử dụng toggleForm để chuyển về form đăng nhập
-                        className="text-fuchsia-500 hover:underline"
+                        onClick={() => router.push("/signin")}
+                        className="text-fuchsia-500 hover:underline cursor-pointer"
                     >
                         Login here!
                     </button>
@@ -31,7 +112,6 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ toggleForm }) => {
             </div>
 
             <div className="space-y-6">
-                {/* Email input */}
                 <InputField
                     label="Email"
                     id="email"
@@ -39,48 +119,63 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ toggleForm }) => {
                     placeholder="Enter your email address"
                     iconPath="M2 7l9.5 5.7a1.94 1.94 0 0 0 2.06 0L23 7"
                     outerPath="M2 4h20v16H2z"
-                    bgColor="bg-white"  // Nền xám sáng
-                    textColor="text-black" // Màu chữ đen
+                    value={email}
+                    onChange={(e: any) => {
+                        setEmail(e.target.value);
+                        setErrorEmail("");
+                    }}
+                    error={errorEmail}
                 />
 
-                {/* Username input */}
                 <InputField
                     label="Username"
                     id="username"
                     type="text"
                     placeholder="Enter your User name"
                     iconPath="M16 21v-2a4 4 0 0 0-8 0v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"
-                    bgColor="bg-white"  // Nền xám sáng
-                    textColor="text-black" // Màu chữ đen
+                    value={username}
+                    onChange={(e: any) => {
+                        setUsername(e.target.value);
+                        setErrorUsername("");
+                    }}
+                    error={errorUsername}
                 />
 
-                {/* Password input */}
                 <PasswordInput
                     label="Password"
                     id="password"
                     placeholder="Enter your Password"
                     show={showPassword}
-                    toggle={() => setShowPassword((prev) => !prev)}
-                    bgColor="bg-white"  // Nền xám sáng
-                    textColor="text-black" // Màu chữ đen
+                    toggle={() => setShowPassword(!showPassword)}
+                    value={password}
+                    onChange={(e: any) => {
+                        setPassword(e.target.value);
+                        setErrorPassword("");
+                    }}
+                    error={errorPassword}
                 />
 
-                {/* Confirm Password input */}
                 <PasswordInput
                     label="Confirm Password"
                     id="confirmPassword"
                     placeholder="Confirm your Password"
                     show={showConfirmPassword}
-                    toggle={() => setShowConfirmPassword((prev) => !prev)}
-                    bgColor="bg-white"  // Nền xám sáng
-                    textColor="text-black" // Màu chữ đen
+                    toggle={() => setShowConfirmPassword(!showConfirmPassword)}
+                    value={confirmPassword}
+                    onChange={(e: any) => {
+                        setConfirmPassword(e.target.value);
+                        setErrorConfirmPassword("");
+                    }}
+                    error={errorConfirmPassword}
                 />
 
-                {/* Register button */}
-                <Button className="w-full py-5 md:py-6 text-lg md:text-xl font-semibold bg-fuchsia-600 hover:bg-fuchsia-700 text-white rounded-full">
-                    Register
-                </Button>
             </div>
+            <Button
+                onClick={handleRegister}
+                className="cursor-pointer w-full py-5 md:py-7 text-lg md:text-2xl font-semibold bg-fuchsia-600 hover:bg-fuchsia-700 text-white rounded-full"
+            >
+                Register
+            </Button>
         </div>
     );
 };
@@ -92,13 +187,14 @@ function InputField({
     placeholder,
     iconPath,
     outerPath = "",
-    bgColor = "bg-white", // Nền mặc định là xám sáng
-    textColor = "text-black", // Chữ mặc định là màu đen
+    value,
+    onChange,
+    error,
 }: any) {
     return (
         <div className="space-y-2">
             <label htmlFor={id}>{label}</label>
-            <div className="relative">
+            <div className="relative py-1">
                 <div className="absolute inset-y-0 left-3 flex items-center">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -119,19 +215,32 @@ function InputField({
                 <Input
                     id={id}
                     type={type}
+                    value={value}
+                    onChange={onChange}
                     placeholder={placeholder}
-                    className={`pl-12 py-5 md:py-6 text-sm md:text-[16px] ${bgColor} ${textColor} border-gray-800 focus:border-fuchsia-500`}
+                    className={`custom-input pl-12 py-5 md:py-6 text-sm md:text-[16px] bg-white text-black border-gray-800 focus:border-fuchsia-500 ${error ? "border-red-500" : ""
+                        }`}
                 />
             </div>
+            {error && <p className="text-red-500 text-xl mt-1">{error}</p>}
         </div>
     );
 }
 
-function PasswordInput({ label, id, placeholder, show, toggle, bgColor, textColor }: any) {
+function PasswordInput({
+    label,
+    id,
+    placeholder,
+    show,
+    toggle,
+    value,
+    onChange,
+    error,
+}: any) {
     return (
         <div className="space-y-2">
             <label htmlFor={id}>{label}</label>
-            <div className="relative">
+            <div className="relative py-1">
                 <div className="absolute inset-y-0 left-3 flex items-center">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -152,8 +261,11 @@ function PasswordInput({ label, id, placeholder, show, toggle, bgColor, textColo
                 <Input
                     id={id}
                     type={show ? "text" : "password"}
+                    value={value}
+                    onChange={onChange}
                     placeholder={placeholder}
-                    className={`pl-12 pr-10 py-5 md:py-6 text-sm md:text-[16px] ${bgColor} ${textColor} border-gray-800 focus:border-fuchsia-500`}
+                    className={`custom-input pl-12 pr-10 py-5 md:py-6 text-sm md:text-[16px] bg-white text-black border-gray-800 focus:border-fuchsia-500 ${error ? "border-red-500" : ""
+                        }`}
                 />
                 <button
                     type="button"
@@ -167,6 +279,7 @@ function PasswordInput({ label, id, placeholder, show, toggle, bgColor, textColo
                     )}
                 </button>
             </div>
+            {error && <p className="text-red-500 text-xl mt-1">{error}</p>}
         </div>
     );
 }

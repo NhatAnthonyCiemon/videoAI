@@ -8,9 +8,120 @@ datasource db {
 }
 
 model users {
-  id            Int       @id @default(autoincrement())
-  username      String    @unique @db.VarChar(50)
-  email         String    @unique @db.VarChar(100)
-  password_hash String
-  created_at    DateTime? @default(now()) @db.Timestamp(6)
+  id                Int      @id @default(autoincrement())
+  email             String?  @unique(map: "unique_email")
+  username          String?
+  password          String?
+  social_id         String?  @unique(map: "unique_social_id")
+  is_verify         Boolean? @default(false)
+  image             String?
+  verificationtoken String?  @unique(map: "unique_verificationtoken")
+  type              String?
+  videos            videos[]
+}
+
+model gallery_music {
+  id   Int     @id @default(autoincrement())
+  url  String
+  name String?
+}
+
+model gallery_sticker {
+  id   Int     @id @default(autoincrement())
+  url  String
+  name String?
+}
+
+model image_video {
+  id             Int       @id @default(autoincrement())
+  video_id       String?   @db.Char(10)
+  ordinal_number Int
+  url            String
+  content        String?
+  prompt         String?
+  start_time     DateTime? @db.Time(6)
+  end_time       DateTime? @db.Time(6)
+  videos         videos?   @relation(fields: [video_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model music {
+  id         Int       @id @default(autoincrement())
+  video_id   String?   @db.Char(10)
+  start_time DateTime? @db.Time(6)
+  end_time   DateTime? @db.Time(6)
+  url        String?
+  is_custom  Boolean?  @default(false)
+  videos     videos?   @relation(fields: [video_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model subtitles {
+  id               Int       @id @default(autoincrement())
+  video_id         String?   @db.Char(10)
+  start_time       DateTime? @db.Time(6)
+  end_time         DateTime? @db.Time(6)
+  content          String?
+  align            String?
+  position         String?
+  font             String?
+  color            String?
+  effect           String?
+  font_size        String?
+  font_style       String?
+  background_color String?
+  videos           videos?   @relation(fields: [video_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model ticker {
+  id             Int             @id @default(autoincrement())
+  video_id       String?         @db.Char(10)
+  start_time     DateTime?       @db.Time(6)
+  end_time       DateTime?       @db.Time(6)
+  id_sticker     Int?
+  width          Int?            @default(100)
+  height         Int?            @default(100)
+  po_x           Int?            @default(0)
+  po_y           Int?            @default(0)
+  sticker_system sticker_system? @relation(fields: [id_sticker], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  videos         videos?         @relation(fields: [video_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model video_info {
+  video_id         String   @id @db.Char(10)
+  music_bg         Boolean? @default(false)
+  duration_seconds Int?
+  videos           videos   @relation(fields: [video_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model videos {
+  id          String        @id @db.Char(10)
+  user_id     Int?
+  name        String
+  category    String?
+  created_at  DateTime?     @default(now()) @db.Timestamp(6)
+  view        Int?          @default(0)
+  content     String?
+  url         String?
+  step        Int
+  keyword     String?
+  image_video image_video[]
+  music       music[]
+  subtitles   subtitles[]
+  ticker      ticker[]
+  video_info  video_info?
+  users       users?        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  voice_info  voice_info?
+}
+
+model voice_info {
+  video_id String  @id @db.Char(10)
+  pitch    Float?
+  rate     Float?
+  voice    String?
+  videos   videos  @relation(fields: [video_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model sticker_system {
+  id     Int      @id @default(autoincrement())
+  url    String
+  ticker ticker[]
 }

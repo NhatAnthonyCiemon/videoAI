@@ -330,6 +330,7 @@ export default function CreateScript({
                                 </label>
                                 <textarea
                                     disabled={disabled}
+                                    spellCheck="false"
                                     placeholder="Kịch bản ..."
                                     className="text-xl none_focus resize-none overflow-auto h-[350px] w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:border-[#a1a1a1]"
                                     rows={4}

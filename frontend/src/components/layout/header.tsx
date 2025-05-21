@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@/app/UserProvider";
 import { useState } from "react";
 import Link from "next/link";
-
+import generateRandomString from "@/lib/generateRandomString";
 export default function Header() {
     const router = useRouter();
     const { user, setUser } = useUser();
@@ -18,7 +18,7 @@ export default function Header() {
             <div className="h-24" />
 
             <header className="border-b border-gray-300 bg-white text-black fixed top-0 left-0 right-0 z-50 w-full shadow">
-                <div className="w-full mx-auto px-4 sm:px-20 py-4 flex items-center justify-between gap-y-4">
+                <div className="w-[1420.8px] mx-auto px-4 sm:px-20 py-4 flex items-center justify-between gap-y-4">
                     {/* Left: Sidebar toggle + Logo */}
                     <div className="flex items-center gap-3">
                         {/* Sidebar Toggle Button */}
@@ -70,19 +70,23 @@ export default function Header() {
                     {/* Center: Navigation */}
                     <nav className="hidden md:flex items-center gap-6 lg:gap-12 text-lg md:text-2xl">
                         <Link
-                            href="#"
+                            href="/"
                             className="hover:text-fuchsia-600 hover:scale-105 transition-all duration-300 ease-in-out"
                         >
                             Trang chủ
                         </Link>
-                        <Link
-                            href="#"
-                            className="hover:text-fuchsia-600 hover:scale-105 transition-all duration-300 ease-in-out"
+                        <p
+                            onClick={() => {
+                                router.push(
+                                    "/create/" + generateRandomString()
+                                );
+                            }}
+                            className="hover:text-fuchsia-600 cursor-pointer hover:scale-105 transition-all duration-300 ease-in-out"
                         >
                             Tạo video
-                        </Link>
+                        </p>
                         <Link
-                            href="#"
+                            href="/dashboard"
                             className="hover:text-fuchsia-600 hover:scale-105 transition-all duration-300 ease-in-out"
                         >
                             Video của tôi

@@ -159,3 +159,15 @@ html {
     outline: none !important;
     box-shadow: none !important;
 }
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    display: none;
+}
+
+/* Cho Firefox */
+html,
+body {
+    scrollbar-width: none;
+    -ms-overflow-style: none; /* IE và Edge */
+}

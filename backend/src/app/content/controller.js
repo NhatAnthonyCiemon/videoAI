@@ -366,18 +366,18 @@ const contentController = {
             const pitch = voice_info.pitch || 0; // Cao độ mặc định
             const num_lines = 1; // Số dòng mặc định
 
-            // Xử lý từng đoạn script để tạo file âm thanh
-            const audioUrls = [];
-            for (let i = 0; i < scripts.length; i++) {
-                const audioUrl = await processTextToSpeech({
-                    text: scripts[i],
-                    voice, // Thay bằng giọng nói bạn muốn sử dụng
-                    rate, // Tốc độ đọc
-                    pitch, // Cao độ
-                    num_lines, // Số dòng
-                });
-                audioUrls.push(audioUrl);
-            }
+            // Xử lý từng đoạn script để tạo file âm thanh song song
+            const audioUrls = await Promise.all(
+                scripts.map((script) =>
+                    processTextToSpeech({
+                        text: script,
+                        voice, // Thay bằng giọng nói bạn muốn sử dụng
+                        rate, // Tốc độ đọc
+                        pitch, // Cao độ
+                        num_lines, // Số dòng
+                    })
+                )
+            );
 
             console.log("🔊 Danh sách URL âm thanh:", audioUrls);
 

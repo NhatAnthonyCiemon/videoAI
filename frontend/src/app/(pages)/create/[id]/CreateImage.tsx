@@ -198,6 +198,7 @@ export default function CreateImage({
                                                 </svg>
                                             </p>
                                             <textarea
+                                                spellCheck="false"
                                                 ref={(el) => {
                                                     if (el) {
                                                         el.style.height =

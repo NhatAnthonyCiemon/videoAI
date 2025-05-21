@@ -7,13 +7,11 @@ input.custom-input:-webkit-autofill:active {
     -webkit-text-fill-color: white !important;
     caret-color: white !important;
     background-color: transparent !important;
-    -webkit-box-shadow: 0 0 0px 1000px #000000 inset !important;
     transition: background-color 9999s ease-in-out 0s !important;
 }
 
 /* Custom input styles */
 .custom-input {
-    background-color: #000000 !important;
     border: none !important;
     border-bottom: 2px solid white !important;
     border-radius: 0 !important;

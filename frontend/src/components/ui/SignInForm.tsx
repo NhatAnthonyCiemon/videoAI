@@ -323,12 +323,11 @@ const SignInForm = () => {
                 </div>
             </div>
 
-            {/* Forgot Password Modal */}
             {showForgotModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-                    <div className="bg-white rounded-lg shadow-lg p-8 w-[90vw] max-w-md relative">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
+                    <div className="bg-gray-900 rounded-xl shadow-2xl p-10 w-full max-w-[40%] md:max-w-[40%] transform transition-all duration-300 scale-100 hover:scale-[1.02]">
                         <button
-                            className="absolute top-2 right-3 text-xl text-gray-400 hover:text-gray-700"
+                            className="absolute top-4 right-4 text-3xl text-gray-400 hover:text-fuchsia-500 transition-colors duration-200"
                             onClick={() => {
                                 setShowForgotModal(false);
                                 setForgotEmail("");
@@ -337,29 +336,47 @@ const SignInForm = () => {
                         >
                             ×
                         </button>
-                        <h2 className="text-2xl font-bold mb-4 text-center">
+                        <h2 className="text-5xl font-bold mb-6 text-center text-white">
                             Quên mật khẩu
                         </h2>
-                        <p className="mb-2 text-gray-600 text-center">
+                        <p className="mb-6 text-gray-300 text-center text-base md:text-[17px]">
                             Nhập email để nhận link đặt lại mật khẩu
                         </p>
-                        <Input
-                            type="email"
-                            value={forgotEmail}
-                            onChange={(e) => {
-                                setForgotEmail(e.target.value);
-                                setForgotError("");
-                            }}
-                            placeholder="Nhập email của bạn"
-                            className={`mt-2 text-white border-0 border-b-2 border-black focus:border-fuchsia-500 ${forgotError ? "border-red-500" : ""}`}
-                        />
+                        <div className="relative">
+                            <div className="absolute inset-y-0 left-3 flex items-center">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="18"
+                                    height="18"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="text-gray-400"
+                                >
+                                    <rect width="20" height="16" x="2" y="4" rx="2" />
+                                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                                </svg>
+                            </div>
+                            <Input
+                                type="email"
+                                value={forgotEmail}
+                                onChange={(e) => {
+                                    setForgotEmail(e.target.value);
+                                    setForgotError("");
+                                }}
+                                placeholder="Nhập email của bạn"
+                                className={`custom-input pl-12 pr-10 py-5 md:py-6 text-xl md:text-[16px] text-white bg-gray-800 border-0 border-b-2 border-gray-600 focus:border-fuchsia-500 placeholder-gray-400 transition-all duration-200 ${forgotError ? "border-red-500" : ""
+                                    }`}
+                            />
+                        </div>
                         {forgotError && (
-                            <p className="text-red-500 text-xl mt-1">
-                                {forgotError}
-                            </p>
+                            <p className="text-red-500 text-xl mt-3">{forgotError}</p>
                         )}
                         <Button
-                            className="w-full mt-4 bg-fuchsia-600 hover:bg-fuchsia-700 text-white"
+                            className="w-full mt-8 bg-fuchsia-600 hover:bg-fuchsia-700 text-white rounded-full py-5 md:py-7 text-lg md:text-2xl font-semibold transition-all duration-200 transform hover:scale-105"
                             onClick={handleForgotSubmit}
                         >
                             Gửi yêu cầu
@@ -370,22 +387,39 @@ const SignInForm = () => {
 
             {/* Success Modal */}
             {showSuccessModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-                    <div className="bg-white rounded-lg shadow-lg p-8 w-[90vw] max-w-md text-center relative">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
+                    <div className="bg-gray-900 rounded-xl shadow-2xl p-10 w-full max-w-[40%] md:max-w-[40%] text-center relative transform transition-all duration-300 scale-100 hover:scale-[1.02]">
                         <button
-                            className="absolute top-2 right-3 text-xl text-gray-400 hover:text-gray-700"
+                            className="absolute top-4 right-4 text-3xl text-gray-400 hover:text-fuchsia-500 transition-colors duration-200"
                             onClick={() => setShowSuccessModal(false)}
                         >
                             ×
                         </button>
-                        <h2 className="text-2xl font-bold mb-4">
+                        <div className="flex justify-center mb-6">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="48"
+                                height="48"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="text-green-500"
+                            >
+                                <path d="M20 6 9 17l-5-5" />
+                                <circle cx="12" cy="12" r="10" />
+                            </svg>
+                        </div>
+                        <h2 className="text-5xl font-bold mb-6 text-white">
                             Đã gửi email!
                         </h2>
-                        <p className="text-gray-600">
+                        <p className="text-gray-300 text-base md:text-[17px] mb-8">
                             Vui lòng kiểm tra email để đặt lại mật khẩu.
                         </p>
                         <Button
-                            className="mt-6 bg-fuchsia-600 hover:bg-fuchsia-700 text-white"
+                            className="w-full bg-fuchsia-600 hover:bg-fuchsia-700 text-white rounded-full py-5 md:py-7 text-lg md:text-2xl font-semibold transition-all duration-200 transform hover:scale-105"
                             onClick={() => setShowSuccessModal(false)}
                         >
                             Đóng
@@ -393,24 +427,43 @@ const SignInForm = () => {
                     </div>
                 </div>
             )}
+
+            {/* Fail Modal */}
             {showFailModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-                    <div className="bg-white rounded-lg shadow-lg p-8 w-[90vw] max-w-md text-center relative">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300">
+                    <div className="bg-gray-900 rounded-xl shadow-2xl p-10 w-full max-w-[40%] md:max-w-[40%] text-center relative transform transition-all duration-300 scale-100 hover:scale-[1.02]">
                         <button
-                            className="absolute top-2 right-3 text-xl text-gray-400 hover:text-gray-700"
+                            className="absolute top-4 right-4 text-3xl text-gray-400 hover:text-fuchsia-500 transition-colors duration-200"
                             onClick={() => setShowFailModal(false)}
                         >
                             ×
                         </button>
-                        <h2 className="text-2xl font-bold mb-4 text-red-600">
+                        <div className="flex justify-center mb-6">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="48"
+                                height="48"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="text-red-500"
+                            >
+                                <path d="M18 6 6 18" />
+                                <path d="m6 6 12 12" />
+                                <circle cx="12" cy="12" r="10" />
+                            </svg>
+                        </div>
+                        <h2 className="text-5xl font-bold mb-6 text-red-500">
                             Gửi thất bại!
                         </h2>
-                        <p className="text-gray-600">
-                            Có lỗi xảy ra hoặc email không tồn tại. Vui lòng thử
-                            lại.
+                        <p className="text-gray-300 text-base md:text-[17px] mb-8">
+                            Có lỗi xảy ra hoặc email không tồn tại. Vui lòng thử lại.
                         </p>
                         <Button
-                            className="mt-6 bg-fuchsia-600 hover:bg-fuchsia-700 text-white"
+                            className="w-full bg-fuchsia-600 hover:bg-fuchsia-700 text-white rounded-full py-5 md:py-7 text-lg md:text-2xl font-semibold transition-all duration-200 transform hover:scale-105"
                             onClick={() => setShowFailModal(false)}
                         >
                             Đóng

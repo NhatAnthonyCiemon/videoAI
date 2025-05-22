@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 import cors from "cors";
 import passport from "./config/passport.js";
 
-
 dotenv.config();
 
 const app = express();

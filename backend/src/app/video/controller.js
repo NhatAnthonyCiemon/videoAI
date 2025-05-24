@@ -41,6 +41,8 @@ const videoController = {
                         url: item.url,
                         prompt: item.prompt,
                         ordinal_number: item.ordinal_number,
+                        start_time: item.start_time,
+                        end_time: item.end_time,
                     };
                 });
                 const image_video = image_video_raw
@@ -50,6 +52,8 @@ const videoController = {
                             content: item.content,
                             url: item.url,
                             prompt: item.prompt,
+                            start_time: item.start_time,
+                            end_time: item.end_time,
                         };
                     });
                 // Lấy thông tin voice_info từ video

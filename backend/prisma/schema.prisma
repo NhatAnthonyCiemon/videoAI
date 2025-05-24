@@ -33,25 +33,28 @@ model gallery_sticker {
 }
 
 model image_video {
-  id             Int       @id @default(autoincrement())
-  video_id       String?   @db.Char(10)
+  id             Int     @id @default(autoincrement())
+  video_id       String? @db.Char(10)
   ordinal_number Int
   url            String
   content        String?
   prompt         String?
-  start_time     DateTime? @db.Time(6)
-  end_time       DateTime? @db.Time(6)
-  videos         videos?   @relation(fields: [video_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  start_time     Float?  @db.Real
+  end_time       Float?  @db.Real
+  videos         videos? @relation(fields: [video_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model music {
-  id         Int       @id @default(autoincrement())
-  video_id   String?   @db.Char(10)
-  start_time DateTime? @db.Time(6)
-  end_time   DateTime? @db.Time(6)
-  url        String?
-  is_custom  Boolean?  @default(false)
-  videos     videos?   @relation(fields: [video_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id           Int           @id @default(autoincrement())
+  video_id     String?       @db.Char(10)
+  start_time   DateTime?     @db.Time(6)
+  end_time     DateTime?     @db.Time(6)
+  url          String?
+  is_custom    Boolean?      @default(false)
+  volume       Float?        @default(1.0) @db.Real
+  id_music     Int?
+  music_system music_system? @relation(fields: [id_music], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  videos       videos?       @relation(fields: [video_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model subtitles {
@@ -123,5 +126,13 @@ model voice_info {
 model sticker_system {
   id     Int      @id @default(autoincrement())
   url    String
+  name   String?
   ticker ticker[]
+}
+
+model music_system {
+  id    Int     @id @default(autoincrement())
+  url   String
+  name  String?
+  music music[]
 }

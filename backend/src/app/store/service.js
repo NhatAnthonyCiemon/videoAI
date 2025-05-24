@@ -194,6 +194,8 @@ const Store = {
                     url: item.url,
                     content: item.content,
                     prompt: item.prompt,
+                    start_time: item.start_time,
+                    end_time: item.end_time,
                 })),
             });
             await prisma.voice_info.update({
@@ -228,6 +230,8 @@ const Store = {
                 url: item.url,
                 content: item.content,
                 prompt: item.prompt,
+                start_time: item.start_time,
+                end_time: item.end_time,
             })),
         });
         await prisma.voice_info.create({

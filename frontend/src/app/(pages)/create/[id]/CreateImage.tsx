@@ -95,7 +95,11 @@ export default function CreateImage({
             top: 0,
             behavior: "smooth",
         });
-        const res = await fetchApi<string>(
+        const res = await fetchApi<{
+            url: string;
+            durations: number[];
+            durationAll: number;
+        }>(
             `http://localhost:4000/content/createvideo`,
             HttpMethod.POST,
             videoData
@@ -104,8 +108,16 @@ export default function CreateImage({
             const newVideoData = videoClass.updateVideo(
                 videoData,
                 "url",
-                res.data!!
+                res.data!!.url
             );
+            newVideoData.image_video.forEach((img, index) => {
+                img.start_time = res.data!!.durations[index];
+                if (index !== newVideoData.image_video.length - 1) {
+                    img.end_time = res.data!!.durations[index + 1] - 0.01;
+                } else {
+                    img.end_time = res.data!!.durationAll;
+                }
+            });
             const newVideoData2 = videoClass.updateVideo(
                 newVideoData,
                 "step",

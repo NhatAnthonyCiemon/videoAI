@@ -383,7 +383,17 @@ const contentController = {
 
             const durations = await getDurations(audioUrls);
             console.log("⏱️ Thời gian các file âm thanh:", durations);
-
+            const startTimeEachImage = [];
+            for (let i = 0; i < durations.length; i++) {
+                if (i === 0) {
+                    startTimeEachImage.push(0);
+                } else {
+                    startTimeEachImage.push(
+                        startTimeEachImage[i - 1] + durations[i - 1]
+                    );
+                }
+            }
+            const durationAll = durations.reduce((acc, cur) => acc + cur, 0);
             console.log("🔊 Bắt đầu merge:");
             const mergedAudio = await mergeMp3Files(audioUrls);
             console.log("🔊 Merge xong:", mergedAudio);
@@ -400,7 +410,11 @@ const contentController = {
             res.status(200).json({
                 mes: "success",
                 status: 200,
-                data: urlVideo,
+                data: {
+                    url: urlVideo,
+                    durations: startTimeEachImage,
+                    durationAll: durationAll,
+                },
             });
             // Xóa file video sau khi upload
             if (fs.existsSync(finalVideo)) {

@@ -10,6 +10,8 @@ const Video = {
                         url: true,
                         prompt: true,
                         ordinal_number: true,
+                        start_time: true,
+                        end_time: true,
                     },
                 },
                 voice_info: {

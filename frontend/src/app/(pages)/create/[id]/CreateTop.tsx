@@ -18,6 +18,7 @@ function CreateTop({
         "Soạn kịch bản và chọn giọng đọc",
         "Tạo hình ảnh",
         "Tạo video",
+        "Edit"
     ];
     const classButton: string = "py-[20px] text-xl flex-1 cursor-pointer";
     const classActive: string = clsx(classButton, "text-white ");

@@ -24,7 +24,7 @@ export default function TabText({
     return (
         <>
             {subtitle && (
-                <div className="space-y-4 text-2xl pt-4 bg-white overflow-y-auto p-4 custom-scroll">
+                <div className="space-y-4 text-2xl pt-4 bg-white overflow-hidden overflow-y-auto p-4 custom-scroll">
                     <h2 className="font-bold">Subtitle Settings</h2>
 
                     <div className="p-2">

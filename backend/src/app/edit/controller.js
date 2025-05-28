@@ -1,10 +1,11 @@
 import { Client } from "@gradio/client";
+import Edit from "./service.js";
 import {
     createResponse,
     createErrorResponse,
 } from "../../utils/responseAPI.js";
 
-const videoController = {
+const editController = {
     export: async (req, res) => {
         try {
             const {
@@ -54,6 +55,52 @@ const videoController = {
             );
         }
     },
+    getMusicSystem: async (req, res) => {
+        try {
+            const music = await Edit.getMusic();
+            if (!music) {
+                return res.status(404).json({
+                    mes: "fail",
+                    status: 404,
+                    data: null,
+                });
+            }
+            res.json({
+                mes: "success",
+                status: 200,
+                data: {
+                    musics: music
+                }
+            });
+
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    },
+
+    getStickerSystem: async (req, res) => {
+        try {
+            const stickers = await Edit.setSticker();
+            if (!stickers) {
+                return res.status(404).json({
+                    mes: "fail",
+                    status: 404,
+                    data: null,
+                });
+            }
+            res.json({
+                mes: "success",
+                status: 200,
+                data: {
+                    stickers: stickers
+                }
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    },
 };
 
-export default videoController;
+export default editController;

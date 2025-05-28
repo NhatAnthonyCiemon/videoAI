@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
+import { Music_System, Music } from "@/types/Video";
 
 export default function TabMusic({
   musics_system,
@@ -7,10 +8,10 @@ export default function TabMusic({
   onAddMusic,
   onUpdateMusic,
 }: {
-  musics_system: { id: number; name: string; data: string }[];
-  music: any;
+  musics_system: Music_System[] | null;
+  music: Music;
   onAddMusic: (id: number, name: string, data: string) => void;
-  onUpdateMusic: (music: any) => void;
+  onUpdateMusic: (music: Music) => void;
 }) {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [playingId, setPlayingId] = useState<number | null>(null);
@@ -75,9 +76,11 @@ export default function TabMusic({
   };
 
   const handleSave = () => {
-    const selectedMusic = musics_system.filter((m) => selectedIds.includes(m.id));
-    selectedMusic.forEach((m) => onAddMusic(m.id, m.name, m.data));
-    setSelectedIds([]);
+    if (musics_system) {
+      const selectedMusic = musics_system.filter((m) => selectedIds.includes(m.id));
+      selectedMusic.forEach((m) => onAddMusic(m.id, m.name, m.url));
+      setSelectedIds([]);
+    }
   };
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -109,14 +112,13 @@ export default function TabMusic({
       </div>
 
       <div className="space-y-2 mt-3">
-        {musics_system.map((music) => (
+        {musics_system?.map((music) => (
           <div
             key={music.id}
-            className={`p-3 border rounded-md flex justify-between items-center transition ${
-              selectedIds.includes(music.id)
+            className={`p-3 border rounded-md flex justify-between items-center transition ${selectedIds.includes(music.id)
                 ? "border-blue-500 bg-blue-50"
                 : "border-gray-300"
-            }`}
+              }`}
           >
             <input
               type="checkbox"
@@ -132,7 +134,7 @@ export default function TabMusic({
             </div>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => handlePlaySystem(music.id, music.data)}
+                onClick={() => handlePlaySystem(music.id, music.url)}
                 className="text-xl bg-gray-100 px-2 py-1 rounded hover:bg-gray-200"
               >
                 {playingId === music.id ? "⏸️ Pause" : "▶️ Play"}

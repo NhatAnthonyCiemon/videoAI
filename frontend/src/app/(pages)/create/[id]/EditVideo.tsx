@@ -1,105 +1,24 @@
 "use client";
-import { useState } from "react";
-import SideBar from "../../components/ui/SideBar";
-import VideoPreview from "../../components/ui/VideoPreview";
-import FormatVideo from "../../components/ui/FormatVideo";
-import SubtitleSetting from "../../components/ui/SubtitleSetting";
-import MusicSetting from "../../components/ui/MusicSetting";
-import StickerSetting from "../../components/ui/StickerSetting";
+import { useState, useEffect } from "react";
+import SideBar from "../../../../components/ui/SideBar";
+import VideoPreview from "../../../../components/ui/VideoPreview";
+import FormatVideo from "../../../../components/ui/FormatVideo";
+import SubtitleSetting from "../../../../components/ui/SubtitleSetting";
+import MusicSetting from "../../../../components/ui/MusicSetting";
+import StickerSetting from "../../../../components/ui/StickerSetting";
+import Video from "@/types/Video";
+import { Music_System, Sticker_System, Music, Sticker, Subtitle, Image_video } from "@/types/Video";
 
-interface Music {
-    id: number;
-    name: string;
-    data: string;
-    start: number;
-    end: number;
-    volume: number;
-    duration: number;
-    status: boolean;
-}
-
-interface Sticker {
-    id: number;
-    name: string;
-    data: string;
-    start: number;
-    end: number;
-    style: {
-        width: number;
-        height: number;
-        rotate: number;
-        position: {
-            x: number;
-            y: number;
-        };
-    };
-    status: boolean;
-}
-
-interface Subtitle {
-    text: string;
-    start: number;
-    end: number;
-    style: {
-        width: number;
-        position: string;
-        fontSize: number;
-        fontColor: string;
-        backgroundColor: string;
-        fontStyle: string[];
-        alignment: string;
-        shadow: {
-            color: string;
-            blur: number;
-            offsetX: number;
-            offsetY: number;
-        };
-        outline: {
-            color: string;
-            width: number;
-        };
-    };
-    status: boolean;
-}
-
-const InitialSubtitles: Subtitle[] = [
-    {
-        text: "Đây là phụ đề.",
-        start: 0,
-        end: 3.984,
-        style: {
-            width: 300,
-            position: "bottom",
-            fontSize: 24,
-            fontColor: "#FFFFFF",
-            backgroundColor: "#000000@0.5",
-            fontStyle: ["bold", "italic"],
-            alignment: "center",
-            shadow: {
-                color: "#000000",
-                blur: 4,
-                offsetX: 2,
-                offsetY: 2,
-            },
-            outline: {
-                color: "#FF0000",
-                width: 1,
-            },
-        },
-        status: true,
-    },
-];
-
-function AddNewSubtitle(text: string, currentList: Subtitle[] = []): Subtitle {
+function AddNewSubtitle(text: string, currentList: Subtitle[] = [], start_time: number = -1, end_time: number = -1): Subtitle {
     const lastSubtitle = currentList[currentList.length - 1];
     const startTime = lastSubtitle ? lastSubtitle.end : 0;
 
     return {
         text,
-        start: startTime,
-        end: startTime + 1,
+        start: start_time < 0 ? startTime : start_time,
+        end: end_time < 0 ? startTime + 1 : end_time,
         style: {
-            width: 300,
+            width: 800,
             position: "bottom",
             fontSize: 24,
             fontColor: "#FFFFFF@1.0",
@@ -121,19 +40,6 @@ function AddNewSubtitle(text: string, currentList: Subtitle[] = []): Subtitle {
     };
 }
 
-const InitialMusics: Music[] = [
-    {
-        id: 0,
-        name: "Lullaby",
-        data: "https://res.cloudinary.com/dphytbuah/video/upload/v1747737999/nh%E1%BA%A1c_n%E1%BB%81n_mp3cut.net_rdtjlc.mp3",
-        start: 0,
-        end: 3.984,
-        volume: 0.5,
-        duration: 0,
-        status: true,
-    },
-];
-
 function AddNewMusic(id: number, name: string, data: string, currentList: Music[] = []): Music {
     const lastMusic = currentList[currentList.length - 1];
     const startTime = lastMusic ? lastMusic.end : 0;
@@ -149,26 +55,6 @@ function AddNewMusic(id: number, name: string, data: string, currentList: Music[
         status: true,
     };
 }
-
-const InitialStickers: Sticker[] = [
-    {
-        id: 0,
-        name: "Chim cánh cụt",
-        data: "https://res.cloudinary.com/dphytbuah/image/upload/v1747738119/images-removebg-preview_y36zfk.png",
-        start: 0,
-        end: 3.984,
-        style: {
-            width: 100,
-            height: 100,
-            rotate: 0,
-            position: {
-                x: 200,
-                y: 200,
-            },
-        },
-        status: true,
-    },
-];
 
 function AddNewSticker(id: number, name: string, data: string, currentList: Sticker[] = []): Sticker {
     const lastSticker = currentList[currentList.length - 1];
@@ -193,43 +79,53 @@ function AddNewSticker(id: number, name: string, data: string, currentList: Stic
     };
 }
 
-const musics_system = [
-    {
-        id: 0,
-        name: "Lullaby",
-        data: "https://res.cloudinary.com/dphytbuah/video/upload/v1747737999/nh%E1%BA%A1c_n%E1%BB%81n_mp3cut.net_rdtjlc.mp3",
-    },
-    {
-        id: 1,
-        name: "Lullaby",
-        data: "https://res.cloudinary.com/dphytbuah/video/upload/v1747737999/nh%E1%BA%A1c_n%E1%BB%81n_mp3cut.net_rdtjlc.mp3",
-    },
-];
-
-const stickers_system = [
-    {
-        id: 0,
-        name: "Chim cánh cụt",
-        data: "https://res.cloudinary.com/dphytbuah/image/upload/v1747738119/images-removebg-preview_y36zfk.png",
-    },
-    {
-        id: 1,
-        name: "Chim cánh cụt",
-        data: "https://res.cloudinary.com/dphytbuah/image/upload/v1747738119/images-removebg-preview_y36zfk.png",
-    },
-];
-
-export default function EditVideo() {
-    const [url, setUrl] = useState("https://res.cloudinary.com/dphytbuah/video/upload/v1747805114/temp_output_with_audio_qijbww.mp4");
+export default function EditVideo({
+    videoData,
+    setVideoData,
+    setWhichActive,
+    musics_sys,
+    setMusics_sys,
+    stickers_sys,
+    setStickers_sys,
+    isPreparing,
+    setIsPreparing,
+}: {
+    videoData: Video;
+    setVideoData: (data: Video) => void;
+    setWhichActive: (index: number) => void;
+    musics_sys: Music_System[] | null;
+    setMusics_sys: (data: Music_System[]) => void;
+    stickers_sys: Sticker_System[] | null;
+    setStickers_sys: (data: Sticker_System[]) => void;
+    isPreparing: boolean;
+    setIsPreparing: (Active: boolean) => void;
+}) {
+    const [url, setUrl] = useState(videoData.url ? videoData.url : "https://res.cloudinary.com/dphytbuah/video/upload/v1747805114/temp_output_with_audio_qijbww.mp4");
     const [selectedTool, setSelectedTool] = useState("subtitles");
     const [tab, setTab] = useState<string>("sticker");
-    const [subtitles, setSubtitles] = useState<Subtitle[]>(InitialSubtitles);
-    const [musics, setMusics] = useState<Music[]>(InitialMusics);
-    const [stickers, setStickers] = useState<Sticker[]>(InitialStickers);
+    const [subtitles, setSubtitles] = useState<Subtitle[]>([]);
+    const [musics, setMusics] = useState<Music[]>([]);
+    const [stickers, setStickers] = useState<Sticker[]>([]);
     const [idxText, setIdxText] = useState<number>(subtitles.length > 0 ? subtitles.length - 1 : -1);
     const [idxMusic, setIdxMusic] = useState<number>(musics.length > 0 ? musics.length - 1 : -1);
     const [idxSticker, setIdxSticker] = useState<number>(stickers.length > 0 ? stickers.length - 1 : -1);
     const [exportStatus, setExportStatus] = useState<string>(""); // State để hiển thị trạng thái export
+    const [text, setText] = useState("");
+
+    useEffect(() => {
+        if (videoData && videoData.image_video) {
+            const newSubtitles = videoData.image_video.map((item: Image_video, index: number) => {
+                // Sử dụng item.content hoặc item.prompt làm nội dung phụ đề
+                return AddNewSubtitle(item.content, subtitles, item.start_time, item.end_time);
+            });
+            // Gộp tất cả content thành 1 đoạn text
+            const combinedText = videoData.image_video.map(item => item.content).join(" ");
+            setText(combinedText);
+            setSubtitles(newSubtitles);
+            setIdxText(newSubtitles.length - 1); // Cập nhật idxText
+        }
+        console.log(musics)
+    }, []); // Bao gồm subtitles trong dependency array
 
     const handleAddSubtitle = (text: string) => {
         const newSubtitle = AddNewSubtitle(text, subtitles);
@@ -379,7 +275,7 @@ export default function EditVideo() {
 
     return (
         <div className="flex h-full w-full">
-            <SideBar selected={selectedTool} onSelect={setSelectedTool} />
+            {/* <SideBar selected={selectedTool} onSelect={setSelectedTool} /> */}
             <div className="bg-white w-[400px]">
                 {selectedTool === "subtitles" && (
                     <SubtitleSetting
@@ -414,7 +310,7 @@ export default function EditVideo() {
                     />
                 )}
             </div>
-            <div className="flex-1 overflow-y-auto max-h-screen custom-scroll">
+            <div className="flex-1 h-full">
                 <div className="pl-4 text-2xl flex gap-4 pt-3">
                     <div>
                         <button
@@ -441,15 +337,16 @@ export default function EditVideo() {
                     subtitles={subtitles}
                     stickers={stickers}
                     musics={musics}
+                    text={text}
                 />
             </div>
-            <div className="pb-30">
+            <div className="min-h-screen">
                 <FormatVideo
                     tab={selectedTool}
                     setTab={setSelectedTool}
-                    musics_system={musics_system}
+                    musics_system={musics_sys}
                     onAddMusic={handleAddMusic}
-                    stickers_system={stickers_system}
+                    stickers_system={stickers_sys}
                     onAddSticker={handleAddSticker}
                     subtitle={subtitles[idxText]}
                     music={musics[idxMusic]}

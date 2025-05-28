@@ -1,7 +1,9 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const editController = require("./controller");
+import editController from "./controller.js";
 
+router.get("/music", editController.getMusicSystem);
+router.get("/sticker", editController.getStickerSystem);
 router.post("/export", editController.export);
 
-module.exports = router;
+export default router;

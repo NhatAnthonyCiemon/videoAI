@@ -48,9 +48,10 @@ interface VideoPreviewProps {
     subtitles: Subtitle[];
     stickers: Sticker[];
     musics: Music[];
+    text: string;
 }
 
-export default function VideoPreview({ url, subtitles, stickers, musics }: VideoPreviewProps) {
+export default function VideoPreview({ url, subtitles, stickers, musics, text }: VideoPreviewProps) {
     const videoRef = useRef<HTMLVideoElement>(null);
     const videoContainerRef = useRef<HTMLDivElement>(null);
     const audioRefs = useRef<{ [key: number]: HTMLAudioElement | null }>({});
@@ -216,7 +217,7 @@ export default function VideoPreview({ url, subtitles, stickers, musics }: Video
     };
 
     return (
-        <div className="flex-1 flex flex-col pt-5 px-4 py-6">
+        <div className="flex-1 flex flex-col pt-5 px-4 py-6 h-full">
             {!isVideoReady && <div className="text-center text-xl">Đang tải video...</div>}
             <div
                 className={`w-full bg-black flex justify-center overflow-hidden rounded-lg shadow relative ${
@@ -359,6 +360,10 @@ export default function VideoPreview({ url, subtitles, stickers, musics }: Video
                         style={{ accentColor: "#2563eb" }}
                     />
                 </div>
+            </div>
+                <h1 className="text-3xl mt-3 mb-2 font-bold">Nội dung</h1>
+            <div className="text-2xl">
+                {text}
             </div>
         </div>
     );

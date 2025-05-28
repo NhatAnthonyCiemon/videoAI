@@ -8,19 +8,43 @@ import LoadingOverlay from "@/components/ui/LoadingOverlay";
 import fetchApi from "@/lib/api/fetch";
 import APIResponse from "@/types/apiResponse";
 import HttpMethod from "@/types/httpMethos";
+import { Music_System, Sticker_System } from "@/types/Video";
+
+interface MusicResponse {
+  data: {
+    musics: Music_System[];
+  };
+  mes: string;
+  status: number;
+}
 
 function CreateVideo({
     videoData,
     setVideoData,
     isCreateAgain,
     setIsCreateAgain,
+    setWhichActive,
+    isPreparing,
+    setIsPreparing,
+    musics,
+    setMusics,
+    stickers,
+    setStickers,
 }: {
     videoData: Video;
     setVideoData: (data: Video) => void;
     isCreateAgain: boolean;
     setIsCreateAgain: (value: boolean) => void;
+    setWhichActive: (index: number) => void;
+    isPreparing: boolean;
+    setIsPreparing: (Active: boolean) => void;
+    musics: Music_System[] | null;
+    setMusics: (data: Music_System[]) => void;
+    stickers: Sticker_System[] | null;
+    setStickers: (data: Sticker_System[]) => void;
 }) {
     const { isModalOpen, openModal, closeModal } = useOverlay();
+
     console.log("videoData", videoData.image_video);
     const handleCreateAgain = async () => {
         setIsCreateAgain(true);
@@ -45,6 +69,34 @@ function CreateVideo({
             );
             setVideoData(newVideoData2);
             setIsCreateAgain(false);
+        } else {
+            throw new Error("Invalid response format");
+        }
+    };
+
+    const handleGetData = async () => {
+        setIsPreparing(true);
+        setWhichActive(3);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
+        const [musicRes, stickerRes] = await Promise.all([
+            fetchApi<{ musics: Music_System[] }>(`http://localhost:4000/edit/music`, HttpMethod.GET),
+            fetchApi<{ stickers: Sticker_System[] }>(`http://localhost:4000/edit/sticker`, HttpMethod.GET),
+        ]);
+
+
+        if (musicRes.mes === "success" && stickerRes.mes === "success") {
+            console.log(musicRes)
+            if (!musicRes.data || !stickerRes.data) {
+                throw new Error("Invalid response data");
+            }
+
+            setMusics(musicRes.data.musics);
+            setStickers(stickerRes.data.stickers);
+            videoData.step = 3;
+            setVideoData(videoData);
+
+            setIsPreparing(false);
         } else {
             throw new Error("Invalid response format");
         }
@@ -233,7 +285,13 @@ function CreateVideo({
                             Edit video
                         </p>
                     </Button>
-                    <Button className="w-full mt-[20px] gap-[10px] items-center py-[20px] rounded-xl">
+                    <Button
+
+                        onClick={() => {
+                            handleGetData();
+                        }}
+
+                        className="w-full mt-[20px] gap-[10px] items-center py-[20px] rounded-xl">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"

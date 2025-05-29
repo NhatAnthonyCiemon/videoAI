@@ -25,4 +25,3 @@ function route(app) {
 }
 
 export default route;
-export default route;

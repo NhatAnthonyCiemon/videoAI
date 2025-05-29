@@ -4,7 +4,8 @@ import { useRouter } from "next/navigation";
 import InforVideo from "@/types/inforVideo";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import RenameDialog from "./RenameDialog";
-import DeleteDialog from "./DeleteDialog"; // Import component mới
+import DeleteDialog from "./DeleteDialog";
+import IncompleteVideoDialog from "./IncompleteVideoDialog";
 import fetchApi from "@/lib/api/fetch";
 import HttpMethod from "@/types/httpMethos";
 
@@ -15,10 +16,11 @@ interface VideoItemProps {
 }
 
 const VideoItem = ({ inforVideo, onViewClick, onClickVideo }: VideoItemProps) => {
-    const { id, url, keyword, name, category, created_at } = inforVideo;
+    const { id, url, keyword, name, category, created_at, step } = inforVideo;
     const router = useRouter();
     const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
-    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false); // Trạng thái cho dialog xóa
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [isIncompleteDialogOpen, setIsIncompleteDialogOpen] = useState(false);
     const [newName, setNewName] = useState(name);
     const [displayName, setDisplayName] = useState(name);
 
@@ -46,7 +48,7 @@ const VideoItem = ({ inforVideo, onViewClick, onClickVideo }: VideoItemProps) =>
 
     const handleRenameCancel = () => {
         console.log("Closing rename dialog via Cancel button");
-        setNewName(name); // Đặt lại tên gốc
+        setNewName(name);
         setIsRenameDialogOpen(false);
     };
 
@@ -60,8 +62,7 @@ const VideoItem = ({ inforVideo, onViewClick, onClickVideo }: VideoItemProps) =>
 
             if (res.mes === "success" && res.status === 200) {
                 setIsDeleteDialogOpen(false);
-                // Điều hướng hoặc làm mới danh sách video
-                router.refresh(); // Làm mới trang để cập nhật danh sách video
+                router.refresh();
             } else {
                 throw new Error(res.message || "Không thể xóa video");
             }
@@ -75,6 +76,20 @@ const VideoItem = ({ inforVideo, onViewClick, onClickVideo }: VideoItemProps) =>
     const handleDeleteCancel = () => {
         console.log("Closing delete dialog via Cancel button");
         setIsDeleteDialogOpen(false);
+    };
+
+    const handleViewClick = () => {
+        if (step === "incomplete") {
+            console.log("Video is incomplete, opening dialog");
+            setIsIncompleteDialogOpen(true);
+        } else {
+            onViewClick();
+        }
+    };
+
+    const handleIncompleteDialogOk = () => {
+        console.log("Closing incomplete video dialog");
+        setIsIncompleteDialogOpen(false);
     };
 
     return (
@@ -167,7 +182,7 @@ const VideoItem = ({ inforVideo, onViewClick, onClickVideo }: VideoItemProps) =>
                 <div className="flex justify-end">
                     <button
                         className="text-xl px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 bg-gray-50 transition-colors duration-200 cursor-pointer shadow-sm font-medium"
-                        onClick={onViewClick}
+                        onClick={handleViewClick}
                     >
                         Xem
                     </button>
@@ -193,6 +208,12 @@ const VideoItem = ({ inforVideo, onViewClick, onClickVideo }: VideoItemProps) =>
                 onConfirm={handleDelete}
                 onCancel={handleDeleteCancel}
                 videoName={displayName}
+            />
+
+            <IncompleteVideoDialog
+                isOpen={isIncompleteDialogOpen}
+                onOpenChange={setIsIncompleteDialogOpen}
+                onOk={handleIncompleteDialogOk}
             />
         </div>
     );

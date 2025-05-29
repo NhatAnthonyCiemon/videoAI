@@ -5,7 +5,7 @@ interface InforVideo {
     name: string;
     category: string;
     keyword: string;
-    step: number;
+    step: string;
     created_at: Date;
 }
 

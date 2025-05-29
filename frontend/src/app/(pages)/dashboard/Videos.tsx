@@ -2,46 +2,104 @@
 import VideoItem from "./VideoItem";
 import InforVideo from "@/types/inforVideo";
 import Pagination from "./Pagination";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import VideoPopup from "@/components/ui/videoPopup";
+import fetchApi from "@/lib/api/fetch";
+import HttpMethod from "@/types/httpMethos";
+import { useFilter } from "./FilterContext";
 
 function Videos() {
-    const inforVideos: InforVideo[] = [
-        { url: "https://www.youtube.com/embed/MbJ72KO5khs", subtitle: "Video 1 - Hướng dẫn sử dụng" },
-        { url: "https://www.youtube.com/embed/hOHKltAiKXQ", subtitle: "Video 2 - Giới thiệu sản phẩm" },
-        { url: "https://www.youtube.com/embed/6acS2vOxmRI", subtitle: "Video 3 - Video demo" },
-        { url: "https://www.youtube.com/embed/fnlJw9H0xAM", subtitle: "Video 4 - Tạo video nhanh" },
-        { url: "https://www.youtube.com/embed/NlC3tRmQrP0", subtitle: "Video 5 - Mẹo hay" },
-        { url: "https://www.youtube.com/embed/5rFMFgv81YU", subtitle: "Video 6 - Hướng dẫn chi tiết" },
-        { url: "https://www.youtube.com/embed/QX9Ox5-_GTw", subtitle: "Video 7 - Giới thiệu tính năng" },
-        { url: "https://www.youtube.com/embed/Wo2G9740xyE", subtitle: "Video 8 - Xu hướng mới" },
-        { url: "https://www.youtube.com/embed/7XPGU7dmZXg", subtitle: "Video 9 - Mẫu video" },
-    ];
-
+    const router = useRouter();
+    const { search, category, sort, status } = useFilter();
+    const [inforVideos, setInforVideos] = useState<InforVideo[]>([]);
     const [curpage, setCurpage] = useState(1);
-    const [totalPages, setTotalPages] = useState(20);
+    const [totalPages, setTotalPages] = useState(1);
     const [popupVideo, setPopupVideo] = useState<{ url: string; subtitle: string } | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    const fetchVideos = async (page: number) => {
+        try {
+            setLoading(true);
+            setError(null);
+
+            const params = new URLSearchParams({
+                page: page.toString(),
+                limit: "2",
+                ...(search && { q: search }),
+                ...(category !== "Tất cả danh mục" && { category }),
+                ...(sort && { sort: sort === "Mới nhất" ? "desc" : "asc" }),
+                ...(status && { status: status === "Hoàn thiện" ? "completed" : "incomplete" }),
+            });
+
+            const url = `http://localhost:4000/video/getVideoData?${params.toString()}`;
+            console.log(`Gọi API: ${url}`);
+
+            const res = await fetchApi<InforVideo[] & { totalPages: number }>(
+                url,
+                HttpMethod.GET
+            );
+
+            console.log("API Response:", JSON.stringify(res, null, 2));
+            if (res.mes === "success" && res.status === 200) {
+                if (!Array.isArray(res.data)) {
+                    console.warn("Dữ liệu video không phải mảng, đặt mảng rỗng");
+                    setInforVideos([]);
+                    setTotalPages(1);
+                } else {
+                    setInforVideos(res.data);
+                    setTotalPages(res.totalPages || 1);
+                }
+            } else {
+                throw new Error(res.message || "Định dạng response không hợp lệ");
+            }
+        } catch (err: any) {
+            const errorMessage = err.message || "Lỗi khi tải dữ liệu video. Vui lòng thử lại.";
+            setError(errorMessage);
+            console.error("Error:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        console.log("useEffect chạy, page:", curpage, "filters:", { search, category, sort, status });
+        fetchVideos(curpage);
+    }, [curpage, search, category, sort, status]);
+
+    const handleVideoClick = (id: string) => {
+        router.push(`/create/${id}`);
+    };
 
     return (
         <>
-            <div className="grid grid-cols-3 gap-x-5 gap-y-10 mt-[40px]">
-                {inforVideos.map((inforVideo, index) => (
-                    <VideoItem
-                        key={index}
-                        inforVideo={inforVideo}
-                        onViewClick={() => setPopupVideo(inforVideo)}
-                        onClickVideo={() => setPopupVideo(inforVideo)}
-                    />
-                ))}
-            </div>
+            {loading && <div className="text-center text-2xl mt-10">Đang tải...</div>}
+            {error && <div className="text-red-500 text-center text-2xl mt-10">{error}</div>}
+            {!loading && !error && inforVideos.length === 0 && (
+                <div className="text-center text-2xl mt-10">Không có video nào để hiển thị.</div>
+            )}
+            {!loading && inforVideos.length > 0 && (
+                <div className="grid grid-cols-3 gap-x-5 gap-y-10 mt-[40px]">
+                    {inforVideos.map((inforVideo, index) => (
+                        <VideoItem
+                            key={index}
+                            inforVideo={inforVideo}
+                            onViewClick={() => setPopupVideo(inforVideo)}
+                            onClickVideo={() => handleVideoClick(inforVideo.id)}
+                        />
+                    ))}
+                </div>
+            )}
 
-            <Pagination
-                curpage={curpage}
-                totalPages={totalPages}
-                onPageChange={setCurpage}
-            />
+            {!loading && !error && inforVideos.length > 0 && (
+                <Pagination
+                    curpage={curpage}
+                    totalPages={totalPages}
+                    onPageChange={setCurpage}
+                />
+            )}
 
-            {/* Popup video */}
             {popupVideo && (
                 <VideoPopup
                     url={popupVideo.url}

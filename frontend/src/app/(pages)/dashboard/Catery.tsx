@@ -1,23 +1,14 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import CategorySelect from "./CaterySelect";
-import Router from "next/navigation";
+import { useRouter } from "next/navigation";
 import generateRandomString from "@/lib/generateRandomString";
+import { useFilter } from "./FilterContext";
 
-type HandleSelect<T> = {
-    [key: string]: (params: T) => void;
-};
-
-const objectHandleSelect: HandleSelect<string> = {
-    xuly: (params: string) => {
-        console.log(params);
-    },
-    xuly2: (params: string) => {
-        console.log(params);
-    },
-};
 function Catery() {
-    const router = Router.useRouter();
+    const router = useRouter();
+    const { setCategory, setSort, setStatus } = useFilter();
+
     return (
         <div className="flex mt-[40px] items-center">
             <svg
@@ -37,26 +28,21 @@ function Catery() {
             <p className="text-2xl mx-[15px]">Lọc:</p>
             <CategorySelect
                 className="ml-[15px]"
-                categories={[
-                    "Tất cả danh mục",
-                    "Thể thao",
-                    "Giải trí",
-                    "Kinh doanh",
-                ]}
+                categories={["Tất cả danh mục", "TikTok", "Instagram", "Youtube", "Twitter"]}
                 selectedCategory="Tất cả danh mục"
-                onSelect={objectHandleSelect.xuly}
+                onSelect={setCategory}
             />
             <CategorySelect
                 className="ml-[15px]"
                 categories={["Mới nhất", "Cũ nhất"]}
                 selectedCategory="Mới nhất"
-                onSelect={objectHandleSelect.xuly2}
+                onSelect={setSort}
             />
             <CategorySelect
                 className="ml-[15px]"
                 categories={["Hoàn thiện", "Chưa hoàn thiện"]}
                 selectedCategory="Hoàn thiện"
-                onSelect={objectHandleSelect.xuly2}
+                onSelect={setStatus}
             />
             <Button
                 onClick={() => {

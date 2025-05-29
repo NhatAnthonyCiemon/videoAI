@@ -481,6 +481,7 @@ const contentController = {
                 status: 200,
                 data: transcript,
             });
+
             // Xóa file tạm sau khi xử lý xong
             fs.unlinkSync(inputFilePath);
         } catch (error) {

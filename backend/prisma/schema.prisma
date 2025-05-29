@@ -8,19 +8,18 @@ datasource db {
 }
 
 model users {
-  id                Int      @id @default(autoincrement())
-  email             String?  @unique(map: "unique_email")
+  id                Int              @id @default(autoincrement())
+  email             String?          @unique(map: "unique_email")
   username          String?
   password          String?
-  social_id         String?  @unique(map: "unique_social_id")
-  is_verify         Boolean? @default(false)
+  social_id         String?          @unique(map: "unique_social_id")
+  is_verify         Boolean?         @default(false)
   image             String?
-  verificationtoken String?  @unique(map: "unique_verificationtoken")
+  verificationtoken String?          @unique(map: "unique_verificationtoken")
   type              String?
-  videos            videos[]
-
-  music_system      music_system[]   
+  music_system      music_system[]
   sticker_system    sticker_system[]
+  videos            videos[]
 }
 
 model gallery_music {
@@ -55,7 +54,7 @@ model music {
   is_custom    Boolean?      @default(false)
   volume       Float?        @default(1.0) @db.Real
   id_music     Int?
-  status       Boolean?        @default(true)
+  status       Boolean?      @default(true)
   music_system music_system? @relation(fields: [id_music], references: [id], onDelete: NoAction, onUpdate: NoAction)
   videos       videos?       @relation(fields: [video_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
@@ -74,7 +73,7 @@ model subtitles {
   font_size        String?
   font_style       String?
   background_color String?
-  status           Boolean?        @default(true)
+  status           Boolean?  @default(true)
   videos           videos?   @relation(fields: [video_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
@@ -131,23 +130,19 @@ model voice_info {
 }
 
 model sticker_system {
-  id     Int     @id @default(autoincrement())
-  name   String?
-  url    String?
-  ticker ticker[]
-
-  id_user Int?     // có thể null
+  id      Int      @id @default(autoincrement())
+  url     String?
+  name    String?
+  id_user Int?
   user    users?   @relation(fields: [id_user], references: [id])
+  ticker  ticker[]
 }
-
 
 model music_system {
   id      Int     @id @default(autoincrement())
   name    String?
-  url    String?
+  id_user Int?
+  url     String?
   music   music[]
-  
-  id_user Int?        // có thể null
-  user    users?      @relation(fields: [id_user], references: [id])
+  user    users?  @relation(fields: [id_user], references: [id])
 }
-

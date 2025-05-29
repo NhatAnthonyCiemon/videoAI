@@ -6,8 +6,11 @@ type LoadingOverlayProps = {
     message?: string;
 };
 
-const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ isPreparing, message = 'Đang chuẩn bị dữ liệu...' }) => {
-    if (!isPreparing) return null; // Không hiển thị nếu isPreparing là false
+const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
+    isPreparing,
+    message = "Đang chuẩn bị dữ liệu...",
+}) => {
+    // Không hiển thị nếu isPreparing là false
     useEffect(() => {
         window.scrollTo(0, 0);
         document.body.style.overflow = "hidden";
@@ -15,6 +18,7 @@ const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ isPreparing, message = 
             document.body.style.overflow = "auto";
         };
     }, []);
+    if (!isPreparing) return null;
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
             <div className="flex flex-col items-center">

@@ -174,6 +174,8 @@ const storeController = {
             voice_info,
             url,
         } = req.body;
+
+        console.log("calll")
         if (
             !id ||
             !user_id ||

@@ -3,9 +3,10 @@ import React, { useEffect } from "react";
 
 type LoadingOverlayProps = {
     isPreparing: boolean;
+    message?: string;
 };
 
-const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ isPreparing }) => {
+const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ isPreparing, message = 'Đang chuẩn bị dữ liệu...' }) => {
     if (!isPreparing) return null; // Không hiển thị nếu isPreparing là false
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -40,7 +41,7 @@ const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ isPreparing }) => {
                 </svg>
                 {/* Text */}
                 <p className="mt-4 text-xl text-white font-semibold">
-                    Đang chuẩn bị dữ liệu...
+                    {message}
                 </p>
             </div>
         </div>

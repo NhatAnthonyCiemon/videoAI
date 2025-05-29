@@ -109,7 +109,7 @@ export default function TabSticker({
                             <img
                                 src={sticker.data}
                                 alt={sticker.name}
-                                className="w-12 h-12 rounded object-contain"
+                                className="max-w-[100px] max-h-[100px] rounded object-contain"
                                 style={{
                                     width: sticker.style.width,
                                     height: sticker.style.height,

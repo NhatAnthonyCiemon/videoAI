@@ -21,6 +21,7 @@ const videoController = {
                         pitch: 0,
                     },
                     url: "",
+                    url_edit: "",
                 };
                 res.json({
                     mes: "success",
@@ -73,6 +74,7 @@ const videoController = {
                     keyword: video.keyword,
                     voice_info: voice_info,
                     url: video.url,
+                    url_edit: video.url_edit,
                 };
                 res.json({
                     mes: "success",

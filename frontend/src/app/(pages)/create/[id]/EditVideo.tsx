@@ -8,76 +8,10 @@ import MusicSetting from "../../../../components/ui/MusicSetting";
 import StickerSetting from "../../../../components/ui/StickerSetting";
 import Video from "@/types/Video";
 import { Music_System, Sticker_System, Music, Sticker, Subtitle, Image_video } from "@/types/Video";
-
-function AddNewSubtitle(text: string, currentList: Subtitle[] = [], start_time: number = -1, end_time: number = -1): Subtitle {
-    const lastSubtitle = currentList[currentList.length - 1];
-    const startTime = lastSubtitle ? lastSubtitle.end : 0;
-
-    return {
-        text,
-        start: start_time < 0 ? startTime : start_time,
-        end: end_time < 0 ? startTime + 1 : end_time,
-        style: {
-            width: 800,
-            position: "bottom",
-            fontSize: 24,
-            fontColor: "#FFFFFF@1.0",
-            backgroundColor: "#000000@0.5",
-            fontStyle: [],
-            alignment: "center",
-            shadow: {
-                color: "#000000",
-                blur: 2,
-                offsetX: 1,
-                offsetY: 1,
-            },
-            outline: {
-                color: "#000000",
-                width: 1,
-            },
-        },
-        status: true,
-    };
-}
-
-function AddNewMusic(id: number, name: string, data: string, currentList: Music[] = []): Music {
-    const lastMusic = currentList[currentList.length - 1];
-    const startTime = lastMusic ? lastMusic.end : 0;
-
-    return {
-        id,
-        name,
-        data,
-        start: startTime,
-        end: startTime + 1,
-        volume: 0.5,
-        duration: 0,
-        status: true,
-    };
-}
-
-function AddNewSticker(id: number, name: string, data: string, currentList: Sticker[] = []): Sticker {
-    const lastSticker = currentList[currentList.length - 1];
-    const startTime = lastSticker ? lastSticker.end : 0;
-
-    return {
-        id,
-        name,
-        data,
-        start: startTime,
-        end: startTime + 1,
-        style: {
-            width: 100,
-            height: 100,
-            rotate: 0,
-            position: {
-                x: 200,
-                y: 200,
-            },
-        },
-        status: true,
-    };
-}
+import LoadingOverlay from "@/components/ui/LoadingOverlay";
+import VideoExportPopup from "@/components/ui/VideoExportPopup";
+import Notification from "@/components/ui/Notification";
+import { AddNewSubtitle, AddNewMusic, AddNewSticker } from "@/types/Video";
 
 export default function EditVideo({
     videoData,
@@ -89,6 +23,13 @@ export default function EditVideo({
     setStickers_sys,
     isPreparing,
     setIsPreparing,
+
+    subtitles,
+    setSubtitles,
+    musics,
+    setMusics,
+    stickers,
+    setStickers,
 }: {
     videoData: Video;
     setVideoData: (data: Video) => void;
@@ -99,20 +40,38 @@ export default function EditVideo({
     setStickers_sys: (data: Sticker_System[]) => void;
     isPreparing: boolean;
     setIsPreparing: (Active: boolean) => void;
+
+    subtitles: Subtitle[] | [];
+    setSubtitles: (data: Subtitle[]) => void;
+    musics: Music[] | [];
+    setMusics: (data: Music[]) => void;
+    stickers: Sticker[] | [];
+    setStickers: (data: Sticker[]) => void;
 }) {
     const [url, setUrl] = useState(videoData.url ? videoData.url : "https://res.cloudinary.com/dphytbuah/video/upload/v1747805114/temp_output_with_audio_qijbww.mp4");
     const [selectedTool, setSelectedTool] = useState("subtitles");
     const [tab, setTab] = useState<string>("sticker");
-    const [subtitles, setSubtitles] = useState<Subtitle[]>([]);
-    const [musics, setMusics] = useState<Music[]>([]);
-    const [stickers, setStickers] = useState<Sticker[]>([]);
+
     const [idxText, setIdxText] = useState<number>(subtitles.length > 0 ? subtitles.length - 1 : -1);
     const [idxMusic, setIdxMusic] = useState<number>(musics.length > 0 ? musics.length - 1 : -1);
     const [idxSticker, setIdxSticker] = useState<number>(stickers.length > 0 ? stickers.length - 1 : -1);
-    const [exportStatus, setExportStatus] = useState<string>(""); // State để hiển thị trạng thái export
     const [text, setText] = useState("");
+    const [isLoad, setIsLoad] = useState(false);
+    const [showPopup, setShowPopup] = useState(false);
+    const [showNot, setShowNot] = useState(false);
+    const [mes, setMes] = useState("");
+    const [video_url, setVideoUrl] = useState("");
+
+    const onClose = () => {
+        setShowNot(false); // Ẩn Notification khi đóng
+    };
 
     useEffect(() => {
+        if (subtitles.length > 0) {
+            console.log("có data");
+            console.log(subtitles);
+            return;
+        }
         if (videoData && videoData.image_video) {
             const newSubtitles = videoData.image_video.map((item: Image_video, index: number) => {
                 // Sử dụng item.content hoặc item.prompt làm nội dung phụ đề
@@ -182,13 +141,106 @@ export default function EditVideo({
         setIdxSticker(updatedList.length > 0 ? updatedList.length - 1 : -1);
     };
 
+    const handleOpenVideoExport = () => {
+        setVideoUrl(videoData.url_edit);
+        setShowPopup(true);
+    };
+
+    const handleSave = async () => {
+        if (!videoData.id) {
+            alert("Thiếu video ID");
+            return;
+        }
+        setIsLoad(true);
+
+        try {
+            const script_input = subtitles.map((sub) => ({
+                text: sub.text,
+                start: sub.start,
+                end: sub.end,
+                style: {
+                    width: sub.style.width,
+                    position: sub.style.position,
+                    fontSize: sub.style.fontSize,
+                    fontColor: sub.style.fontColor,
+                    backgroundColor: sub.style.backgroundColor,
+                    fontStyle: sub.style.fontStyle,
+                    alignment: sub.style.alignment,
+                    shadow: {
+                        color: sub.style.shadow?.color ?? "#000000",
+                        offsetX: sub.style.shadow?.offsetX ?? 0,
+                        offsetY: sub.style.shadow?.offsetY ?? 0,
+                    },
+                    outline: {
+                        color: sub.style.outline?.color ?? "#000000",
+                        width: sub.style.outline?.width ?? 1,
+                    },
+                },
+                status: sub.status,
+            }));
+
+            const sticker_files = stickers.map((s) => s.data);
+            const sticker_config = stickers.map((sticker) => ({
+                id: sticker.id,
+                start: sticker.start,
+                end: sticker.end,
+                width: sticker.style.width,
+                height: sticker.style.height,
+                position: sticker.style.position,
+                rotate: sticker.style.rotate,
+                status: sticker.status,
+            }));
+
+            const audio_files = musics.map((m) => m.data);
+            const audio_config = musics.map((m) => ({
+                id: m.id,
+                start: m.start,
+                end: m.end,
+                volume: m.volume,
+                status: m.status,
+            }));
+
+            const payload = {
+                video_id: videoData.id,
+                script_input,
+                sticker_files,
+                sticker_config,
+                audio_files,
+                audio_config,
+            };
+
+            const response = await fetch("http://localhost:4000/edit/save", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                throw new Error("Lỗi từ server");
+            }
+
+            const result = await response.json();
+            console.log("Save result:", result);
+            setIsLoad(false);
+            setShowNot(true);
+            setMes("Lưu dữ liệu edit thành công!")
+        } catch (err) {
+            console.error("Save error:", err);
+            setShowNot(true);
+            setMes("Có lỗi xảy ra! Hãy thử lại!")
+        }
+    };
+
+
     const handleExport = async () => {
         if (!url) {
             alert("Vui lòng cung cấp URL video chính!");
             return;
         }
 
-        setExportStatus("Đang xử lý...");
+        setIsLoad(true);
 
         try {
             // Lọc các phần tử có status: true
@@ -203,6 +255,7 @@ export default function EditVideo({
                     start: sub.start,
                     end: sub.end,
                     style: {
+                        width: sub.style.width,
                         position: sub.style.position,
                         fontSize: sub.style.fontSize,
                         fontColor: sub.style.fontColor,
@@ -262,14 +315,21 @@ export default function EditVideo({
             if (!response.ok) {
                 throw new Error("Backend API error");
             }
+            const res = await response.json();
+            console.log(res)
 
-            const { video_url, status } = await response.json();
 
-            setExportStatus(`Export thành công! Video: ${video_url}`);
-            window.open(video_url, "_blank"); // Mở video trong tab mới
+            const video_url = res.data.video_url;
+
+            //window.open(video_url, "_blank"); // Mở video trong tab mới
+
+            setVideoUrl(video_url);
+            videoData.url_edit = video_url;
+            setVideoData(videoData);
+            setIsLoad(false);
+            setShowPopup(true);
         } catch (err) {
             console.error("Export error:", err);
-            setExportStatus("Lỗi khi export video. Vui lòng thử lại.");
         }
     };
 
@@ -319,18 +379,23 @@ export default function EditVideo({
                         >
                             Export Video
                         </button>
-                        {exportStatus && (
-                            <p className="mt-2 text-xl">{exportStatus}</p>
-                        )}
                     </div>
                     <div>
                         <button
-                            onClick={handleExport}
+                            onClick={handleSave}
                             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
                         >
                             Lưu tiến trình
                         </button>
                     </div>
+                    {videoData.url_edit && <div>
+                        <button
+                            onClick={handleOpenVideoExport}
+                            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+                        >
+                            Video đã export
+                        </button>
+                    </div>}
                 </div>
                 <VideoPreview
                     url={url}
@@ -356,6 +421,20 @@ export default function EditVideo({
                     onUpdateSticker={handleUpdateSticker}
                 />
             </div>
+            <LoadingOverlay isPreparing={isLoad} message="Đang xử lý..."/>
+            {showPopup && <VideoExportPopup videoUrl={video_url} videoid={videoData.id} onClose={() => setShowPopup(false)} />}
+            {showNot && (
+                <>
+                    <Notification
+                        message={mes}
+                        type="success"
+                        onClose={() => {
+                            onClose();
+                            document.body.style.overflow = "auto";
+                        }}
+                    />
+                </>
+            )}
         </div>
     );
 }

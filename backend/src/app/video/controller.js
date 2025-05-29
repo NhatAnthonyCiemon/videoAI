@@ -151,7 +151,9 @@ const videoController = {
 
     getRandomVideos: async (req, res) => {
         try {
-            const result = await Video.getRandomVideos(12); // Lấy 12 video ngẫu nhiên
+            const { status = 'completed' } = req.query; // Default to 'completed'
+            const limit = 12; // Lấy 12 video ngẫu nhiên
+            const result = await Video.getRandomVideos(limit, status);
             res.json({
                 data: result.data,
                 status: 200,

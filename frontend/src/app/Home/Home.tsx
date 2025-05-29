@@ -7,11 +7,11 @@ import Header from "@/components/layout/header";
 import { useRouter } from "next/navigation";
 import VideoPopup from "@/components/ui/videoPopup";
 import generateRandomString from "@/lib/generateRandomString";
-import fetchApi from "@/lib/api/fetch"; // Giả sử bạn đã có hàm fetchApi
+import fetchApi from "@/lib/api/fetch";
 import HttpMethod from "@/types/httpMethos";
 
 export default function HomePage() {
-    type Platform = "TikTok" | "YouTube" | "Twitter" | "Instagram"; // Cập nhật TikTok
+    type Platform = "TikTok" | "YouTube" | "Twitter" | "Instagram";
     const router = useRouter();
 
     // Dữ liệu tĩnh cho trend
@@ -60,30 +60,28 @@ export default function HomePage() {
     };
 
     const [selected, setSelected] = useState<Platform>("TikTok");
-    const [videos, setVideos] = useState<{ url: string; subtitle: string }[]>([]); // State cho video
-    const [popupVideo, setPopupVideo] = useState<{ url: string; subtitle: string } | null>(null);
+    const [videos, setVideos] = useState<{ url: string; url_edit?: string; subtitle: string; step: string }[]>([]);
+    const [popupVideo, setPopupVideo] = useState<{ url: string; url_edit?: string; subtitle: string; step: string } | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    // Gọi API để lấy 12 video ngẫu nhiên
-    // Trong HomePage.tsx
+    // Gọi API để lấy 12 video ngẫu nhiên với status=completed
     useEffect(() => {
         const fetchRandomVideos = async () => {
             try {
                 setLoading(true);
                 setError(null);
 
-                const url = `http://localhost:4000/video/getRandomVideos`;
+                const url = `http://localhost:4000/video/getRandomVideos?status=completed`;
                 const res = await fetchApi<{
-                    data: { url: string; subtitle: string }[];
+                    data: { url: string; url_edit?: string; subtitle: string; step: string }[];
                 }>(url, HttpMethod.GET);
 
                 if (res.message === "success" && res.status === 200) {
-                    // Kiểm tra res.data có tồn tại và là mảng không
                     if (res.data && Array.isArray(res.data)) {
-                        setVideos(res.data.slice(0, 12)); // Đảm bảo tối đa 12 video
+                        setVideos(res.data.slice(0, 12));
                     } else {
-                        setVideos([]); // Nếu res.data là null hoặc không phải mảng, đặt mảng rỗng
+                        setVideos([]);
                         console.warn("Dữ liệu video không hợp lệ:", res.data);
                     }
                 } else {
@@ -93,7 +91,7 @@ export default function HomePage() {
                 const errorMessage = err.message || "Lỗi khi tải video ngẫu nhiên";
                 setError(errorMessage);
                 console.error("Error:", err);
-                setVideos([]); // Đặt mảng rỗng nếu có lỗi
+                setVideos([]);
             } finally {
                 setLoading(false);
             }
@@ -329,14 +327,14 @@ export default function HomePage() {
                     )}
                     {!loading && videos.length > 0 && (
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                            {videos.map(({ url, subtitle }, i) => (
+                            {videos.map(({ url, url_edit, subtitle }, i) => (
                                 <div
                                     className="aspect-video bg-gray-50 rounded-2xl overflow-hidden shadow-lg relative cursor-pointer"
                                     key={i}
-                                    onClick={() => setPopupVideo({ url, subtitle })}
+                                    onClick={() => setPopupVideo({ url, url_edit, subtitle, step: "completed" })}
                                 >
                                     <video
-                                        src={url}
+                                        src={url_edit ?? url}
                                         title={`Video ${i}`}
                                         className="w-full h-full object-cover"
                                     />
@@ -354,7 +352,7 @@ export default function HomePage() {
             {/* Popup video */}
             {popupVideo && (
                 <VideoPopup
-                    url={popupVideo.url}
+                    url={popupVideo.url_edit ?? popupVideo.url}
                     subtitle={popupVideo.subtitle}
                     onClose={() => setPopupVideo(null)}
                 />

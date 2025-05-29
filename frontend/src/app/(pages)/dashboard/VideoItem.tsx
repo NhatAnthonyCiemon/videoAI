@@ -16,7 +16,7 @@ interface VideoItemProps {
 }
 
 const VideoItem = ({ inforVideo, onViewClick, onClickVideo }: VideoItemProps) => {
-    const { id, url, keyword, name, category, created_at, step } = inforVideo;
+    const { id, url, keyword, name, category, created_at, step, url_edit } = inforVideo;
     const router = useRouter();
     const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -99,7 +99,7 @@ const VideoItem = ({ inforVideo, onViewClick, onClickVideo }: VideoItemProps) =>
                 onClick={onClickVideo}
             >
                 <video
-                    src={url}
+                    src={url_edit ?? url} // Prioritize url_edit, fallback to url
                     title={keyword}
                     className="absolute top-0 left-0 w-full h-full rounded-xl cursor-pointer"
                 />
@@ -153,7 +153,7 @@ const VideoItem = ({ inforVideo, onViewClick, onClickVideo }: VideoItemProps) =>
                                     className="px-4 py-2 text-xl text-gray-700 hover:bg-gray-100 cursor-pointer"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        router.push(`http://localhost:3000/create/${id}`);
+                                        router.push(url_edit ?? `http://localhost:3000/create/${id}`); // Prioritize url_edit, fallback to create URL
                                     }}
                                 >
                                     Chỉnh sửa

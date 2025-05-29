@@ -56,7 +56,7 @@ const Video = {
                 const mappedCategory = categoryMap[category] || category;
                 where.category = {
                     equals: mappedCategory,
-                    mode: 'insensitive', // Không phân biệt hoa thường
+                    mode: 'insensitive',
                 };
             }
 
@@ -82,6 +82,7 @@ const Video = {
                     step: true,
                     category: true,
                     created_at: true,
+                    url_edit: true, // Added url_edit
                 },
                 skip,
                 take: limit,
@@ -108,6 +109,7 @@ const Video = {
                 keyword: video.keyword,
                 step: video.step >= 2 ? 'completed' : 'incomplete',
                 created_at: video.created_at,
+                url_edit: video.url_edit, // Added url_edit
             }));
 
             return {
@@ -164,10 +166,21 @@ const Video = {
         }
     },
 
-    getRandomVideos: async (limit) => {
+    getRandomVideos: async (limit, status) => {
         try {
-            // Lấy ngẫu nhiên video bằng orderBy random
+            // Xây dựng điều kiện where
+            const where = {};
+
+            // Lọc theo trạng thái (dựa trên step)
+            if (status) {
+                where.step = {
+                    [status === 'completed' ? 'gte' : 'lt']: 2,
+                };
+            }
+
+            // Lấy ngẫu nhiên video
             const videos = await prisma.videos.findMany({
+                where,
                 select: {
                     id: true,
                     url: true,
@@ -177,10 +190,11 @@ const Video = {
                     step: true,
                     category: true,
                     created_at: true,
+                    url_edit: true,
                 },
                 take: limit,
                 orderBy: {
-                    id: 'asc', // Sử dụng random() trong SQL thông qua raw query nếu cần
+                    id: 'asc', // Note: For true randomness, consider using raw SQL with random()
                 },
             });
 
@@ -195,12 +209,13 @@ const Video = {
             const formattedVideos = videos.map((video) => ({
                 id: video.id,
                 url: video.url,
-                subtitle: video.content, // Ánh xạ content thành subtitle
+                subtitle: video.content,
                 name: video.name,
                 category: categoryMapReverse[video.category] || video.category,
                 keyword: video.keyword,
                 step: video.step >= 2 ? 'completed' : 'incomplete',
                 created_at: video.created_at,
+                url_edit: video.url_edit,
             }));
 
             return {

@@ -20,7 +20,6 @@ const RenameDialog = ({
     if (!isOpen) return null;
 
     const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
-        // Prevent closing dialog when clicking inside the content
         if (e.target === e.currentTarget) {
             onCancel();
         }
@@ -34,33 +33,43 @@ const RenameDialog = ({
 
     return (
         <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[1000]"
+            className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-[1000] transition-opacity duration-300"
             onClick={handleOverlayClick}
             onKeyDown={handleKeyDown}
             tabIndex={0}
+            role="dialog"
+            aria-labelledby="rename-dialog-title"
+            aria-describedby="rename-dialog-description"
         >
-            <div className="bg-white rounded-2xl p-8 shadow-2xl w-full max-w-lg z-[1001]">
-                <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
+            <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl p-12 shadow-2xl w-full max-w-lg sm:max-w-xl mx-auto transform transition-all duration-300 scale-100">
+                <h2
+                    id="rename-dialog-title"
+                    className="text-5xl sm:text-5xl font-bold text-gray-900 mb-8 text-center"
+                >
                     Đặt lại tên video
                 </h2>
                 <input
+                    id="rename-dialog-description"
                     type="text"
                     value={newName}
                     onChange={(e) => onNameChange(e.target.value)}
-                    className="w-full p-4 border border-gray-300 rounded-xl mb-6 text-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full p-5 text-3xl text-gray-700 border border-gray-300 rounded-full mb-12 focus:outline-none focus:ring-4 focus:ring-blue-400 transition-all duration-200"
                     placeholder="Nhập tên mới"
                     autoFocus
+                    aria-label="Tên video mới"
                 />
-                <div className="flex justify-end space-x-4">
+                <div className="flex justify-center gap-8">
                     <button
-                        className="px-5 py-3 text-lg text-gray-700 border border-gray-300 rounded-xl hover:bg-gray-100 transition"
+                        className="px-10 py-5 text-3xl font-semibold text-gray-700 bg-gray-200 rounded-full hover:bg-gray-300 transition-all duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-400"
                         onClick={onCancel}
+                        aria-label="Hủy đổi tên video"
                     >
                         Hủy
                     </button>
                     <button
-                        className="px-5 py-3 text-lg text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition"
+                        className="px-10 py-5 text-3xl font-semibold text-white bg-blue-600 rounded-full hover:bg-blue-700 transition-all duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-400"
                         onClick={onRename}
+                        aria-label="Xác nhận đổi tên video"
                     >
                         Đổi tên
                     </button>

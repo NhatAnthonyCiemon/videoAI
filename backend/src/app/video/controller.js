@@ -187,6 +187,24 @@ const videoController = {
             res.status(500).json({ message: error.message || 'Lỗi server nội bộ' });
         }
     },
+
+    deleteVideo: async (req, res) => {
+        const { id } = req.params;
+        const user = req.user;
+
+        try {
+            await Video.deleteVideo(user.id, id);
+
+            res.json({
+                mes: 'success',
+                status: 200,
+                message: 'Xóa video thành công',
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: error.message || 'Lỗi server nội bộ' });
+        }
+    },
 };
 
 export default videoController;

@@ -3,7 +3,8 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import InforVideo from "@/types/inforVideo";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import RenameDialog from "./RenameDialog"; // Import component mới
+import RenameDialog from "./RenameDialog";
+import DeleteDialog from "./DeleteDialog"; // Import component mới
 import fetchApi from "@/lib/api/fetch";
 import HttpMethod from "@/types/httpMethos";
 
@@ -16,7 +17,8 @@ interface VideoItemProps {
 const VideoItem = ({ inforVideo, onViewClick, onClickVideo }: VideoItemProps) => {
     const { id, url, keyword, name, category, created_at } = inforVideo;
     const router = useRouter();
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false); // Trạng thái cho dialog xóa
     const [newName, setNewName] = useState(name);
     const [displayName, setDisplayName] = useState(name);
 
@@ -31,21 +33,48 @@ const VideoItem = ({ inforVideo, onViewClick, onClickVideo }: VideoItemProps) =>
 
             if (res.mes === "success" && res.status === 200) {
                 setDisplayName(newName);
-                setIsDialogOpen(false);
+                setIsRenameDialogOpen(false);
             } else {
                 throw new Error(res.message || "Không thể đổi tên video");
             }
         } catch (error: any) {
             console.error("Error renaming video:", error.message);
             alert(error.message);
-            setIsDialogOpen(false); // Đóng dialog ngay cả khi có lỗi
+            setIsRenameDialogOpen(false);
         }
     };
 
-    const handleCancel = () => {
-        console.log("Closing dialog via Cancel button");
+    const handleRenameCancel = () => {
+        console.log("Closing rename dialog via Cancel button");
         setNewName(name); // Đặt lại tên gốc
-        setIsDialogOpen(false); // Đóng dialog
+        setIsRenameDialogOpen(false);
+    };
+
+    const handleDelete = async () => {
+        try {
+            const url = `http://localhost:4000/video/deleteVideo/${id}`;
+            const res = await fetchApi<{ mes: string; status: number; message?: string }>(
+                url,
+                HttpMethod.DELETE
+            );
+
+            if (res.mes === "success" && res.status === 200) {
+                setIsDeleteDialogOpen(false);
+                // Điều hướng hoặc làm mới danh sách video
+                router.refresh(); // Làm mới trang để cập nhật danh sách video
+            } else {
+                throw new Error(res.message || "Không thể xóa video");
+            }
+        } catch (error: any) {
+            console.error("Error deleting video:", error.message);
+            alert(error.message);
+            setIsDeleteDialogOpen(false);
+        }
+    };
+
+    const handleDeleteCancel = () => {
+        console.log("Closing delete dialog via Cancel button");
+        setIsDeleteDialogOpen(false);
     };
 
     return (
@@ -100,7 +129,7 @@ const VideoItem = ({ inforVideo, onViewClick, onClickVideo }: VideoItemProps) =>
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         console.log("Opening rename dialog");
-                                        setIsDialogOpen(true);
+                                        setIsRenameDialogOpen(true);
                                     }}
                                 >
                                     Đặt lại tên
@@ -118,7 +147,8 @@ const VideoItem = ({ inforVideo, onViewClick, onClickVideo }: VideoItemProps) =>
                                     className="px-4 py-2 text-xl text-red-600 hover:bg-gray-100 cursor-pointer"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        console.log("Xóa");
+                                        console.log("Opening delete dialog");
+                                        setIsDeleteDialogOpen(true);
                                     }}
                                 >
                                     Xóa
@@ -145,16 +175,24 @@ const VideoItem = ({ inforVideo, onViewClick, onClickVideo }: VideoItemProps) =>
             </div>
 
             <RenameDialog
-                isOpen={isDialogOpen}
+                isOpen={isRenameDialogOpen}
                 onOpenChange={(open) => {
-                    console.log("Dialog open state:", open);
-                    setIsDialogOpen(open);
+                    console.log("Rename dialog open state:", open);
+                    setIsRenameDialogOpen(open);
                     if (!open) setNewName(name);
                 }}
                 newName={newName}
                 onNameChange={setNewName}
                 onRename={handleRename}
-                onCancel={handleCancel}
+                onCancel={handleRenameCancel}
+            />
+
+            <DeleteDialog
+                isOpen={isDeleteDialogOpen}
+                onOpenChange={setIsDeleteDialogOpen}
+                onConfirm={handleDelete}
+                onCancel={handleDeleteCancel}
+                videoName={displayName}
             />
         </div>
     );

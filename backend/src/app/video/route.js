@@ -7,6 +7,7 @@ router.get('/getRandomVideos', middleware.isAuthenticated, videoController.getRa
 router.get('/getVideoData', middleware.isAuthenticated, videoController.getVideoData);
 router.post('/renameVideo/:id', middleware.isAuthenticated, videoController.renameVideo);
 router.get('/suggestions', middleware.isAuthenticated, videoController.getSuggestions);
+router.delete('/deleteVideo/:id', middleware.isAuthenticated, videoController.deleteVideo);
 router.get("/:id", middleware.isAuthenticated, videoController.getVideoById);
 
 export default router;

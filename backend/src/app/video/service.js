@@ -237,6 +237,29 @@ const Video = {
             throw new Error(error.message || 'Lỗi khi đổi tên video');
         }
     },
+
+    deleteVideo: async (userId, videoId) => {
+        try {
+            const video = await prisma.videos.findUnique({
+                where: { id: videoId },
+            });
+
+            if (!video) {
+                throw new Error('Video không tồn tại');
+            }
+
+            if (video.user_id !== userId) {
+                throw new Error('Bạn không có quyền xóa video này');
+            }
+
+            await prisma.videos.delete({
+                where: { id: videoId },
+            });
+        } catch (error) {
+            console.error(error);
+            throw new Error(error.message || 'Lỗi khi xóa video');
+        }
+    },
 };
 
 export default Video;

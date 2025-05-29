@@ -9,5 +9,10 @@ router.post("/", contentController.getContentData);
 router.post("/getcontentimage", contentController.getContentDataWithImage);
 router.post("/regenerateimage", contentController.getReGenerateImage);
 router.post("/createvideo", contentController.handleVideoController);
-// module.exports = router;
+router.post(
+    "/audio",
+    middleware.uploadAudio,
+    contentController.uploadAudioHandler
+);
+
 export default router;

@@ -12,6 +12,11 @@ function route(app) {
     app.use("/store", storeRouter);
     app.use("/video", videoRouter);
     app.use("/auth", authRouter);
+    app.use("/trend", trendRouter);
+    app.use("/content", contentRouter);
+    app.use("/store", storeRouter);
+    app.use("/video", videoRouter);
+    app.use("/auth", authRouter);
     app.use("/user", userRouter);
     app.use("/edit", editRouter);
     app.use((req, res) => {
@@ -19,4 +24,5 @@ function route(app) {
     });
 }
 
+export default route;
 export default route;

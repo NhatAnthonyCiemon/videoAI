@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import Video from "@/types/Video";
 import VideoClass from "@/lib/Video";

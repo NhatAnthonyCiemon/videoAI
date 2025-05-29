@@ -5,16 +5,15 @@ import { Client } from "@gradio/client";
 import { Runware } from "@runware/sdk-js";
 // const dotenv = require("dotenv");
 import dotenv from "dotenv";
+import { transcribeAudioFile } from "../../utils/handerAudio.js";
 dotenv.config();
-import { url } from "inspector";
+
 import { createFullVideo } from "../../utils/createVideo.js";
 import { processTextToSpeech } from "../../utils/createVoice.js";
 import { getDurations } from "../../utils/duration.js";
 import { mergeMp3Files } from "../../utils/mergeVoice.js";
 import { uploadVideo } from "../../utils/uploadVideo.js";
-import ffmpeg from "fluent-ffmpeg";
-import axios from "axios";
-import path from "path";
+
 import fs from "fs";
 
 const key = process.env.GOOGLE_API_KEY;
@@ -470,6 +469,22 @@ const contentController = {
             });
         } catch (error) {
             console.error("Error fetching content data:", error);
+            res.status(500).json({ error: "Internal Server Error" });
+        }
+    },
+    uploadAudioHandler: async (req, res) => {
+        try {
+            const inputFilePath = req.file.path;
+            const transcript = await transcribeAudioFile(inputFilePath);
+            res.json({
+                mes: "success",
+                status: 200,
+                data: transcript,
+            });
+            // Xóa file tạm sau khi xử lý xong
+            fs.unlinkSync(inputFilePath);
+        } catch (error) {
+            console.error("Error processing audio file:", error);
             res.status(500).json({ error: "Internal Server Error" });
         }
     },

@@ -1,3 +1,4 @@
+import React from "react";
 import ContentPage from "./ContentPage";
 import Header from "@/components/layout/header";
 import { redirect } from "next/navigation";

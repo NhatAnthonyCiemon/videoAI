@@ -3,16 +3,20 @@ import React, { useEffect } from "react";
 
 type LoadingOverlayProps = {
     isPreparing: boolean;
+    message?: string;
 };
 
-const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ isPreparing }) => {
+const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ isPreparing, message = 'Đang chuẩn bị dữ liệu...' }) => {
+    if (!isPreparing) return null; // Không hiển thị nếu isPreparing là false
+    useEffect(() => {
+        window.scrollTo(0, 0);
+        document.body.style.overflow = "hidden";
+        return () => {
+            document.body.style.overflow = "auto";
+        };
+    }, []);
     return (
-        <div
-            className={
-                "fixed inset-0 flex items-center justify-center bg-black/50 z-50" +
-                (isPreparing ? "" : " hidden")
-            }
-        >
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
             <div className="flex flex-col items-center">
                 {/* Icon Loading */}
                 <svg
@@ -37,7 +41,7 @@ const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ isPreparing }) => {
                 </svg>
                 {/* Text */}
                 <p className="mt-4 text-xl text-white font-semibold">
-                    Đang chuẩn bị dữ liệu...
+                    {message}
                 </p>
             </div>
         </div>

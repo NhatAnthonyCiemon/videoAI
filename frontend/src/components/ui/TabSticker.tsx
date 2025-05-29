@@ -1,23 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
+import { Sticker_System, Sticker } from "@/types/Video";
 
-interface Sticker {
-    id: number;
-    name: string;
-    data: string;
-    start: number;
-    end: number;
-    style: {
-        width: number;
-        height: number;
-        rotate: number;
-        position: {
-            x: number;
-            y: number;
-        };
-    };
-    status: boolean;
-}
 
 export default function TabSticker({
     stickers_system,
@@ -25,7 +9,7 @@ export default function TabSticker({
     onAddSticker,
     onUpdateSticker,
 }: {
-    stickers_system: { id: number; name: string; data: string }[];
+    stickers_system: Sticker_System[] | null;
     sticker: Sticker | null;
     onAddSticker: (id: number, name: string, data: string) => void;
     onUpdateSticker: (sticker: Sticker) => void;
@@ -39,9 +23,11 @@ export default function TabSticker({
     };
 
     const handleSave = () => {
-        const selectedStickers = stickers_system.filter((s) => selectedIds.includes(s.id));
-        selectedStickers.forEach((s) => onAddSticker(s.id, s.name, s.data));
-        setSelectedIds([]);
+        if (stickers_system) {
+            const selectedStickers = stickers_system.filter((s) => selectedIds.includes(s.id));
+            selectedStickers.forEach((s) => onAddSticker(s.id, s.name, s.url));
+            setSelectedIds([]);
+        }
     };
 
     const handleStyleChange = (field: keyof Sticker["style"], value: number) => {
@@ -72,14 +58,13 @@ export default function TabSticker({
             </div>
 
             <div className="space-y-2 mt-3">
-                {stickers_system.map((s) => (
+                {stickers_system?.map((s) => (
                     <div
                         key={s.id}
-                        className={`p-3 border rounded-md flex justify-between items-center transition ${
-                            selectedIds.includes(s.id)
+                        className={`p-3 border rounded-md flex justify-between items-center transition ${selectedIds.includes(s.id)
                                 ? "border-blue-500 bg-blue-50"
                                 : "border-gray-300"
-                        }`}
+                            }`}
                     >
                         <input
                             type="checkbox"
@@ -95,7 +80,7 @@ export default function TabSticker({
                         </div>
                         <div className="flex items-center gap-2">
                             <img
-                                src={s.data}
+                                src={s.url}
                                 alt={s.name}
                                 className="w-12 h-12 rounded object-contain"
                             />
@@ -124,7 +109,7 @@ export default function TabSticker({
                             <img
                                 src={sticker.data}
                                 alt={sticker.name}
-                                className="w-12 h-12 rounded object-contain"
+                                className="max-w-[100px] max-h-[100px] rounded object-contain"
                                 style={{
                                     width: sticker.style.width,
                                     height: sticker.style.height,

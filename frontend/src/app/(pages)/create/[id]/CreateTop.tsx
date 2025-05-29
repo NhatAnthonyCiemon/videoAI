@@ -17,7 +17,7 @@ function CreateTop({
     const buttonContent: string[] = [
         "Soạn kịch bản và chọn giọng đọc",
         "Tạo hình ảnh",
-        "Tạo video",
+        "Tạo video"
     ];
     const classButton: string = "py-[20px] text-xl flex-1 cursor-pointer";
     const classActive: string = clsx(classButton, "text-white ");
@@ -26,37 +26,59 @@ function CreateTop({
         "text-black bg-gray-200 hover:bg-gray-200"
     );
     return (
-        <div className="w-full pt-[50px] pb-[50px] mb-[10px]">
-            <h1 className="text-3xl font-bold mb-[10px]">Tạo video AI</h1>
-            <div className="flex items-center gap-[10px] w-[1280px]">
-                {buttonContent.map((item, index) => (
-                    <React.Fragment key={index}>
+        <>
+            {whichActive <= 2 ? (
+                <div className="w-full pt-[50px] pb-[50px] mb-[10px]">
+                    <h1 className="text-3xl font-bold mb-[10px]">Tạo video AI</h1>
+                    <div className="flex items-center gap-[10px] w-[1280px]">
+                        {buttonContent.map((item, index) => (
+                            <React.Fragment key={index}>
+                                <Button
+                                    onClick={() => {
+                                        setWhichActive(index);
+                                        window.scrollTo({
+                                            top: 0,
+                                            behavior: "smooth",
+                                        });
+                                    }}
+                                    className={clsx(
+                                        index === whichActive
+                                            ? classActive
+                                            : classNotActive
+                                    )}
+                                    disabled={
+                                        index > videoData.step && whichActive !== index
+                                    }
+                                >
+                                    {item}
+                                </Button>
+                                {index !== buttonContent.length - 1 && (
+                                    <ChevronRightIcon className="w-6 h-6" />
+                                )}
+                            </React.Fragment>
+                        ))}
+                    </div>
+                </div>
+            ) : (
+                <div className="w-full mt-3 mb-[10px] flex justify-between">
+                    <h1 className="text-4xl font-bold mb-[10px]">Edit Video</h1>
+                    <div className="flex items-center gap-[10px]">
                         <Button
                             onClick={() => {
-                                setWhichActive(index);
+                                setWhichActive(2);
                                 window.scrollTo({
                                     top: 0,
                                     behavior: "smooth",
                                 });
                             }}
-                            className={clsx(
-                                index === whichActive
-                                    ? classActive
-                                    : classNotActive
-                            )}
-                            disabled={
-                                index > videoData.step && whichActive !== index
-                            }
+                            className="text-2xl p-8"
                         >
-                            {item}
+                            Quay lại trang trước
                         </Button>
-                        {index !== buttonContent.length - 1 && (
-                            <ChevronRightIcon className="w-6 h-6" />
-                        )}
-                    </React.Fragment>
-                ))}
-            </div>
-        </div>
+                    </div>
+                </div>
+            )}
+        </>
     );
 }
 

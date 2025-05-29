@@ -8,19 +8,76 @@ import LoadingOverlay from "@/components/ui/LoadingOverlay";
 import fetchApi from "@/lib/api/fetch";
 import APIResponse from "@/types/apiResponse";
 import HttpMethod from "@/types/httpMethos";
+import { Music_System, Sticker_System, Subtitle, Music, Sticker } from "@/types/Video";
+
+// Định nghĩa interface cho dữ liệu từ backend
+interface BackendResponse {
+    subtitles: Subtitle[];
+    stickers: Sticker[];
+    musics: Music[];
+}
+
+interface MusicResponse {
+    data: { musics: Music_System[] } | null;
+    mes: string;
+    status: number;
+}
+
+interface StickerResponse {
+    data: { stickers: Sticker_System[] } | null;
+    mes: string;
+    status: number;
+}
+
+interface EditDataResponse {
+    data: BackendResponse | null;
+    mes: string;
+    status: number;
+}
 
 function CreateVideo({
     videoData,
     setVideoData,
     isCreateAgain,
     setIsCreateAgain,
+    setWhichActive,
+    isPreparing,
+    setIsPreparing,
+    musics_sys,
+    setMusics_sys,
+    stickers_sys,
+    setStickers_sys,
+
+    subtitles,
+    setSubtitles,
+    musics,
+    setMusics,
+    stickers,
+    setStickers,
 }: {
     videoData: Video;
     setVideoData: (data: Video) => void;
     isCreateAgain: boolean;
     setIsCreateAgain: (value: boolean) => void;
+    setWhichActive: (index: number) => void;
+    isPreparing: boolean;
+    setIsPreparing: (Active: boolean) => void;
+    musics_sys: Music_System[] | null;
+    setMusics_sys: (data: Music_System[]) => void;
+    stickers_sys: Sticker_System[] | null;
+    setStickers_sys: (data: Sticker_System[]) => void;
+
+    subtitles: Subtitle[] | [];
+    setSubtitles: (data: Subtitle[]) => void;
+    musics: Music[] | [];
+    setMusics: (data: Music[]) => void;
+    stickers: Sticker[] | [];
+    setStickers: (data: Sticker[]) => void;
 }) {
     const { isModalOpen, openModal, closeModal } = useOverlay();
+
+
+    console.log("videoData", videoData.image_video);
     const handleCreateAgain = async () => {
         setIsCreateAgain(true);
 
@@ -48,6 +105,68 @@ function CreateVideo({
             throw new Error("Invalid response format");
         }
     };
+
+    const handleGetData = async () => {
+        setIsPreparing(true);
+        setWhichActive(3);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
+        try {
+            const [musicRes, stickerRes, editDataRes] = await Promise.all([
+                fetchApi<MusicResponse["data"]>(`http://localhost:4000/edit/music`, HttpMethod.GET),
+                fetchApi<StickerResponse["data"]>(`http://localhost:4000/edit/sticker`, HttpMethod.GET),
+                fetchApi<EditDataResponse["data"]>(`http://localhost:4000/edit/getdata/${videoData.id}`, HttpMethod.GET),
+            ]);
+
+            // Kiểm tra phản hồi từ API
+            if (
+                musicRes.mes !== "success" ||
+                stickerRes.mes !== "success" ||
+                editDataRes.mes !== "success"
+            ) {
+                throw new Error("Failed to load some of the resources.");
+            }
+
+            // Kiểm tra musicRes.data
+            if (!musicRes.data) {
+                throw new Error("Music data is null");
+            }
+
+            // Kiểm tra stickerRes.data
+            if (!stickerRes.data) {
+                throw new Error("Sticker data is null");
+            }
+
+            // Kiểm tra editDataRes.data
+            if (!editDataRes.data) {
+                throw new Error("Edit data is null");
+            }
+
+            // Cập nhật dữ liệu music_system và sticker_system
+            setMusics_sys(musicRes.data.musics);
+            setStickers_sys(stickerRes.data.stickers);
+
+            // Dữ liệu từ backend
+            const { subtitles: backendSubtitles, musics: backendMusics, stickers: backendStickers } = editDataRes.data;
+
+            // Cập nhật subtitles
+            setSubtitles(backendSubtitles);
+
+            // Cập nhật musics
+            setMusics(backendMusics);
+
+            // Cập nhật stickers
+            setStickers(backendStickers);
+
+            // Cập nhật videoData.step
+            setVideoData({ ...videoData, step: 3 });
+        } catch (err) {
+            console.error("handleGetData error:", err);
+        } finally {
+            setIsPreparing(false);
+        }
+    };
+
 
     return (
         <div>
@@ -232,7 +351,13 @@ function CreateVideo({
                             Edit video
                         </p>
                     </Button>
-                    <Button className="w-full mt-[20px] gap-[10px] items-center py-[20px] rounded-xl">
+                    <Button
+
+                        onClick={() => {
+                            handleGetData();
+                        }}
+
+                        className="w-full mt-[20px] gap-[10px] items-center py-[20px] rounded-xl">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -261,6 +386,7 @@ function CreateVideo({
                 onClose={closeModal}
             />
             <LoadingOverlay isPreparing={isCreateAgain} />
+            {!isCreateAgain && <LoadingOverlay isPreparing={isPreparing} />}
         </div>
     );
 }

@@ -2,55 +2,17 @@
 import { Play, Pause, Volume2 as Speaker, VolumeX as SpeakerOff } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-interface Style {
-    width: number;
-    position: string;
-    fontSize: number;
-    fontColor: string;
-    backgroundColor: string;
-    fontStyle: string[];
-    alignment: string;
-    shadow: { color: string; blur: number; offsetX: number; offsetY: number };
-    outline: { color: string; width: number };
-}
-
-interface Subtitle {
-    text: string;
-    start: number;
-    end: number;
-    style: Style;
-    status: boolean;
-}
-
-interface Sticker {
-    id: number;
-    name: string;
-    data: string;
-    start: number;
-    end: number;
-    style: { width: number; height: number; rotate: number; position: { x: number; y: number } };
-    status: boolean;
-}
-
-interface Music {
-    id: number;
-    name: string;
-    data: string;
-    start: number;
-    end: number;
-    volume: number;
-    duration: number;
-    status: boolean;
-}
+import { Subtitle, Music, Sticker } from "@/types/Video";
 
 interface VideoPreviewProps {
     url: string;
     subtitles: Subtitle[];
     stickers: Sticker[];
     musics: Music[];
+    text: string;
 }
 
-export default function VideoPreview({ url, subtitles, stickers, musics }: VideoPreviewProps) {
+export default function VideoPreview({ url, subtitles, stickers, musics, text }: VideoPreviewProps) {
     const videoRef = useRef<HTMLVideoElement>(null);
     const videoContainerRef = useRef<HTMLDivElement>(null);
     const audioRefs = useRef<{ [key: number]: HTMLAudioElement | null }>({});
@@ -61,7 +23,7 @@ export default function VideoPreview({ url, subtitles, stickers, musics }: Video
     const [duration, setDuration] = useState(0);
     const [volume, setVolume] = useState(1);
     const [videoDimensions, setVideoDimensions] = useState({ width: 1, height: 1 });
-    const [videoOffset, setVideoOffset] = useState({ x: 0, y: 0 }); // Thêm state để lưu offset
+    const [videoOffset, setVideoOffset] = useState({ x: 0, y: 0 });
 
     const togglePlay = () => {
         const video = videoRef.current;
@@ -79,8 +41,6 @@ export default function VideoPreview({ url, subtitles, stickers, musics }: Video
     const handleTimeUpdate = () => {
         const time = videoRef.current?.currentTime || 0;
         setCurrentTime(time);
-        const activeMusic = musics.find((music) => music.status && time >= music.start && time <= music.end);
-        if (videoRef.current) videoRef.current.volume = activeMusic ? activeMusic.volume : volume;
         handleMusicPlayback(time);
     };
 
@@ -109,7 +69,6 @@ export default function VideoPreview({ url, subtitles, stickers, musics }: Video
             setVideoDimensions({ width: videoRef.current.videoWidth || 1, height: videoRef.current.videoHeight || 1 });
             setIsVideoReady(videoRef.current.readyState >= 2);
             videoRef.current.volume = volume;
-            // Tính offset của video so với container
             const videoRect = videoRef.current.getBoundingClientRect();
             const containerRect = videoContainerRef.current?.getBoundingClientRect();
             if (containerRect) {
@@ -144,7 +103,7 @@ export default function VideoPreview({ url, subtitles, stickers, musics }: Video
     };
 
     useEffect(() => {
-        if (!url) return; // Ngăn useEffect chạy nếu url rỗng
+        if (!url) return;
         const video = videoRef.current;
         if (!video) return;
 
@@ -197,7 +156,7 @@ export default function VideoPreview({ url, subtitles, stickers, musics }: Video
 
     const getColor = (color: string) => {
         if (color.includes("@")) {
-            const [hex, opacity = "0.5"] = color.split("@");
+            const [hex, opacity = "1"] = color.split("@");
             const r = parseInt(hex.slice(1, 3), 16);
             const g = parseInt(hex.slice(3, 5), 16);
             const b = parseInt(hex.slice(5, 7), 16);
@@ -216,7 +175,7 @@ export default function VideoPreview({ url, subtitles, stickers, musics }: Video
     };
 
     return (
-        <div className="flex-1 flex flex-col pt-5 px-4 py-6">
+        <div className="flex-1 flex flex-col pt-5 px-4 py-6 h-full">
             {!isVideoReady && <div className="text-center text-xl">Đang tải video...</div>}
             <div
                 className={`w-full bg-black flex justify-center overflow-hidden rounded-lg shadow relative ${
@@ -360,6 +319,8 @@ export default function VideoPreview({ url, subtitles, stickers, musics }: Video
                     />
                 </div>
             </div>
+            <h1 className="text-3xl mt-3 mb-2 font-bold">Nội dung</h1>
+            <div className="text-2xl">{text}</div>
         </div>
     );
 }

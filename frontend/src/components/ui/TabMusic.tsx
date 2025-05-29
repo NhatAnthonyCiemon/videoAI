@@ -1,5 +1,9 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
+import { Music_System, Music } from "@/types/Video";
+import LoadingOverlay from "@/components/ui/LoadingOverlay";
+
+import { getToken } from "@/lib/Token";
 
 export default function TabMusic({
   musics_system,
@@ -7,16 +11,17 @@ export default function TabMusic({
   onAddMusic,
   onUpdateMusic,
 }: {
-  musics_system: { id: number; name: string; data: string }[];
-  music: any;
+  musics_system: Music_System[] | null;
+  music: Music;
   onAddMusic: (id: number, name: string, data: string) => void;
-  onUpdateMusic: (music: any) => void;
+  onUpdateMusic: (music: Music) => void;
 }) {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [playingId, setPlayingId] = useState<number | null>(null);
   const [playingCurrent, setPlayingCurrent] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [isLoad, setIsLoad] = useState(false);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -63,21 +68,61 @@ export default function TabMusic({
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && file.type.startsWith("audio/")) {
-      const fileUrl = URL.createObjectURL(file);
-      onAddMusic(-1, file.name || "Không xác định", fileUrl);
-      e.target.value = ""; // Reset input file để có thể chọn lại cùng file
+      try {
+        // Tạo FormData để gửi file
+        const formData = new FormData();
+        formData.append("audio", file);
+        console.log("calll")
+        setIsLoad(true);
+        const token = getToken();
+        // Gọi API /upload-audio
+        const response = await fetch("http://localhost:4000/edit/upload-audio", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}` // truyền token vào header
+          },
+          body: formData,
+        });
+
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Upload failed");
+        }
+
+        const data = await response.json();
+        console.log(data)
+        if (!data.data.url) {
+          throw new Error("No URL returned from server");
+        }
+
+        // Gọi onAddMusic với URL từ server
+        onAddMusic(data.data.id, file.name || "Không xác định", data.data.url);
+
+        // Reset input file để có thể chọn lại cùng file
+        e.target.value = "";
+
+        setIsLoad(false);
+      } catch (error) {
+        console.error("Error uploading audio:", error);
+        alert(`Lỗi khi tải file âm thanh: Vui lòng thử lại.`);
+
+        setIsLoad(false);
+      }
     } else {
       alert("Vui lòng chọn file âm thanh hợp lệ!");
     }
   };
 
   const handleSave = () => {
-    const selectedMusic = musics_system.filter((m) => selectedIds.includes(m.id));
-    selectedMusic.forEach((m) => onAddMusic(m.id, m.name, m.data));
-    setSelectedIds([]);
+    if (musics_system) {
+      const selectedMusic = musics_system.filter((m) => selectedIds.includes(m.id));
+      selectedMusic.forEach((m) => onAddMusic(m.id, m.name, m.url));
+      setSelectedIds([]);
+    }
   };
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -109,14 +154,13 @@ export default function TabMusic({
       </div>
 
       <div className="space-y-2 mt-3">
-        {musics_system.map((music) => (
+        {musics_system?.map((music) => (
           <div
             key={music.id}
-            className={`p-3 border rounded-md flex justify-between items-center transition ${
-              selectedIds.includes(music.id)
-                ? "border-blue-500 bg-blue-50"
-                : "border-gray-300"
-            }`}
+            className={`p-3 border rounded-md flex justify-between items-center transition ${selectedIds.includes(music.id)
+              ? "border-blue-500 bg-blue-50"
+              : "border-gray-300"
+              }`}
           >
             <input
               type="checkbox"
@@ -132,7 +176,7 @@ export default function TabMusic({
             </div>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => handlePlaySystem(music.id, music.data)}
+                onClick={() => handlePlaySystem(music.id, music.url)}
                 className="text-xl bg-gray-100 px-2 py-1 rounded hover:bg-gray-200"
               >
                 {playingId === music.id ? "⏸️ Pause" : "▶️ Play"}
@@ -182,6 +226,9 @@ export default function TabMusic({
           </div>
         </div>
       )}
+
+
+      <LoadingOverlay isPreparing={isLoad} message="Đang xử lý audio..." />
     </div>
   );
 }

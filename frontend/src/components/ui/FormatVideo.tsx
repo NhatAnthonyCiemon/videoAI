@@ -3,6 +3,7 @@ import { useState } from "react";
 import TabText from "@/components/ui/TabText";
 import TabSticker from "@/components/ui/TabSticker";
 import TabMusic from "@/components/ui/TabMusic";
+import { Music_System, Sticker_System, Music, Sticker, Subtitle } from "@/types/Video";
 
 export default function FormatVideo({
     tab,
@@ -21,16 +22,16 @@ export default function FormatVideo({
 }: {
     tab: string;
     setTab: (tab: string) => void;
-    musics_system: any[];
+    musics_system: Music_System[] | null;
     onAddMusic: (id: number, name: string, data: string) => void;
-    stickers_system: any[];
+    stickers_system: Sticker_System[] | null;
     onAddSticker: (id: number, name: string, data: string) => void;
-    subtitle: any;
-    onUpdateSubtitle: (sub: any) => void;
-    music: any;
-    onUpdateMusic: (sub: any) => void;
-    sticker: any;
-    onUpdateSticker: (sub: any) => void;
+    subtitle: Subtitle;
+    onUpdateSubtitle: (sub: Subtitle) => void;
+    music: Music;
+    onUpdateMusic: (sub: Music) => void;
+    sticker: Sticker;
+    onUpdateSticker: (sub: Sticker) => void;
 }) {
     return (
         <div className="w-[400px] h-full bg-white border-l-1 border-gray-700 flex flex-col">

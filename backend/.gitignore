@@ -1,4 +1,4 @@
 node_modules
 .env
 .vscode
-./src/ultils/key.json
+backend/src/utils/key.json

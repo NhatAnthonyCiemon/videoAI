@@ -73,6 +73,7 @@ export default function EditVideo({
             return;
         }
         if (videoData && videoData.image_video) {
+            // console.log(videoData)
             const newSubtitles = videoData.image_video.map((item: Image_video, index: number) => {
                 // Sử dụng item.content hoặc item.prompt làm nội dung phụ đề
                 return AddNewSubtitle(item.content, subtitles, item.start_time, item.end_time);
@@ -83,7 +84,7 @@ export default function EditVideo({
             setSubtitles(newSubtitles);
             setIdxText(newSubtitles.length - 1); // Cập nhật idxText
         }
-        console.log(musics)
+        // console.log(musics)
     }, []); // Bao gồm subtitles trong dependency array
 
     const handleAddSubtitle = (text: string) => {

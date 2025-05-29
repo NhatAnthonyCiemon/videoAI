@@ -149,15 +149,32 @@ function CreateVideo({
             // Dữ liệu từ backend
             const { subtitles: backendSubtitles, musics: backendMusics, stickers: backendStickers } = editDataRes.data;
 
+
             // Cập nhật subtitles
-            setSubtitles(backendSubtitles);
+            if (backendSubtitles.length > 0) {
+                console.log("update sub")
+                setSubtitles(backendSubtitles);
+            }
+            else {
+                console.log("no sub")
+            }
 
             // Cập nhật musics
-            setMusics(backendMusics);
-
+            if (backendMusics.length > 0) {
+                console.log("update sub")
+                setMusics(backendMusics);
+            }
+            else {
+                console.log("no mus")
+            }
             // Cập nhật stickers
-            setStickers(backendStickers);
-
+            if (backendStickers.length > 0) {
+                console.log("update sub")
+                setStickers(backendStickers);
+            }
+            else {
+                console.log("no sti")
+            }
             // Cập nhật videoData.step
             setVideoData({ ...videoData, step: 3 });
         } catch (err) {

@@ -15,10 +15,10 @@ export default function VideoPopup({ url, subtitle, onClose }: VideoPopupProps) 
                 {/* Nút đóng góc trên cùng bên phải */}
                 <Button
                     onClick={onClose}
-                    className="absolute top-4 right-4 text-white bg-transparent hover:bg-white/20 text-4xl z-50 rounded-full"
+                    className="absolute top-4 right-4 text-white bg-transparent hover:bg-white/10 text-4xl z-50 rounded-sm"
                     aria-label="Đóng video"
                 >
-                    &times;
+                    ×
                 </Button>
 
                 {/* Video 70% */}
@@ -34,14 +34,14 @@ export default function VideoPopup({ url, subtitle, onClose }: VideoPopupProps) 
                         <video
                             src={url}
                             controls
-                            autoPlay
+                            autoPlay={false}
                             className="w-full h-full object-contain bg-black"
                         />
                     )}
                 </div>
 
                 {/* Phụ đề 30% */}
-                <div className="flex-[3] p-6 overflow-y-auto text-white text-lg leading-relaxed rounded-lg border border-white/20">
+                <div className="flex-[3] p-6 overflow-y-auto text-white text-xl leading-relaxed rounded-lg border border-white/20">
                     <h2 className="mb-4 font-semibold text-2xl">Phụ đề:</h2>
                     <p className="whitespace-pre-line">{subtitle}</p>
                 </div>

@@ -87,6 +87,106 @@ const videoController = {
             res.status(500).json({ message: "Internal server error" });
         }
     },
+
+    searchVideos: async (req, res) => {
+        const query = req.query.q;
+        const user = req.user;
+        console.log("K")
+        try {
+            const suggestions = await Video.searchVideos(query, user.id);
+            console.log(suggestions)
+            res.json({
+                mes: 'success',
+                status: 200,
+                data: suggestions,
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    },
+
+    getVideoData: async (req, res) => {
+        const { page = 1, limit = 5, q, category, sort, status } = req.query;
+        const user = req.user;
+
+        try {
+            const result = await Video.getVideoData(
+                user.id,
+                parseInt(page),
+                parseInt(limit),
+                q,
+                category,
+                sort,
+                status
+            );
+            res.json({
+                mes: 'success',
+                status: 200,
+                data: result.data,
+                totalPages: result.totalPages,
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Lỗi server nội bộ' });
+        }
+    },
+
+    getSuggestions: async (req, res) => {
+        const { q } = req.query;
+        const user = req.user;
+
+        try {
+            const suggestions = await Video.getSuggestions(user.id, q);
+            res.json({
+                mes: 'success',
+                status: 200,
+                data: { suggestions },
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Lỗi khi lấy gợi ý' });
+        }
+    },
+
+    getRandomVideos: async (req, res) => {
+        try {
+            const result = await Video.getRandomVideos(12); // Lấy 12 video ngẫu nhiên
+            res.json({
+                data: result.data,
+                status: 200,
+                message: 'success',
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Lỗi server nội bộ' });
+        }
+    },
+
+    renameVideo: async (req, res) => {
+        const { id } = req.params; // Lấy id từ URL params
+        const { name } = req.body; // Lấy tên mới từ body
+        const user = req.user; // Lấy thông tin user từ middleware
+
+        try {
+            // Kiểm tra xem name có được cung cấp hay không
+            if (!name) {
+                return res.status(400).json({ message: 'Tên video là bắt buộc' });
+            }
+
+            // Gọi service để đổi tên video
+            await Video.renameVideo(user.id, id, name);
+
+            res.json({
+                mes: 'success',
+                status: 200,
+                message: 'Đổi tên video thành công',
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: error.message || 'Lỗi server nội bộ' });
+        }
+    },
 };
 
 export default videoController;

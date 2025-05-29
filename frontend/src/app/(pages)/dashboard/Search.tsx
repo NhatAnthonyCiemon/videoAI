@@ -2,34 +2,86 @@
 import { Input } from "@/components/ui/input";
 import { useEffect, useRef, useState } from "react";
 import * as Popover from "@radix-ui/react-popover";
+import { useFilter } from "./FilterContext";
+import fetchApi from "@/lib/api/fetch";
+import HttpMethod from "@/types/httpMethos";
 
 function Search() {
-    const [search, setSearch] = useState("");
+    const { search, setSearch, suggestions, setSuggestions } = useFilter();
     const inputRef = useRef<HTMLInputElement>(null);
-    const suggestions = [
-        "React",
-        "Next.js",
-        "Node.js",
-        "Tailwind",
-        "Typescript",
-    ];
+    const [inputValue, setInputValue] = useState(search); // Trạng thái tạm thời cho input
+    const [isFocused, setIsFocused] = useState(false); // Theo dõi trạng thái focus
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+    // Tự động focus input khi component mount
     useEffect(() => {
         if (inputRef.current) {
             inputRef.current.focus();
+            setIsFocused(true); // Đặt focus ban đầu
         }
     }, []);
 
+    // Cập nhật gợi ý khi inputValue thay đổi
+    useEffect(() => {
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
+
+        if (inputValue) {
+            timeoutRef.current = setTimeout(async () => {
+                try {
+                    const url = `http://localhost:4000/video/suggestions?q=${encodeURIComponent(inputValue)}`;
+                    const res = await fetchApi<{ suggestions: string[] }>(url, HttpMethod.GET);
+                    if (res.mes === "success" && res.status === 200 && res.data) {
+                        setSuggestions(res.data.suggestions || []);
+                    } else {
+                        setSuggestions([]);
+                    }
+                } catch (error) {
+                    console.error("Lỗi khi lấy gợi ý:", error);
+                    setSuggestions([]);
+                }
+            }, 300); // Debounce 300ms
+        } else {
+            setSuggestions([]); // Xóa gợi ý nếu input rỗng
+        }
+
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+        };
+    }, [inputValue, setSuggestions]);
+
+    // Xử lý khi nhấn Enter
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter" && inputValue.trim()) {
+            setSearch(inputValue.trim()); // Cập nhật search khi nhấn Enter
+        }
+    };
+
+    // Xử lý khi bấm nút tìm kiếm
+    const handleSearchClick = () => {
+        if (inputValue.trim()) {
+            setSearch(inputValue.trim()); // Cập nhật search khi bấm nút tìm kiếm
+        }
+    };
+
     return (
         <div className="flex mx-auto w-[70%] items-center relative">
-            <Popover.Root open={search.length > 0}>
+            <Popover.Root
+                open={isFocused && suggestions.length > 0 && inputValue.length > 0}
+                onOpenChange={(open) => setIsFocused(open)} // Cập nhật isFocused khi Popover mở/đóng
+            >
                 <Popover.Trigger asChild>
                     <Input
                         type="text"
                         placeholder="Tìm kiếm video ..."
-                        value={search}
+                        value={inputValue}
                         ref={inputRef}
-                        onChange={(e) => setSearch(e.target.value)}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onFocus={() => setIsFocused(true)} // Mở Popover khi focus
+                        onKeyDown={handleKeyDown} // Xử lý phím Enter
                         className="p-10 mx-auto !text-2xl border border-gray-300 rounded-md"
                     />
                 </Popover.Trigger>
@@ -40,13 +92,16 @@ function Search() {
                         className="bg-white border border-gray-300 rounded-md shadow-lg w-[895px]"
                         onOpenAutoFocus={(e) => e.preventDefault()}
                         onCloseAutoFocus={(e) => e.preventDefault()}
+                        onInteractOutside={() => setIsFocused(false)} // Đóng khi bấm ra ngoài
                     >
                         {suggestions.map((s) => (
                             <div
                                 key={s}
                                 className="w-full px-4 py-4 text-gray-700 hover:bg-gray-100 hover:text-black transition-colors duration-150 cursor-pointer rounded-md text-2xl"
                                 onClick={() => {
-                                    setSearch(s);
+                                    setInputValue(s);
+                                    setSearch(s); // Cập nhật ngay khi chọn gợi ý
+                                    setIsFocused(false); // Đóng Popover khi chọn gợi ý
                                     inputRef.current?.focus();
                                 }}
                             >
@@ -62,8 +117,10 @@ function Search() {
                     fill="none"
                     viewBox="0 0 24 24"
                     strokeWidth={1.5}
-                    stroke={search ? "#000" : "#A7A7A7"}
+                    stroke={inputValue ? "#000" : "#A7A7A7"}
                     className="size-10 cursor-pointer"
+                    onClick={handleSearchClick}
+                    aria-label="Tìm kiếm"
                 >
                     <path
                         strokeLinecap="round"

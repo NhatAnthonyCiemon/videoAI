@@ -17,6 +17,7 @@ import DraftModal from "@/components/ui/DraftModal";
 import LoadingOverlay from "@/components/ui/LoadingOverlay";
 import { Image_video } from "@/types/Video";
 import CustomCheckBox from "@/components/ui/CheckBoxCustom";
+import VoiceText from "@/components/ui/VoiceText";
 
 const voices = [
     "vi-VN-HoaiMyNeural (vi-VN, Female)",
@@ -69,7 +70,7 @@ export default function CreateScript({
                 .then((res: APIResponse<string[]>) => {
                     if ((res.mes = "success")) {
                         //chỉ lấy tối đa 8 gợi ý
-                        setSuggestions(res.data!!.slice(0, 8));
+                        setSuggestions(res.data!!.slice(0, 7));
                         if (!isGenerate) setIsLoading(false);
                     } else {
                         throw new Error("Invalid response format");
@@ -82,6 +83,11 @@ export default function CreateScript({
             setIsShowSuggestions(false);
         }
     }, [debouncedValue, isSearch, videoData.category]);
+    useEffect(() => {
+        if (inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, [videoData.keyword]);
     const handleGenerateScript = () => {
         if (videoData.keyword.length === 0) return;
         setIsLoading(true);
@@ -263,6 +269,7 @@ export default function CreateScript({
                                                 className="none_focus flex-1 !text-xl px-4 h-[35px] border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
                                                 ref={inputRef}
                                             />
+                                            {/* <VoiceText className="absolute right-0 top-[50%] transform -translate-y-1/2" /> */}
                                         </Popover.Trigger>
                                         <Popover.Portal>
                                             <Popover.Content
@@ -309,8 +316,15 @@ export default function CreateScript({
                                         </Popover.Portal>
                                     </Popover.Root>
                                     {isLoading && (
-                                        <LoadingIcon className="absolute right-[24%] top-1/2 transform -translate-y-1/2" />
+                                        <LoadingIcon className="absolute right-[32%] top-1/2 transform -translate-y-1/2" />
                                     )}
+                                    <VoiceText
+                                        className="mr-[10px]"
+                                        videoData={videoData}
+                                        setVideoData={setVideoData}
+                                        setDisabled={setDisabled}
+                                        setIsLoading={setIsLoading}
+                                    />
                                     <Button
                                         onClick={handleGenerateScript}
                                         ref={generateScriptRef}

@@ -6,16 +6,13 @@ type LoadingOverlayProps = {
 };
 
 const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ isPreparing }) => {
-    if (!isPreparing) return null; // Không hiển thị nếu isPreparing là false
-    useEffect(() => {
-        window.scrollTo(0, 0);
-        document.body.style.overflow = "hidden";
-        return () => {
-            document.body.style.overflow = "auto";
-        };
-    }, []);
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+        <div
+            className={
+                "fixed inset-0 flex items-center justify-center bg-black/50 z-50" +
+                (isPreparing ? "" : " hidden")
+            }
+        >
             <div className="flex flex-col items-center">
                 {/* Icon Loading */}
                 <svg

@@ -21,7 +21,6 @@ function CreateVideo({
     setIsCreateAgain: (value: boolean) => void;
 }) {
     const { isModalOpen, openModal, closeModal } = useOverlay();
-    console.log("videoData", videoData.image_video);
     const handleCreateAgain = async () => {
         setIsCreateAgain(true);
 

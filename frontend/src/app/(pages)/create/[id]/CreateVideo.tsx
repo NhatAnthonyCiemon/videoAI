@@ -8,7 +8,13 @@ import LoadingOverlay from "@/components/ui/LoadingOverlay";
 import fetchApi from "@/lib/api/fetch";
 import APIResponse from "@/types/apiResponse";
 import HttpMethod from "@/types/httpMethos";
-import { Music_System, Sticker_System, Subtitle, Music, Sticker } from "@/types/Video";
+import {
+    Music_System,
+    Sticker_System,
+    Subtitle,
+    Music,
+    Sticker,
+} from "@/types/Video";
 
 // Định nghĩa interface cho dữ liệu từ backend
 interface BackendResponse {
@@ -76,7 +82,6 @@ function CreateVideo({
 }) {
     const { isModalOpen, openModal, closeModal } = useOverlay();
 
-
     console.log("videoData", videoData.image_video);
     const handleCreateAgain = async () => {
         setIsCreateAgain(true);
@@ -113,9 +118,18 @@ function CreateVideo({
 
         try {
             const [musicRes, stickerRes, editDataRes] = await Promise.all([
-                fetchApi<MusicResponse["data"]>(`http://localhost:4000/edit/music`, HttpMethod.GET),
-                fetchApi<StickerResponse["data"]>(`http://localhost:4000/edit/sticker`, HttpMethod.GET),
-                fetchApi<EditDataResponse["data"]>(`http://localhost:4000/edit/getdata/${videoData.id}`, HttpMethod.GET),
+                fetchApi<MusicResponse["data"]>(
+                    `http://localhost:4000/edit/music`,
+                    HttpMethod.GET
+                ),
+                fetchApi<StickerResponse["data"]>(
+                    `http://localhost:4000/edit/sticker`,
+                    HttpMethod.GET
+                ),
+                fetchApi<EditDataResponse["data"]>(
+                    `http://localhost:4000/edit/getdata/${videoData.id}`,
+                    HttpMethod.GET
+                ),
             ]);
 
             // Kiểm tra phản hồi từ API
@@ -147,33 +161,33 @@ function CreateVideo({
             setStickers_sys(stickerRes.data.stickers);
 
             // Dữ liệu từ backend
-            const { subtitles: backendSubtitles, musics: backendMusics, stickers: backendStickers } = editDataRes.data;
-
+            const {
+                subtitles: backendSubtitles,
+                musics: backendMusics,
+                stickers: backendStickers,
+            } = editDataRes.data;
 
             // Cập nhật subtitles
             if (backendSubtitles.length > 0) {
-                console.log("update sub")
+                console.log("update sub");
                 setSubtitles(backendSubtitles);
-            }
-            else {
-                console.log("no sub")
+            } else {
+                console.log("no sub");
             }
 
             // Cập nhật musics
             if (backendMusics.length > 0) {
-                console.log("update sub")
+                console.log("update sub");
                 setMusics(backendMusics);
-            }
-            else {
-                console.log("no mus")
+            } else {
+                console.log("no mus");
             }
             // Cập nhật stickers
             if (backendStickers.length > 0) {
-                console.log("update sub")
+                console.log("update sub");
                 setStickers(backendStickers);
-            }
-            else {
-                console.log("no sti")
+            } else {
+                console.log("no sti");
             }
             // Cập nhật videoData.step
             setVideoData({ ...videoData, step: 3 });
@@ -183,7 +197,6 @@ function CreateVideo({
             setIsPreparing(false);
         }
     };
-
 
     return (
         <div>
@@ -349,7 +362,12 @@ function CreateVideo({
                             </p>
                         </Button>
                     </div>
-                    <Button className="w-full mt-[20px] bg-[#329F00] hover:bg-[#7caf64] gap-[10px] items-center py-[20px] rounded-xl">
+                    <Button
+                        onClick={() => {
+                            handleGetData();
+                        }}
+                        className="w-full cursor-pointer mt-[20px] bg-[#329F00] hover:bg-[#7caf64] gap-[10px] items-center py-[20px] rounded-xl"
+                    >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -368,13 +386,7 @@ function CreateVideo({
                             Edit video
                         </p>
                     </Button>
-                    <Button
-
-                        onClick={() => {
-                            handleGetData();
-                        }}
-
-                        className="w-full mt-[20px] gap-[10px] items-center py-[20px] rounded-xl">
+                    <Button className="w-full cursor-pointer mt-[20px] gap-[10px] items-center py-[20px] rounded-xl">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -391,7 +403,7 @@ function CreateVideo({
                         </svg>
 
                         <p className="text-2xl text-white font-bold">
-                            Edit video
+                            Export video
                         </p>
                     </Button>
                 </div>

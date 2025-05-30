@@ -15,7 +15,10 @@ function Videos() {
     const [inforVideos, setInforVideos] = useState<InforVideo[]>([]);
     const [curpage, setCurpage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [popupVideo, setPopupVideo] = useState<{ url: string; subtitle: string } | null>(null);
+    const [popupVideo, setPopupVideo] = useState<{
+        url: string;
+        subtitle: string;
+    } | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -30,21 +33,24 @@ function Videos() {
                 ...(search && { q: search }),
                 ...(category !== "Tất cả danh mục" && { category }),
                 ...(sort && { sort: sort === "Mới nhất" ? "desc" : "asc" }),
-                ...(status && { status: status === "Hoàn thiện" ? "completed" : "incomplete" }),
+                ...(status && {
+                    status:
+                        status === "Hoàn thiện" ? "completed" : "incomplete",
+                }),
             });
 
             const url = `http://localhost:4000/video/getVideoData?${params.toString()}`;
-            console.log(`Gọi API: ${url}`);
 
             const res = await fetchApi<InforVideo[] & { totalPages: number }>(
                 url,
                 HttpMethod.GET
             );
 
-            console.log("API Response:", JSON.stringify(res, null, 2));
             if (res.mes === "success" && res.status === 200) {
                 if (!Array.isArray(res.data)) {
-                    console.warn("Dữ liệu video không phải mảng, đặt mảng rỗng");
+                    console.warn(
+                        "Dữ liệu video không phải mảng, đặt mảng rỗng"
+                    );
                     setInforVideos([]);
                     setTotalPages(1);
                 } else {
@@ -52,10 +58,13 @@ function Videos() {
                     setTotalPages(res.totalPages || 1);
                 }
             } else {
-                throw new Error(res.message || "Định dạng response không hợp lệ");
+                throw new Error(
+                    res.message || "Định dạng response không hợp lệ"
+                );
             }
         } catch (err: any) {
-            const errorMessage = err.message || "Lỗi khi tải dữ liệu video. Vui lòng thử lại.";
+            const errorMessage =
+                err.message || "Lỗi khi tải dữ liệu video. Vui lòng thử lại.";
             setError(errorMessage);
             console.error("Error:", err);
         } finally {
@@ -64,7 +73,12 @@ function Videos() {
     };
 
     useEffect(() => {
-        console.log("useEffect chạy, page:", curpage, "filters:", { search, category, sort, status });
+        console.log("useEffect chạy, page:", curpage, "filters:", {
+            search,
+            category,
+            sort,
+            status,
+        });
         fetchVideos(curpage);
     }, [curpage, search, category, sort, status]);
 
@@ -74,10 +88,18 @@ function Videos() {
 
     return (
         <>
-            {loading && <div className="text-center text-2xl mt-10">Đang tải...</div>}
-            {error && <div className="text-red-500 text-center text-2xl mt-10">{error}</div>}
+            {loading && (
+                <div className="text-center text-2xl mt-10">Đang tải...</div>
+            )}
+            {error && (
+                <div className="text-red-500 text-center text-2xl mt-10">
+                    {error}
+                </div>
+            )}
             {!loading && !error && inforVideos.length === 0 && (
-                <div className="text-center text-2xl mt-10">Không có video nào để hiển thị.</div>
+                <div className="text-center text-2xl mt-10">
+                    Không có video nào để hiển thị.
+                </div>
             )}
             {!loading && inforVideos.length > 0 && (
                 <div className="grid grid-cols-3 gap-x-5 gap-y-10 mt-[40px]">

@@ -18,7 +18,6 @@ const authController = {
         try {
             const existUser = await User.findUserByEmail(email);
             if (existUser) {
-                console.log("Lỗi 3");
                 res.json(createErrorResponse(400, "Email already taken"));
             }
             const Token = Crypto.generateToken();
@@ -29,7 +28,6 @@ const authController = {
                 Token
             );
             if (!user) {
-                console.log("Lỗi 2");
                 res.json(createErrorResponse(400, "User not created"));
             }
             await sendEmail(email, Token);
@@ -454,11 +452,9 @@ btn_submit.addEventListener("click", async (e) => {
         }
     },
     updatePassword: async (req, res) => {
-        console.log("Update password");
         const { password, token } = req.body;
         try {
             const decode = jwt.verify(token, process.env.JWT_SECRET);
-            console.log(decode);
             const user = await User.getUserById(decode.id);
             if (!user) {
                 return res.status(400).json({ error: "User not found" });

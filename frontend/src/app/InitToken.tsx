@@ -10,8 +10,6 @@ export default function InitToken({
     token: string;
     children: React.ReactNode;
 }) {
-    useEffect(() => {
-        setToken(token);
-    }, [token]);
+    setToken(token);
     return <div>{children}</div>;
 }

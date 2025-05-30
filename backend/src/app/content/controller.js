@@ -187,7 +187,6 @@ async function generateImage(
             );
 
             const statusData = await statusRes.json();
-            console.log(statusData);
             if (statusData.status === "completed" && statusData.outputs) {
                 mediaUrl = statusData.outputs.mediaUrls[0];
                 break;

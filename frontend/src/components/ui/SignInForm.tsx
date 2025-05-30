@@ -19,13 +19,13 @@ import "@/app/signin_style.css";
 function showErrorToast(message: string) {
     toast.error(message, {
         duration: 4000,
-        position: "top-center",
+        position: "bottom-right",
     });
 }
 function showSuccessToast(message: string) {
     toast.success(message, {
         duration: 3000,
-        position: "top-center",
+        position: "bottom-right",
     });
 }
 
@@ -218,7 +218,9 @@ const SignInForm = () => {
             <div className="space-y-8">
                 {/* Email input */}
                 <div className="space-y-3">
-                    <label htmlFor="email" className="text-white">Email</label>
+                    <label htmlFor="email" className="text-white">
+                        Email
+                    </label>
                     <div className="relative py-1">
                         <div className="absolute inset-y-0 left-3 flex items-center">
                             <svg
@@ -233,7 +235,13 @@ const SignInForm = () => {
                                 strokeLinejoin="round"
                                 className="text-gray-400"
                             >
-                                <rect width="20" height="16" x="2" y="4" rx="2" />
+                                <rect
+                                    width="20"
+                                    height="16"
+                                    x="2"
+                                    y="4"
+                                    rx="2"
+                                />
                                 <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                             </svg>
                         </div>
@@ -246,7 +254,9 @@ const SignInForm = () => {
                                 setEmailError("");
                             }}
                             placeholder="Enter your email address"
-                            className={`custom-input pl-12 pr-10 py-5 md:py-6 text-xl md:text-[16px] text-white ${emailError ? "border-red-500" : ""}`}
+                            className={`custom-input pl-12 pr-10 py-5 md:py-6 text-xl md:text-[16px] text-white ${
+                                emailError ? "border-red-500" : ""
+                            }`}
                         />
                     </div>
                     {emailError && (
@@ -356,7 +366,13 @@ const SignInForm = () => {
                                     strokeLinejoin="round"
                                     className="text-gray-400"
                                 >
-                                    <rect width="20" height="16" x="2" y="4" rx="2" />
+                                    <rect
+                                        width="20"
+                                        height="16"
+                                        x="2"
+                                        y="4"
+                                        rx="2"
+                                    />
                                     <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                                 </svg>
                             </div>
@@ -368,12 +384,15 @@ const SignInForm = () => {
                                     setForgotError("");
                                 }}
                                 placeholder="Nhập email của bạn"
-                                className={`custom-input pl-12 pr-10 py-5 md:py-6 text-xl md:text-[16px] text-white bg-gray-800 border-0 border-b-2 border-gray-600 focus:border-fuchsia-500 placeholder-gray-400 transition-all duration-200 ${forgotError ? "border-red-500" : ""
-                                    }`}
+                                className={`custom-input pl-12 pr-10 py-5 md:py-6 text-xl md:text-[16px] text-white bg-gray-800 border-0 border-b-2 border-gray-600 focus:border-fuchsia-500 placeholder-gray-400 transition-all duration-200 ${
+                                    forgotError ? "border-red-500" : ""
+                                }`}
                             />
                         </div>
                         {forgotError && (
-                            <p className="text-red-500 text-xl mt-3">{forgotError}</p>
+                            <p className="text-red-500 text-xl mt-3">
+                                {forgotError}
+                            </p>
                         )}
                         <Button
                             className="w-full mt-8 bg-fuchsia-600 hover:bg-fuchsia-700 text-white rounded-full py-5 md:py-7 text-lg md:text-2xl font-semibold transition-all duration-200 transform hover:scale-105"
@@ -460,7 +479,8 @@ const SignInForm = () => {
                             Gửi thất bại!
                         </h2>
                         <p className="text-gray-300 text-base md:text-[17px] mb-8">
-                            Có lỗi xảy ra hoặc email không tồn tại. Vui lòng thử lại.
+                            Có lỗi xảy ra hoặc email không tồn tại. Vui lòng thử
+                            lại.
                         </p>
                         <Button
                             className="w-full bg-fuchsia-600 hover:bg-fuchsia-700 text-white rounded-full py-5 md:py-7 text-lg md:text-2xl font-semibold transition-all duration-200 transform hover:scale-105"
@@ -490,7 +510,9 @@ function PasswordInput({
 
     return (
         <div className="space-y-2">
-            <label htmlFor="password" className="text-white">Password</label>
+            <label htmlFor="password" className="text-white">
+                Password
+            </label>
             <div className="relative py-1">
                 <div className="absolute inset-y-0 left-3 flex items-center">
                     <svg
@@ -513,7 +535,9 @@ function PasswordInput({
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your Password"
-                    className={`custom-input pl-12 pr-10 py-5 md:py-6 text-xl md:text-[16px] text-white ${error ? "border-red-500" : ""}`}
+                    className={`custom-input pl-12 pr-10 py-5 md:py-6 text-xl md:text-[16px] text-white ${
+                        error ? "border-red-500" : ""
+                    }`}
                     value={password}
                     onChange={(e) => {
                         setPassword(e.target.value);

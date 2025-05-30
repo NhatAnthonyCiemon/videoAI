@@ -7,7 +7,14 @@ import SubtitleSetting from "../../../../components/ui/SubtitleSetting";
 import MusicSetting from "../../../../components/ui/MusicSetting";
 import StickerSetting from "../../../../components/ui/StickerSetting";
 import Video from "@/types/Video";
-import { Music_System, Sticker_System, Music, Sticker, Subtitle, Image_video } from "@/types/Video";
+import {
+    Music_System,
+    Sticker_System,
+    Music,
+    Sticker,
+    Subtitle,
+    Image_video,
+} from "@/types/Video";
 import LoadingOverlay from "@/components/ui/LoadingOverlay";
 import VideoExportPopup from "@/components/ui/VideoExportPopup";
 import Notification from "@/components/ui/Notification";
@@ -48,13 +55,23 @@ export default function EditVideo({
     stickers: Sticker[] | [];
     setStickers: (data: Sticker[]) => void;
 }) {
-    const [url, setUrl] = useState(videoData.url ? videoData.url : "https://res.cloudinary.com/dphytbuah/video/upload/v1747805114/temp_output_with_audio_qijbww.mp4");
+    const [url, setUrl] = useState(
+        videoData.url
+            ? videoData.url
+            : "https://res.cloudinary.com/dphytbuah/video/upload/v1747805114/temp_output_with_audio_qijbww.mp4"
+    );
     const [selectedTool, setSelectedTool] = useState("subtitles");
     const [tab, setTab] = useState<string>("sticker");
 
-    const [idxText, setIdxText] = useState<number>(subtitles.length > 0 ? subtitles.length - 1 : -1);
-    const [idxMusic, setIdxMusic] = useState<number>(musics.length > 0 ? musics.length - 1 : -1);
-    const [idxSticker, setIdxSticker] = useState<number>(stickers.length > 0 ? stickers.length - 1 : -1);
+    const [idxText, setIdxText] = useState<number>(
+        subtitles.length > 0 ? subtitles.length - 1 : -1
+    );
+    const [idxMusic, setIdxMusic] = useState<number>(
+        musics.length > 0 ? musics.length - 1 : -1
+    );
+    const [idxSticker, setIdxSticker] = useState<number>(
+        stickers.length > 0 ? stickers.length - 1 : -1
+    );
     const [text, setText] = useState("");
     const [isLoad, setIsLoad] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
@@ -74,12 +91,21 @@ export default function EditVideo({
         }
         if (videoData && videoData.image_video) {
             // console.log(videoData)
-            const newSubtitles = videoData.image_video.map((item: Image_video, index: number) => {
-                // Sử dụng item.content hoặc item.prompt làm nội dung phụ đề
-                return AddNewSubtitle(item.content, subtitles, item.start_time, item.end_time);
-            });
+            const newSubtitles = videoData.image_video.map(
+                (item: Image_video, index: number) => {
+                    // Sử dụng item.content hoặc item.prompt làm nội dung phụ đề
+                    return AddNewSubtitle(
+                        item.content,
+                        subtitles,
+                        item.start_time,
+                        item.end_time
+                    );
+                }
+            );
             // Gộp tất cả content thành 1 đoạn text
-            const combinedText = videoData.image_video.map(item => item.content).join(" ");
+            const combinedText = videoData.image_video
+                .map((item) => item.content)
+                .join(" ");
             setText(combinedText);
             setSubtitles(newSubtitles);
             setIdxText(newSubtitles.length - 1); // Cập nhật idxText
@@ -97,7 +123,7 @@ export default function EditVideo({
         const updatedList = [...subtitles];
         updatedList[idxText] = updatedSubtitle;
         setSubtitles(updatedList);
-        console.log(updatedSubtitle)
+        console.log(updatedSubtitle);
     };
 
     const handleDeleteSubtitle = (index: number) => {
@@ -226,14 +252,13 @@ export default function EditVideo({
             console.log("Save result:", result);
             setIsLoad(false);
             setShowNot(true);
-            setMes("Lưu dữ liệu edit thành công!")
+            setMes("Lưu dữ liệu edit thành công!");
         } catch (err) {
             console.error("Save error:", err);
             setShowNot(true);
-            setMes("Có lỗi xảy ra! Hãy thử lại!")
+            setMes("Có lỗi xảy ra! Hãy thử lại!");
         }
     };
-
 
     const handleExport = async () => {
         if (!url) {
@@ -317,8 +342,7 @@ export default function EditVideo({
                 throw new Error("Backend API error");
             }
             const res = await response.json();
-            console.log(res)
-
+            console.log(res);
 
             const video_url = res.data.video_url;
 
@@ -376,27 +400,29 @@ export default function EditVideo({
                     <div>
                         <button
                             onClick={handleExport}
-                            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                            className="bg-blue-600 cursor-pointer text-white px-4 py-2 rounded hover:bg-blue-700 transition"
                         >
-                            Export Video
+                            Tạo video Edit(có tùy chọn lưu)
                         </button>
                     </div>
                     <div>
                         <button
                             onClick={handleSave}
-                            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                            className="bg-blue-600 cursor-pointer    text-white px-4 py-2 rounded hover:bg-blue-700 transition"
                         >
                             Lưu tiến trình
                         </button>
                     </div>
-                    {videoData.url_edit && <div>
-                        <button
-                            onClick={handleOpenVideoExport}
-                            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
-                        >
-                            Video đã export
-                        </button>
-                    </div>}
+                    {videoData.url_edit && (
+                        <div>
+                            <button
+                                onClick={handleOpenVideoExport}
+                                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+                            >
+                                Video đã export
+                            </button>
+                        </div>
+                    )}
                 </div>
                 <VideoPreview
                     url={url}
@@ -422,8 +448,14 @@ export default function EditVideo({
                     onUpdateSticker={handleUpdateSticker}
                 />
             </div>
-            <LoadingOverlay isPreparing={isLoad} message="Đang xử lý..."/>
-            {showPopup && <VideoExportPopup videoUrl={video_url} videoid={videoData.id} onClose={() => setShowPopup(false)} />}
+            <LoadingOverlay isPreparing={isLoad} message="Đang xử lý..." />
+            {showPopup && (
+                <VideoExportPopup
+                    videoUrl={video_url}
+                    videoid={videoData.id}
+                    onClose={() => setShowPopup(false)}
+                />
+            )}
             {showNot && (
                 <>
                     <Notification

@@ -15,8 +15,13 @@ interface VideoItemProps {
     onClickVideo: () => void;
 }
 
-const VideoItem = ({ inforVideo, onViewClick, onClickVideo }: VideoItemProps) => {
-    const { id, url, keyword, name, category, created_at, step, url_edit } = inforVideo;
+const VideoItem = ({
+    inforVideo,
+    onViewClick,
+    onClickVideo,
+}: VideoItemProps) => {
+    const { id, url, keyword, name, category, created_at, step, url_edit } =
+        inforVideo;
     const router = useRouter();
     const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -27,11 +32,11 @@ const VideoItem = ({ inforVideo, onViewClick, onClickVideo }: VideoItemProps) =>
     const handleRename = async () => {
         try {
             const url = `http://localhost:4000/video/renameVideo/${id}`;
-            const res = await fetchApi<{ mes: string; status: number; message: string }>(
-                url,
-                HttpMethod.POST,
-                { name: newName }
-            );
+            const res = await fetchApi<{
+                mes: string;
+                status: number;
+                message: string;
+            }>(url, HttpMethod.POST, { name: newName });
 
             if (res.mes === "success" && res.status === 200) {
                 setDisplayName(newName);
@@ -55,10 +60,11 @@ const VideoItem = ({ inforVideo, onViewClick, onClickVideo }: VideoItemProps) =>
     const handleDelete = async () => {
         try {
             const url = `http://localhost:4000/video/deleteVideo/${id}`;
-            const res = await fetchApi<{ mes: string; status: number; message?: string }>(
-                url,
-                HttpMethod.DELETE
-            );
+            const res = await fetchApi<{
+                mes: string;
+                status: number;
+                message?: string;
+            }>(url, HttpMethod.DELETE);
 
             if (res.mes === "success" && res.status === 200) {
                 setIsDeleteDialogOpen(false);
@@ -99,7 +105,7 @@ const VideoItem = ({ inforVideo, onViewClick, onClickVideo }: VideoItemProps) =>
                 onClick={onClickVideo}
             >
                 <video
-                    src={url_edit ?? url} // Prioritize url_edit, fallback to url
+                    src={url_edit && url && "/img/avatar_placeholder.png"} // Prioritize url_edit, fallback to url
                     title={keyword}
                     className="absolute top-0 left-0 w-full h-full rounded-xl cursor-pointer"
                 />
@@ -153,7 +159,10 @@ const VideoItem = ({ inforVideo, onViewClick, onClickVideo }: VideoItemProps) =>
                                     className="px-4 py-2 text-xl text-gray-700 hover:bg-gray-100 cursor-pointer"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        router.push(url_edit ?? `http://localhost:3000/create/${id}`); // Prioritize url_edit, fallback to create URL
+                                        router.push(
+                                            url_edit ??
+                                                `http://localhost:3000/create/${id}`
+                                        ); // Prioritize url_edit, fallback to create URL
                                     }}
                                 >
                                     Chỉnh sửa
@@ -174,7 +183,9 @@ const VideoItem = ({ inforVideo, onViewClick, onClickVideo }: VideoItemProps) =>
                 </div>
 
                 <div className="flex items-center text-xl text-gray-600">
-                    <span>{new Date(created_at).toLocaleDateString("vi-VN")}</span>
+                    <span>
+                        {new Date(created_at).toLocaleDateString("vi-VN")}
+                    </span>
                     <span className="mx-2">•</span>
                     <span>{category || "Chưa có danh mục"}</span>
                 </div>

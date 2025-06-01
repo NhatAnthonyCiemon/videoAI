@@ -22,7 +22,7 @@ const storeController = {
             !content ||
             !voice_info
         ) {
-            console.log("Missing required fields");
+            console.log("Missing required fields in saveFullContentData");
             return res.status(400).json({
                 mes: "Missing required fields",
                 status: false,
@@ -102,7 +102,7 @@ const storeController = {
             image_video === undefined ||
             !voice_info
         ) {
-            console.log("Missing required fields");
+            console.log("Missing required in saveImage");
             return res.status(400).json({
                 mes: "Missing required fields",
                 status: false,
@@ -170,10 +170,22 @@ const storeController = {
             step,
             content,
             keyword,
-            image_video,
+            image_video = [],
             voice_info,
             url,
+            is_custom_voice,
+            duration,
+            thumbnail,
+            quality,
+            is_bg_music,
         } = req.body;
+        console.log("Dữ liệu tuyền đi :", req.body);
+        console.log("Saving video with the following details:");
+        console.log("Duration:", duration);
+        console.log("Thumbnail:", thumbnail);
+        console.log("Quality:", quality);
+        console.log("is_bg_music:", is_bg_music);
+           
 
         console.log("calll")
         if (
@@ -185,19 +197,21 @@ const storeController = {
             !content ||
             image_video === undefined ||
             !voice_info ||
-            !url
+            !url 
         ) {
-            console.log("Missing required fields");
+            console.log("Missing required fields in saveVideo");
             return res.status(400).json({
                 mes: "Missing required fields",
                 status: false,
                 data: null,
             });
         }
+
         let newkeyword = keyword;
         if (!keyword) {
             newkeyword = "";
         }
+
         try {
             const user = await store.findUserId(user_id);
             if (!user) {
@@ -214,6 +228,7 @@ const storeController = {
                     data: null,
                 });
             }
+           
             const result = await store.saveDataWithVideo(
                 id,
                 user_id,
@@ -224,8 +239,14 @@ const storeController = {
                 newkeyword,
                 image_video,
                 voice_info,
-                url
+                url,
+                is_custom_voice,
+                duration,
+                thumbnail,
+                quality,
+                is_bg_music
             );
+            
             if (!result) {
                 return res.status(500).json({
                     mes: "Error saving data",

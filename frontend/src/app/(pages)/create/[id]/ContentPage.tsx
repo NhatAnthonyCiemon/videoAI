@@ -26,6 +26,8 @@ function ContentPage({ video }: { video: Video }) {
     const [subtitles, setSubtitles] = useState<Subtitle[]>([]);
     const [musics, setMusics] = useState<Music[]>([]);
     const [stickers, setStickers] = useState<Sticker[]>([]);
+
+    const [isCustomVoice, setIsCustomVoice] = useState(video.is_custom_voice);
     return (
         <div className="w-[1280px] mx-auto overflow-hidden">
             <CreateTop
@@ -41,6 +43,8 @@ function ContentPage({ video }: { video: Video }) {
                     setVideoData={setVideoData}
                     isPreparing={isPreparing}
                     setIsPreparing={setIsPreparing}
+                    isCustomVoice={isCustomVoice}
+                    setIsCustomVoice={setIsCustomVoice}
                 />
             )}
             {((whichActive === 1 && videoData.step >= 1) ||
@@ -51,6 +55,8 @@ function ContentPage({ video }: { video: Video }) {
                     setVideoData={setVideoData}
                     isPreparing={isPreparing}
                     setIsPreparing={setIsPreparing}
+
+                    isCustomVoice={isCustomVoice}
                 />
             )}
 

@@ -40,19 +40,19 @@ export async function mergeMp3Files(urls, output = "merged.mp3") {
       .outputOptions(["-c", "copy"])
       .output(output)
       .on("end", () => {
-        fs.unlinkSync(listFile);
-        // Xóa các file âm thanh tạm
-        files.forEach((file) => {
-          if (fs.existsSync(file)) fs.unlinkSync(file);
-        });
+        //fs.unlinkSync(listFile);
+        // // Xóa các file âm thanh tạm
+        // files.forEach((file) => {
+        //   if (fs.existsSync(file)) fs.unlinkSync(file);
+        // });
         resolve(output);
       })
       .on("error", (err) => {
         fs.unlinkSync(listFile);
         // Xóa các file âm thanh tạm nếu có lỗi
-        files.forEach((file) => {
-          if (fs.existsSync(file)) fs.unlinkSync(file);
-        });
+        // files.forEach((file) => {
+        //   if (fs.existsSync(file)) fs.unlinkSync(file);
+        // });
         reject(err);
       })
       .run();

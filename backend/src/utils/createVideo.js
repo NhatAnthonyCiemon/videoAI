@@ -19,7 +19,7 @@ async function createVideoSegments(images, durations) {
         const output = `clip_${index}.mp4`;
         const { width, height } = { width: 1024, height: 768 };
         const sValue = `${width}x${height}`;
-        let fps = 120;
+        let fps = 60;
         if (isRender) {
             fps = 30;
         }

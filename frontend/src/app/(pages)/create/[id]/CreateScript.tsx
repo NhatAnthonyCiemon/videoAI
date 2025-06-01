@@ -32,12 +32,18 @@ export default function CreateScript({
     setVideoData,
     isPreparing,
     setIsPreparing,
+
+    isCustomVoice,
+    setIsCustomVoice
 }: {
     setWhichActive: (Active: number) => void;
     videoData: Video;
     setVideoData: (video: Video) => void;
     isPreparing: boolean;
     setIsPreparing: (Active: boolean) => void;
+
+    isCustomVoice: boolean;
+    setIsCustomVoice: (isCustomVoice: boolean) => void;
 }) {
     const [disabled, setDisabled] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -324,6 +330,7 @@ export default function CreateScript({
                                         setVideoData={setVideoData}
                                         setDisabled={setDisabled}
                                         setIsLoading={setIsLoading}
+                                        
                                     />
                                     <Button
                                         onClick={handleGenerateScript}
@@ -363,11 +370,14 @@ export default function CreateScript({
                         </div>
 
                         {/* Right Section */}
+                        
                         <div className="border border-gray-300 rounded-3xl p-4">
                             <VoiceSelector
                                 voices={voices}
                                 videoData={videoData}
                                 setVideoData={setVideoData}
+                                isCustomVoice={isCustomVoice} // truyền state
+                                setIsCustomVoice={setIsCustomVoice} // truyền hàm set
                             />
                         </div>
                     </div>

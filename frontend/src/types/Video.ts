@@ -13,9 +13,16 @@ type Video = {
     sticker: Sticker[];
     subtitle: Subtitle[];
     url_edit: string;
+    is_custom_voice: boolean;
+    duration: number;
+    thumbnail: string;
+    quality: string;
+    is_bg_music: boolean;
 };
 
 type Image_video = {
+    file_mp3: File;
+    url_mp3: string;
     content: string;
     url: string;
     prompt: string;

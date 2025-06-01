@@ -12,6 +12,7 @@ const Video = {
                         ordinal_number: true,
                         start_time: true,
                         end_time: true,
+                        url_mp3: true, // Include url_mp3 if it exists
                     },
                 },
                 voice_info: {

@@ -43,6 +43,7 @@ model image_video {
   prompt         String?
   start_time     Float?  @db.Real
   end_time       Float?  @db.Real
+  url_mp3        String?
   videos         videos? @relation(fields: [video_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
@@ -101,24 +102,29 @@ model video_info {
 }
 
 model videos {
-  id          String        @id @db.Char(10)
-  user_id     Int?
-  name        String
-  category    String?
-  created_at  DateTime?     @default(now()) @db.Timestamp(6)
-  view        Int?          @default(0)
-  content     String?
-  url         String?
-  step        Int
-  keyword     String?
-  url_edit    String?
-  image_video image_video[]
-  music       music[]
-  subtitles   subtitles[]
-  ticker      ticker[]
-  video_info  video_info?
-  users       users?        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  voice_info  voice_info?
+  id              String        @id @db.Char(10)
+  user_id         Int?
+  name            String
+  category        String?
+  created_at      DateTime?     @default(now()) @db.Timestamp(6)
+  view            Int?          @default(0)
+  content         String?
+  url             String?
+  step            Int
+  keyword         String?
+  url_edit        String?
+  is_custom_voice Boolean?
+  duration        Float?        @db.Real
+  thumbnail       String?
+  quality         String?
+  is_bg_music     Boolean?      @default(false)
+  image_video     image_video[]
+  music           music[]
+  subtitles       subtitles[]
+  ticker          ticker[]
+  video_info      video_info?
+  users           users?        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  voice_info      voice_info?
 }
 
 model voice_info {

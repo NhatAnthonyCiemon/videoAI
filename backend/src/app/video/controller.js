@@ -5,6 +5,8 @@ const videoController = {
         const user = req.user;
         try {
             const video = await Video.getById(id);
+            console.log("Video ren ra ban đầu :", video);
+
             if (!video) {
                 const newVideo = {
                     id: id,
@@ -22,6 +24,11 @@ const videoController = {
                     },
                     url: "",
                     url_edit: "",
+                    is_custom_voice: false,
+                    duration: 0,
+                    thumbnail: "",
+                    quality: "",
+                    is_bg_music: false,
                 };
                 res.json({
                     mes: "success",
@@ -44,6 +51,7 @@ const videoController = {
                         ordinal_number: item.ordinal_number,
                         start_time: item.start_time,
                         end_time: item.end_time,
+                        url_mp3 : item.url_mp3 || "", // Thêm trường url_mp3 nếu có
                     };
                 });
                 const image_video = image_video_raw
@@ -55,6 +63,7 @@ const videoController = {
                             prompt: item.prompt,
                             start_time: item.start_time,
                             end_time: item.end_time,
+                            url_mp3 : item.url_mp3,
                         };
                     });
                 // Lấy thông tin voice_info từ video
@@ -75,7 +84,13 @@ const videoController = {
                     voice_info: voice_info,
                     url: video.url,
                     url_edit: video.url_edit,
+                    is_custom_voice: video.is_custom_voice,
+                    duration: video.duration,
+                    thumbnail: video.thumbnail,
+                    quality: video.quality,
+                    is_bg_music: video.is_bg_music,
                 };
+                
                 res.json({
                     mes: "success",
                     status: 200,

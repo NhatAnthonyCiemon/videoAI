@@ -10,13 +10,15 @@ import { uploadAudio } from "../../utils/uploadAudio.js";
 import prisma from "../../config/database/db.config.js";
 import ffmpeg from 'fluent-ffmpeg';
 // import ffmpeg from 'fluent-ffmpeg';
-import { path as ffmpegPath } from '@ffmpeg-installer/ffmpeg';
+import { path as ffmpegPath } from '@ffmpeg-installer/ffmpeg'; 
+import { trimAudio } from '../../utils/editAudio.js';
 
 ffmpeg.setFfmpegPath(ffmpegPath);
 
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const tempDir = path.join(__dirname, '../tmp');
 const outputDir = path.join(__dirname, 'outputs');
 
 // Hàm xóa file với retry
@@ -524,6 +526,90 @@ const editController = {
                 await deleteFileWithRetry(req.file.path).catch(err => console.error("Failed to delete temp file:", err));
             }
             res.status(500).json(createErrorResponse(500, `Upload image failed: ${error.message}`));
+        }
+    },
+    trimAudio: async (req, res) => {
+        await fs.ensureDir(tempDir);
+        try {
+            const { id, name, start, end, replace } = req.body;
+            const userId = req.user?.id;
+
+            // Validate input
+            if (!id || !name || start === undefined || end === undefined || replace === undefined) {
+                throw new Error('Missing required fields: id, name, start, end, replace');
+            }
+            if (start < 0 || end <= start) {
+                throw new Error('Invalid trim range: start must be >= 0 and end > start');
+            }
+            if (!userId) {
+                throw new Error('Unauthorized: User ID not found');
+            }
+
+            // Fetch existing music from database
+            const music = await prisma.music_system.findUnique({
+                where: { id },
+            });
+            if (!music) {
+                throw new Error(`Music with ID ${id} not found`);
+            }
+            if (music.id_user !== userId) {
+                throw new Error('Unauthorized: You do not own this music');
+            }
+
+            // Download the original audio file
+            const inputPath = path.join(tempDir, `input_${Date.now()}.mp3`);
+            try {
+                const response = await axios.get(music.url, { responseType: 'arraybuffer', timeout: 30000 });
+                await fs.writeFile(inputPath, response.data);
+            } catch (err) {
+                throw new Error(`Failed to download audio: ${err.message}`);
+            }
+
+            // Trim audio
+            const outputPath = path.join(tempDir, `trimmed_${Date.now()}.mp3`);
+            const cloudUrl = await trimAudio(inputPath, outputPath, start, end);
+
+            // Update or create new music entry
+            let updatedMusic;
+            if (replace) {
+                // Update existing music entry
+                updatedMusic = await prisma.music_system.update({
+                    where: { id },
+                    data: {
+                        url: cloudUrl,
+                        name,
+                    },
+                });
+            } else {
+                // Create new music entry
+                updatedMusic = await prisma.music_system.create({
+                    data: {
+                        url: cloudUrl,
+                        name,
+                        user: { connect: { id: userId } },
+                    },
+                });
+            }
+
+            // Clean up temporary files
+            await deleteFileWithRetry(inputPath);
+            await deleteDirectoryWithRetry(tempDir);
+
+            // Send response
+            res.json(createResponse(200, 'Audio trimmed and saved successfully', {
+                id: updatedMusic.id,
+                url: updatedMusic.url,
+                name: updatedMusic.name,
+            }));
+        } catch (err) {
+            console.error('Trim audio error:', err);
+            // Clean up on error
+            try {
+                await deleteDirectoryWithRetry(tempDir);
+            } catch (cleanupErr) {
+                console.error('Failed to cleanup tempDir:', cleanupErr);
+            }
+            res.status(500).json(createErrorResponse(500, `Trim audio failed: ${err.message}`));
         }
     },
 };

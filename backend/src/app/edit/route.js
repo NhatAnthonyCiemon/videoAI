@@ -17,6 +17,7 @@ import middleware from "../../middleware/index.js";
 
 router.use(middleware.isAuthenticated);
 router.post("/music-user", editController.getMusicUser);
+router.post("/trim-audio", editController.trimAudio);
 // Thêm hai endpoint upload
 router.post("/upload-audio", upload.single("audio"), editController.uploadAudio);
 router.post("/upload-image", upload.single("image"), editController.uploadImage);

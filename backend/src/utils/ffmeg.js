@@ -193,6 +193,7 @@ async function overlayVideo({ videoPath, scripts = [], stickers = [], audioConfi
         const fontRegular = path.join(__dirname, '../app/edit/fonts', 'Roboto-VariableFont_wdth_wght.ttf').replace(/\\/g, '/');
         for (let i = 0; i < scripts.length; i++) {
             const { text, start = 0, end = 1, style = {} } = scripts[i];
+            console.log(`Style for subtitle ${i}:`, style);
             const {
                 position = 'bottom',
                 fontSize = 20,
@@ -201,6 +202,8 @@ async function overlayVideo({ videoPath, scripts = [], stickers = [], audioConfi
                 fontStyle = [],
                 alignment = 'center',
                 width: textWidth = width,
+                shadow = {},
+                outline = {},
             } = style;
 
             const fontPath = (
@@ -208,16 +211,36 @@ async function overlayVideo({ videoPath, scripts = [], stickers = [], audioConfi
                 fontStyle.includes('bold') ? path.join(__dirname, '../app/edit/fonts', 'Roboto_Condensed-Bold.ttf') : fontRegular
             ).replace(/\\/g, '/');
 
+            if (!fs.existsSync(fontPath)) {
+                console.error(`Font file not found: ${fontPath}`);
+                throw new Error(`Font file not found: ${fontPath}`);
+            }
+
             console.log(`Processing subtitle ${i}: ${JSON.stringify(scripts[i])}`);
             const wrappedText = wrapText(text, textWidth - 100, fontSize).replace(/'/g, "\\'").replace(/:/g, "\\:").replace(/,/g, "\\,").replace(/=/g, "\\=").replace(/%/g, "\\%");
             const y = position === 'top' ? '30' : position === 'middle' ? '(h-text_h)/2' : 'h-text_h-30';
             const x = alignment === 'center' ? '(w-text_w)/2' : alignment === 'left' ? '10' : 'w-text_w-10';
 
+            // Cấu hình shadow
+            const shadowColor = shadow.color || '#000000';
+            const shadowX = shadow.offsetX !== undefined ? Math.max(shadow.offsetX, 1) : 2;
+            const shadowY = shadow.offsetY !== undefined ? Math.max(shadow.offsetY, 1) : 2;
+
+            // Cấu hình outline
+            const outlineColor = outline.color || '#FFFF00';
+            const outlineWidth = outline.width !== undefined ? Math.max(outline.width, 2) : 2;
+
+            // Xử lý fontColor
+            const cleanFontColor = fontColor.split('@')[0];
+
             filterComplex.push(
-                `${currentVideoStream}drawtext=text='${wrappedText}':fontsize=${fontSize}:fontcolor=${fontColor}:` +
+                `${currentVideoStream}drawtext=text='${wrappedText}':fontsize=${fontSize}:fontcolor=${cleanFontColor}:` +
                 `fontfile='${fontPath}':box=1:boxcolor=${backgroundColor}:boxborderw=10:line_spacing=10:` +
-                `x=${x}:y=${y}:enable='between(t,${start},${end})'[v${i}]`
+                `x=${x}:y=${y}:enable='between(t,${start},${end})':` +
+                `shadowcolor=${shadowColor}:shadowx=${shadowX}:shadowy=${shadowY}:` +
+                `borderw=${outlineWidth}:bordercolor=${outlineColor}[v${i}]`
             );
+            console.log(`Drawtext filter for subtitle ${i}:`, filterComplex[filterComplex.length - 1]);
             currentVideoStream = `[v${i}]`;
         }
 
@@ -260,7 +283,6 @@ async function overlayVideo({ videoPath, scripts = [], stickers = [], audioConfi
                 audioFilters.push('[0:a]volume=1.0[original_audio]');
                 audioInputs.push('[original_audio]');
             }
-            // Sử dụng whole_dur thay vì pad_dur
             audioFilters.push(`${audioInputs.join('')}amix=inputs=${audioInputs.length}[audio]`);
         } else if (hasVideoAudio) {
             audioFilters.push('[0:a]anull[audio]');

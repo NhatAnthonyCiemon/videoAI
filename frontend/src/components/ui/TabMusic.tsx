@@ -22,6 +22,7 @@ export default function TabMusic({
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [isLoad, setIsLoad] = useState(false);
+    const [music_user, setMusicUser] = useState<Music_System[] | null>(null);
 
     useEffect(() => {
         if (audioRef.current) {
@@ -122,9 +123,48 @@ export default function TabMusic({
         }
     };
 
+    const getMusicUser = async () => {
+        try {
+            setIsLoad(true);
+            const token = getToken();
+            // Gọi API /upload-audio
+            const response = await fetch(
+                "http://localhost:4000/edit/music-user",
+                {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${token}`, // truyền token vào header
+                    }
+                }
+            );
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Lấy nhạc nền thất bại");
+            }
+            const json = await response.json();
+            setMusicUser(json.data.musics);
+
+            console.log("Music User:", json);
+
+            setIsLoad(false);
+        } catch (error) {
+            console.error("Error uploading audio:", error);
+            alert(`Lỗi khi lấy nhạc nền: Vui lòng thử lại.`);
+
+            setIsLoad(false);
+        }
+
+    };
+
+    useEffect(() => {
+        getMusicUser();
+    }, []);
+
     const handleSave = () => {
         if (musics_system) {
-            const selectedMusic = musics_system.filter((m) =>
+            const allMusics = [...(musics_system || []), ...(music_user || [])];
+            const selectedMusic = allMusics.filter((m) =>
                 selectedIds.includes(m.id)
             );
             selectedMusic.forEach((m) => onAddMusic(m.id, m.name, m.url));
@@ -140,110 +180,152 @@ export default function TabMusic({
     };
 
     return (
-        <div className="space-y-4 text-2xl pt-4 bg-white overflow-y-auto p-4">
-            <audio
-                ref={audioRef}
-                onEnded={() => {
-                    setPlayingId(null);
-                    setPlayingCurrent(false);
-                }}
-            />
-            <input
-                type="file"
-                ref={fileInputRef}
-                accept="audio/*"
-                onChange={handleFileChange}
-                className="hidden"
-            />
+        <div className="flex gap-5 w-full space-y-4 text-2xl pt-4 bg-white overflow-y-auto p-4">
+            <div className="flex-1 space-y-4">
+                <audio
+                    ref={audioRef}
+                    onEnded={() => {
+                        setPlayingId(null);
+                        setPlayingCurrent(false);
+                    }}
+                />
+                <input
+                    type="file"
+                    ref={fileInputRef}
+                    accept="audio/*"
+                    onChange={handleFileChange}
+                    className="hidden"
+                />
 
-            <div className="flex justify-between">
-                <h2 className="text-2xl font-bold">Chọn nhạc nền</h2>
-                <button
-                    onClick={handleUpload}
-                    className="text-2xl cursor-pointer bg-gray-200 px-3 py-1 rounded hover:bg-gray-300 transition"
-                >
-                    + Tải nhạc lên
-                </button>
-            </div>
-
-            <div className="space-y-2 mt-3">
-                {musics_system?.map((music) => (
-                    <div
-                        key={music.id}
-                        className={`p-3 border rounded-md flex justify-between items-center transition ${
-                            selectedIds.includes(music.id)
-                                ? "border-blue-500 bg-blue-50"
-                                : "border-gray-300"
-                        }`}
-                    >
-                        <input
-                            type="checkbox"
-                            checked={selectedIds.includes(music.id)}
-                            onChange={() => toggleSelect(music.id)}
-                            className="w-5 h-5 cursor-pointer mr-4 ml-2"
-                        />
-                        <div
-                            className="flex-1 cursor-pointer"
-                            onClick={() => toggleSelect(music.id)}
-                        >
-                            <p className="font-semibold">{music.name}</p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <button
-                                onClick={() =>
-                                    handlePlaySystem(music.id, music.url)
-                                }
-                                className="text-xl bg-gray-100 px-2 py-1 rounded hover:bg-gray-200"
-                            >
-                                {playingId === music.id
-                                    ? "⏸️ Pause"
-                                    : "▶️ Play"}
-                            </button>
-                        </div>
-                    </div>
-                ))}
-            </div>
-
-            {selectedIds.length > 0 && (
-                <div className="pt-4">
+                <div className="flex justify-between">
+                    <h2 className="text-2xl font-bold">Chọn nhạc nền</h2>
                     <button
-                        onClick={handleSave}
-                        className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition cursor-pointer"
+                        onClick={handleUpload}
+                        className="text-2xl cursor-pointer bg-gray-200 px-3 py-1 rounded hover:bg-gray-300 transition"
                     >
-                        Thêm nhạc nền
+                        + Tải nhạc lên
                     </button>
                 </div>
-            )}
 
-            {music && (
-                <div className="pt-4 border-t mt-4">
-                    <h3 className="text-2xl font-bold">Nhạc đang chọn</h3>
-                    <div className="mt-2">
-                        <p className="text-2xl">Tên: {music.name}</p>
-                        <div className="mt-2 flex items-center gap-2">
-                            <button
-                                onClick={() => handlePlayCurrent(music.data)}
-                                className="text-2xl bg-gray-100 px-2 py-1 rounded hover:bg-gray-200"
-                            >
-                                {playingCurrent ? "⏸️ Pause" : "▶️ Play"}
-                            </button>
-                        </div>
-                        <div className="mt-2">
-                            <label className="text-2xl">Âm lượng: </label>
+                <div className="space-y-2 mt-3">
+                    <h2 className="text-2xl">Nhạc hệ thống</h2>
+                    {musics_system?.map((music) => (
+                        <div
+                            key={music.id}
+                            className={`p-3 border rounded-md flex justify-between items-center transition ${selectedIds.includes(music.id)
+                                ? "border-blue-500 bg-blue-50"
+                                : "border-gray-300"
+                                }`}
+                        >
                             <input
-                                type="range"
-                                min="0"
-                                max="1"
-                                step="0.1"
-                                value={music.volume || 0.5}
-                                onChange={handleVolumeChange}
-                                className="w-full"
+                                type="checkbox"
+                                checked={selectedIds.includes(music.id)}
+                                onChange={() => toggleSelect(music.id)}
+                                className="w-5 h-5 cursor-pointer mr-4 ml-2"
                             />
-                            <span>{(music.volume * 100).toFixed(0)}%</span>
+                            <div
+                                className="flex-1 cursor-pointer"
+                                onClick={() => toggleSelect(music.id)}
+                            >
+                                <p className="font-semibold">{music.name}</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() =>
+                                        handlePlaySystem(music.id, music.url)
+                                    }
+                                    className="text-xl bg-gray-100 px-2 py-1 rounded hover:bg-gray-200"
+                                >
+                                    {playingId === music.id
+                                        ? "⏸️ Pause"
+                                        : "▶️ Play"}
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="space-y-2 mt-3">
+                    <h2 className="text-2xl">Nhạc của người dùng</h2>
+                    {music_user?.map((music) => (
+                        <div
+                            key={music.id}
+                            className={`p-3 border rounded-md flex justify-between items-center transition ${selectedIds.includes(music.id)
+                                ? "border-blue-500 bg-blue-50"
+                                : "border-gray-300"
+                                }`}
+                        >
+                            <input
+                                type="checkbox"
+                                checked={selectedIds.includes(music.id)}
+                                onChange={() => toggleSelect(music.id)}
+                                className="w-5 h-5 cursor-pointer mr-4 ml-2"
+                            />
+                            <div
+                                className="flex-1 cursor-pointer"
+                                onClick={() => toggleSelect(music.id)}
+                            >
+                                <p className="font-semibold">{music.name}</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() =>
+                                        handlePlaySystem(music.id, music.url)
+                                    }
+                                    className="text-xl bg-gray-100 px-2 py-1 rounded hover:bg-gray-200"
+                                >
+                                    {playingId === music.id
+                                        ? "⏸️ Pause"
+                                        : "▶️ Play"}
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                {selectedIds.length > 0 && (
+                    <div className="pt-4">
+                        <button
+                            onClick={handleSave}
+                            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition cursor-pointer"
+                        >
+                            Thêm nhạc nền
+                        </button>
+                    </div>
+                )}
+            </div>
+
+            <div className="w-1/2 space-y-4">
+                {music && (
+                    <div className="">
+                        <h3 className="text-2xl font-bold">Nhạc đang chọn</h3>
+                        <div className="mt-2">
+                            <p className="text-2xl">Tên: {music.name}</p>
+                            <div className="mt-2 flex items-center gap-2">
+                                <button
+                                    onClick={() => handlePlayCurrent(music.data)}
+                                    className="text-2xl bg-gray-100 px-2 py-1 rounded hover:bg-gray-200"
+                                >
+                                    {playingCurrent ? "⏸️ Pause" : "▶️ Play"}
+                                </button>
+                            </div>
+                            <div className="mt-2">
+                                <label className="text-2xl">Âm lượng: </label>
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="1"
+                                    step="0.1"
+                                    value={music.volume || 0.5}
+                                    onChange={handleVolumeChange}
+                                    className="w-full"
+                                />
+                                <span>{(music.volume * 100).toFixed(0)}%</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )}
+            </div>
 
             <LoadingOverlay
                 isPreparing={isLoad}

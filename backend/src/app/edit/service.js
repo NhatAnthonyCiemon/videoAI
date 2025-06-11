@@ -23,6 +23,15 @@ const Edit = {
         return musics;
     },
 
+    getMusicUser: async (id) => {
+        const musics = await prisma.music_system.findMany({
+            where: {
+                id_user: id,
+            },
+        });
+        return musics;
+    },
+
 
     setSticker: async () => {
         const stickers = await prisma.sticker_system.findMany({
@@ -37,17 +46,17 @@ const Edit = {
         const [subtitles, stickers, musics] = await Promise.all([
             prisma.subtitles.findMany({
                 where: { video_id },
-                orderBy: { start_time: 'asc' },
+                // orderBy: { start_time: 'asc' },
             }),
             prisma.ticker.findMany({
                 where: { video_id },
                 include: { sticker_system: true },
-                orderBy: { start_time: 'asc' },
+                // orderBy: { start_time: 'asc' },
             }),
             prisma.music.findMany({
                 where: { video_id },
                 include: { music_system: true },
-                orderBy: { start_time: 'asc' },
+                // orderBy: { start_time: 'asc' },
             }),
         ]);
 

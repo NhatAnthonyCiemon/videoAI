@@ -10,9 +10,10 @@ interface VideoPreviewProps {
     stickers: Sticker[];
     musics: Music[];
     text: string;
+    onTimeUpdate?: (time: number) => void;
 }
 
-export default function VideoPreview({ url, subtitles, stickers, musics, text }: VideoPreviewProps) {
+export default function VideoPreview({ url, subtitles, stickers, musics, text, onTimeUpdate }: VideoPreviewProps) {
     const videoRef = useRef<HTMLVideoElement>(null);
     const videoContainerRef = useRef<HTMLDivElement>(null);
     const audioRefs = useRef<{ [key: number]: HTMLAudioElement | null }>({});
@@ -24,6 +25,13 @@ export default function VideoPreview({ url, subtitles, stickers, musics, text }:
     const [volume, setVolume] = useState(1);
     const [videoDimensions, setVideoDimensions] = useState({ width: 1, height: 1 });
     const [videoOffset, setVideoOffset] = useState({ x: 0, y: 0 });
+    const [renderKey, setRenderKey] = useState(0);
+
+    useEffect(() => {
+        // Mỗi khi subtitles thay đổi (thậm chí nội dung bên trong chúng thay đổi)
+        // ta tạo ra một render mới
+        setRenderKey(prev => prev + 1);
+    }, [subtitles]);
 
     const togglePlay = () => {
         const video = videoRef.current;
@@ -41,6 +49,7 @@ export default function VideoPreview({ url, subtitles, stickers, musics, text }:
     const handleTimeUpdate = () => {
         const time = videoRef.current?.currentTime || 0;
         setCurrentTime(time);
+        onTimeUpdate?.(time);
         handleMusicPlayback(time);
     };
 
@@ -132,7 +141,7 @@ export default function VideoPreview({ url, subtitles, stickers, musics, text }:
             video.removeEventListener("pause", () => setIsPlaying(false));
             video.removeEventListener("play", () => setIsPlaying(true));
             video.removeEventListener("loadedmetadata", handleLoadedMetadata);
-            video.removeEventListener("error", () => {});
+            video.removeEventListener("error", () => { });
         };
     }, [url]);
 
@@ -145,25 +154,38 @@ export default function VideoPreview({ url, subtitles, stickers, musics, text }:
 
     const getBackgroundColor = (color: string) => {
         if (color.includes("@")) {
-            const [hex, opacity = "0.5"] = color.split("@");
+            const [hex, opacityStr] = color.split("@");
             const r = parseInt(hex.slice(1, 3), 16);
             const g = parseInt(hex.slice(3, 5), 16);
             const b = parseInt(hex.slice(5, 7), 16);
-            return `rgba(${r}, ${g}, ${b}, ${parseFloat(opacity) || 0.5})`;
+            const opacity = parseFloat(opacityStr ?? "0.5");
+            return `rgba(${r}, ${g}, ${b}, ${isNaN(opacity) ? 0.5 : opacity})`;
         }
         return color;
     };
 
+
     const getColor = (color: string) => {
         if (color.includes("@")) {
-            const [hex, opacity = "1"] = color.split("@");
+            const [hex, opacityStr] = color.split("@");
             const r = parseInt(hex.slice(1, 3), 16);
             const g = parseInt(hex.slice(3, 5), 16);
             const b = parseInt(hex.slice(5, 7), 16);
-            return `rgba(${r}, ${g}, ${b}, ${parseFloat(opacity) || 1})`;
+            const opacity = parseFloat(opacityStr ?? "1");
+            return `rgba(${r}, ${g}, ${b}, ${isNaN(opacity) ? 1 : opacity})`;
         }
         return color;
     };
+
+    const getOpacity = (color: string) => {
+        if (color.includes("@")) {
+            const [, opacityStr] = color.split("@");
+            const opacity = parseFloat(opacityStr);
+            return isNaN(opacity) ? 1 : opacity;
+        }
+        return 1;
+    };
+
 
     const getSubtitlePosition = (alignment: string) => {
         const videoWidth = videoRef.current?.clientWidth || 1;
@@ -178,16 +200,15 @@ export default function VideoPreview({ url, subtitles, stickers, musics, text }:
         <div className="flex-1 flex flex-col pt-5 px-4 py-6 h-full">
             {!isVideoReady && <div className="text-center text-xl">Đang tải video...</div>}
             <div
-                className={`w-full bg-black flex justify-center overflow-hidden rounded-lg shadow relative ${
-                    isLoading ? "opacity-0" : "opacity-100"
-                }`}
+                className={`w-full bg-black flex justify-center overflow-hidden rounded-lg shadow relative ${isLoading ? "opacity-0" : "opacity-100"
+                    }`}
                 ref={videoContainerRef}
             >
                 <video
                     ref={videoRef}
                     onTimeUpdate={handleTimeUpdate}
                     onLoadedMetadata={handleLoadedMetadata}
-                    className={`w-auto object-cover max-h-[500px] relative`}
+                    className={`w-auto object-cover max-h-[400px] relative`}
                     loop
                 >
                     <source src={url} type="video/mp4" />
@@ -210,7 +231,7 @@ export default function VideoPreview({ url, subtitles, stickers, musics, text }:
                 {subtitles.map((sub, index) =>
                     sub.status && currentTime >= sub.start - 0.01 && currentTime <= sub.end + 0.01 ? (
                         <div
-                            key={index}
+                            key={`${renderKey}-${index}`}
                             className="absolute flex"
                             style={{
                                 bottom: sub.style.position === "bottom" ? `${scaleY(30)}px` : "auto",
@@ -233,15 +254,18 @@ export default function VideoPreview({ url, subtitles, stickers, musics, text }:
                                     borderRadius: `${scaleX(4)}px`,
                                     textShadow: sub.style.shadow
                                         ? `${scaleX(sub.style.shadow.offsetX)}px ${scaleY(
-                                              sub.style.shadow.offsetY
-                                          )}px ${scaleY(sub.style.shadow.blur)}px ${sub.style.shadow.color}`
+                                            sub.style.shadow.offsetY
+                                        )}px ${scaleY(sub.style.shadow.blur)}px ${sub.style.shadow.color}`
                                         : "none",
                                     WebkitTextStroke: sub.style.outline
                                         ? `${scaleX(sub.style.outline.width)}px ${sub.style.outline.color}`
                                         : "none",
                                 }}
                             >
-                                {sub.text}
+                                <span style={{
+                                    opacity: getOpacity(sub.style.fontColor),
+                                }}>{sub.text}</span>
+
                             </p>
                         </div>
                     ) : null
@@ -297,7 +321,7 @@ export default function VideoPreview({ url, subtitles, stickers, musics, text }:
                     onChange={handleSeek}
                     onInput={handleSeek}
                     onMouseDown={() => videoRef.current?.pause()}
-                    onMouseUp={() => isPlaying && videoRef.current?.play().catch(() => {})}
+                    onMouseUp={() => isPlaying && videoRef.current?.play().catch(() => { })}
                     className="flex-1 cursor-pointer mx-2"
                     disabled={!isVideoReady}
                     style={{ accentColor: "#2563eb", background: "#e5e7eb" }}
@@ -319,8 +343,8 @@ export default function VideoPreview({ url, subtitles, stickers, musics, text }:
                     />
                 </div>
             </div>
-            <h1 className="text-3xl mt-3 mb-2 font-bold">Nội dung</h1>
-            <div className="text-2xl">{text}</div>
+            {/* <h1 className="text-3xl mt-3 mb-2 font-bold">Nội dung</h1>
+            <div className="text-2xl">{text}</div> */}
         </div>
     );
 }

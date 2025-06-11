@@ -412,6 +412,31 @@ const editController = {
         }
     },
 
+    getMusicUser: async (req, res) => {
+        try {
+            console.log(req.user);
+            const music = await Edit.getMusicUser(req.user.id);
+            if (!music) {
+                return res.status(404).json({
+                    mes: "fail",
+                    status: 404,
+                    data: null,
+                });
+            }
+            res.json({
+                mes: "success",
+                status: 200,
+                data: {
+                    musics: music
+                }
+            });
+
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    },
+
     getStickerSystem: async (req, res) => {
         try {
             const stickers = await Edit.setSticker();

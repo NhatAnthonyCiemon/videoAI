@@ -34,8 +34,8 @@ export default function FormatVideo({
     onUpdateSticker: (sub: Sticker) => void;
 }) {
     return (
-        <div className="w-[400px] h-full bg-white border-l-1 border-gray-700 flex flex-col">
-            <div className="bg-gray-300 pt-5 pb-3">
+        <div className="w-full h-full bg-white border-gray-700 flex flex-col">
+            <div className="bg-gray-300 pt-3 pb-3">
                 <div className="flex gap-2 text-2xl justify-center pl-3 pr-3">
                     <button
                         className={`w-full cursor-pointer h-12 p-1 rounded ${

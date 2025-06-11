@@ -59,25 +59,7 @@ function CreateTop({
                         ))}
                     </div>
                 </div>
-            ) : (
-                <div className="w-full mt-3 mb-[10px] flex justify-between">
-                    <h1 className="text-4xl font-bold mb-[10px]">Edit Video</h1>
-                    <div className="flex items-center gap-[10px]">
-                        <Button
-                            onClick={() => {
-                                setWhichActive(2);
-                                window.scrollTo({
-                                    top: 0,
-                                    behavior: "smooth",
-                                });
-                            }}
-                            className="text-2xl p-8"
-                        >
-                            Quay lại trang trước
-                        </Button>
-                    </div>
-                </div>
-            )}
+            ) : null}
         </>
     );
 }

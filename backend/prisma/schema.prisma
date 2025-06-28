@@ -8,18 +8,25 @@ datasource db {
 }
 
 model users {
-  id                Int              @id @default(autoincrement())
-  email             String?          @unique(map: "unique_email")
-  username          String?
-  password          String?
-  social_id         String?          @unique(map: "unique_social_id")
-  is_verify         Boolean?         @default(false)
-  image             String?
-  verificationtoken String?          @unique(map: "unique_verificationtoken")
-  type              String?
-  music_system      music_system[]
-  sticker_system    sticker_system[]
-  videos            videos[]
+  id                   Int              @id @default(autoincrement())
+  email                String?          @unique(map: "unique_email")
+  username             String?
+  password             String?
+  social_id            String?          @unique(map: "unique_social_id")
+  is_verify            Boolean?         @default(false)
+  image                String?
+  verificationtoken    String?          @unique(map: "unique_verificationtoken")
+  type                 String?
+  youtubeaccesstoken   String?
+  youtuberefreshtoken  String?
+  youtubetokenexpiry   DateTime?        @db.Timestamp(6)
+  facebookaccesstoken  String?
+  facebookrefreshtoken String?
+  facebooktokenexpiry  DateTime?        @db.Timestamp(6)
+  music_system         music_system[]
+  share_url            share_url[]
+  sticker_system       sticker_system[]
+  videos               videos[]
 }
 
 model gallery_music {
@@ -35,16 +42,18 @@ model gallery_sticker {
 }
 
 model image_video {
-  id             Int     @id @default(autoincrement())
-  video_id       String? @db.Char(10)
+  id             Int        @id @default(autoincrement())
+  video_id       String?    @db.Char(10)
   ordinal_number Int
   url            String
   content        String?
   prompt         String?
-  start_time     Float?  @db.Real
-  end_time       Float?  @db.Real
+  start_time     Float?     @db.Real
+  end_time       Float?     @db.Real
   url_mp3        String?
-  videos         videos? @relation(fields: [video_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  anim           Int?
+  animation      animation? @relation(fields: [anim], references: [id_anim], onDelete: NoAction, onUpdate: NoAction)
+  videos         videos?    @relation(fields: [video_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model music {
@@ -120,6 +129,7 @@ model videos {
   is_bg_music     Boolean?      @default(false)
   image_video     image_video[]
   music           music[]
+  share_url       share_url?
   subtitles       subtitles[]
   ticker          ticker[]
   video_info      video_info?
@@ -151,4 +161,28 @@ model music_system {
   url     String?
   music   music[]
   user    users?  @relation(fields: [id_user], references: [id])
+}
+
+model share_url {
+  id           String  @id @db.Char(10)
+  user_id      Int?
+  url_facebook String?
+  url_youtube  String?
+  url_tiktok   String?
+  users        users?  @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_shareurl_user")
+  videos       videos  @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_shareurl_video")
+}
+
+model animation {
+  id_anim     Int           @id
+  name        String?
+  describe    String?
+  url_anim    String?
+  image_video image_video[]
+}
+
+model config {
+  code     String  @id
+  value    String?
+  describe String?
 }

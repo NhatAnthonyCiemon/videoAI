@@ -13,6 +13,7 @@ import { processTextToSpeech } from "../../utils/createVoice.js";
 import { getDurations } from "../../utils/duration.js";
 import { mergeMp3Files } from "../../utils/mergeVoice.js";
 import { uploadVideo } from "../../utils/uploadVideo.js";
+import animService from "../animation/service.js";
 
 import fs from "fs";
 
@@ -183,30 +184,30 @@ async function generateImage(
         },
       });
 
-            const statusData = await statusRes.json();
-            if (statusData.status === "completed" && statusData.outputs) {
-                mediaUrl = statusData.outputs.mediaUrls[0];
-                break;
-            }
-        }
-
-        if (!mediaUrl)
-            throw new Error("❌ Không thể lấy được ảnh sau 100 lần kiểm tra.");
-
-        return {
-            url: mediaUrl,
-            index: i,
-            prompt: prompt,
-            content: content,
-        };
-    } catch (error) {
-        return {
-            url: "",
-            index: i,
-            prompt: prompt,
-            content: content,
-        };
+      const statusData = await statusRes.json();
+      if (statusData.status === "completed" && statusData.outputs) {
+        mediaUrl = statusData.outputs.mediaUrls[0];
+        break;
+      }
     }
+
+    if (!mediaUrl)
+      throw new Error("❌ Không thể lấy được ảnh sau 100 lần kiểm tra.");
+
+    return {
+      url: mediaUrl,
+      index: i,
+      prompt: prompt,
+      content: content,
+    };
+  } catch (error) {
+    return {
+      url: "",
+      index: i,
+      prompt: prompt,
+      content: content,
+    };
+  }
 }
 
 async function generateImageVer3(
@@ -352,12 +353,20 @@ const contentController = {
         audioUrls = image_video.map((item) => item.url_mp3);
         console.log("🔊 Danh sách URL âm thanh từ custom voice:", audioUrls);
       }
-      const images = image_video.map((item) => item.url);
-      // const images = [
-      //   "https://res.cloudinary.com/dasqsts9r/image/upload/v1738057702/cld-sample-4.jpg",
-      //   "https://res.cloudinary.com/dasqsts9r/image/upload/v1738057702/cld-sample-4.jpg",
-      //   "https://res.cloudinary.com/dasqsts9r/image/upload/v1738057702/cld-sample-4.jpg",
-      // ];
+      //const images = image_video.map((item) => item.url);
+      const id_anims = image_video.map((item) => item.anim);
+      console.log("id_anims:", id_anims);
+      // const anims = await Promise.all(
+      //   id_anims.map((id) => animService.getNameAnimation(id))
+      // );
+      // console.log("anims:", anims);
+      const images = [
+        "https://res.cloudinary.com/dasqsts9r/image/upload/v1738057702/cld-sample-4.jpg",
+        "https://res.cloudinary.com/dasqsts9r/image/upload/v1738057702/cld-sample-4.jpg",
+        "https://res.cloudinary.com/dasqsts9r/image/upload/v1738057702/cld-sample-4.jpg",
+   
+      
+      ];
       const scripts = image_video.map((item) => item.content);
       const voice = voice_info.voice || "vi-VN-HoaiMyNeural (vi-VN, Female)";
       const rate = voice_info.rate || 0; // Tốc độ đọc mặc định
@@ -395,10 +404,14 @@ const contentController = {
       console.log("🔊 Bắt đầu merge:");
       const mergedAudio = await mergeMp3Files(audioUrls);
       console.log("🔊 Merge xong:", mergedAudio);
-      console.log("danh sách ảnh trước khi tạo video", images);
 
       // // Tiếp tục xử lý logic tạo video với  audioUrls và images
-      const finalVideo = await createFullVideo(images, durations, mergedAudio);
+      const finalVideo = await createFullVideo(
+        images,
+        id_anims,
+        durations,
+        mergedAudio
+      );
 
       const urlVideo = await uploadVideo(finalVideo);
       console.log("✅ URL video :", urlVideo);
@@ -409,7 +422,7 @@ const contentController = {
           url: urlVideo,
           durations: startTimeEachImage,
           durationAll: durationAll,
-          quality : 'HD (720p)',
+          quality: "HD (720p)",
           bg_music: false,
           thumbnail: images[0],
         },
@@ -420,74 +433,74 @@ const contentController = {
         console.log(`✅ Đã xóa file video : ${finalVideo}`);
       }
 
-            // Gửi URL video về client
-        } catch (err) {
-            console.error("❌ Server error:", err);
-            res.status(500).json({
-                mes: "fail",
-                status: 500,
-                data: null,
-            });
-        }
-    },
+      // Gửi URL video về client
+    } catch (err) {
+      console.error("❌ Server error:", err);
+      res.status(500).json({
+        mes: "fail",
+        status: 500,
+        data: null,
+      });
+    }
+  },
 
-    getContentDataWithImage: async (req, res) => {
-        const { content } = req.body;
-        try {
-            const imagePrompts = await enrichScriptWithImagePrompts(content);
-            const result = await generateImagesFromSegments(
-                imagePrompts,
-                "1648918127446573124",
-                pixaiToken
-            );
-            res.json({
-                mes: "success",
-                status: 200,
-                data: result,
-            });
-        } catch (error) {
-            console.error("Error fetching content data:", error);
-            res.status(500).json({ error: "Internal Server Error" });
-        }
-    },
-    getReGenerateImage: async (req, res) => {
-        const { prompt, index, content } = req.body;
-        try {
-            // const result = await generateImage(
-            //     prompt,
-            //     "1648918127446573124",
-            //     pixaiToken,
-            //     index,
-            //     content
-            // );
-            const result = await generateImageVer3(prompt, index, content);
-            res.json({
-                mes: "success",
-                status: 200,
-                data: result,
-            });
-        } catch (error) {
-            console.error("Error fetching content data:", error);
-            res.status(500).json({ error: "Internal Server Error" });
-        }
-    },
-    uploadAudioHandler: async (req, res) => {
-        try {
-            const inputFilePath = req.file.path;
-            const transcript = await transcribeAudioFile(inputFilePath);
-            res.json({
-                mes: "success",
-                status: 200,
-                data: transcript,
-            });
+  getContentDataWithImage: async (req, res) => {
+    const { content } = req.body;
+    try {
+      const imagePrompts = await enrichScriptWithImagePrompts(content);
+      const result = await generateImagesFromSegments(
+        imagePrompts,
+        "1648918127446573124",
+        pixaiToken
+      );
+      res.json({
+        mes: "success",
+        status: 200,
+        data: result,
+      });
+    } catch (error) {
+      console.error("Error fetching content data:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  },
+  getReGenerateImage: async (req, res) => {
+    const { prompt, index, content } = req.body;
+    try {
+      // const result = await generateImage(
+      //     prompt,
+      //     "1648918127446573124",
+      //     pixaiToken,
+      //     index,
+      //     content
+      // );
+      const result = await generateImageVer3(prompt, index, content);
+      res.json({
+        mes: "success",
+        status: 200,
+        data: result,
+      });
+    } catch (error) {
+      console.error("Error fetching content data:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  },
+  uploadAudioHandler: async (req, res) => {
+    try {
+      const inputFilePath = req.file.path;
+      const transcript = await transcribeAudioFile(inputFilePath);
+      res.json({
+        mes: "success",
+        status: 200,
+        data: transcript,
+      });
 
-            // Xóa file tạm sau khi xử lý xong
-            fs.unlinkSync(inputFilePath);
-        } catch (error) {
-            console.error("Error processing audio file:", error);
-            res.status(500).json({ error: "Internal Server Error" });
-        }
-    },
+      // Xóa file tạm sau khi xử lý xong
+      fs.unlinkSync(inputFilePath);
+    } catch (error) {
+      console.error("Error processing audio file:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  },
 };
 
 // module.exports = contentController;

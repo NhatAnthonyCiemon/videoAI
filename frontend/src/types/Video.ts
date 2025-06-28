@@ -23,6 +23,7 @@ type Video = {
 type Image_video = {
     file_mp3: File;
     url_mp3: string;
+    anim: number;
     content: string;
     url: string;
     prompt: string;

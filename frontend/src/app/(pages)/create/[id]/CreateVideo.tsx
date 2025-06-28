@@ -210,7 +210,7 @@ function CreateVideo({
 
       // Cập nhật musics
       if (backendMusics.length > 0) {
-        console.log("update sub");
+        console.log("update mus", backendMusics);
         setMusics(backendMusics);
       } else {
         console.log("no mus");

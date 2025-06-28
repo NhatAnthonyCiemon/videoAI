@@ -78,13 +78,13 @@ interface Subtitle {
         backgroundColor: string;
         fontStyle: string[];
         alignment: string;
-        shadow: {
+        shadow?: {
             color: string;
             blur: number;
             offsetX: number;
             offsetY: number;
         };
-        outline: {
+        outline?: {
             color: string;
             width: number;
         };
@@ -122,16 +122,17 @@ function AddNewSubtitle(text: string, currentList: Subtitle[] = [], start_time: 
             backgroundColor: "#000000@0.5",
             fontStyle: [],
             alignment: "center",
-            shadow: {
-                color: "#000000",
-                blur: 2,
-                offsetX: 1,
-                offsetY: 1,
-            },
-            outline: {
-                color: "#000000",
-                width: 1,
-            },
+            // shadow: {
+            //     color: "#000000",
+            //     blur: 2,
+            //     offsetX: 1,
+            //     offsetY: 1,
+            // },
+            // outline: {
+            //     color: "#000000",
+            //     width: 1,
+            // },
+            
         },
         status: true,
     };

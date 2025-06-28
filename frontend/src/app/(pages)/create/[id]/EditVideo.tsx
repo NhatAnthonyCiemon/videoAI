@@ -7,6 +7,7 @@ import SubtitleSetting from "../../../../components/ui/SubtitleSetting";
 import MusicSetting from "../../../../components/ui/MusicSetting";
 import StickerSetting from "../../../../components/ui/StickerSetting";
 import Video from "@/types/Video";
+import { Button } from "@/components/ui/button";
 import {
     Music_System,
     Sticker_System,
@@ -78,6 +79,7 @@ export default function EditVideo({
     const [showNot, setShowNot] = useState(false);
     const [mes, setMes] = useState("");
     const [video_url, setVideoUrl] = useState("");
+    const [currentTime, setCurrentTime] = useState(0);
 
     const onClose = () => {
         setShowNot(false); // Ẩn Notification khi đóng
@@ -108,10 +110,28 @@ export default function EditVideo({
                 .join(" ");
             setText(combinedText);
             setSubtitles(newSubtitles);
-            setIdxText(newSubtitles.length - 1); // Cập nhật idxText
+            setIdxText(0); // Cập nhật idxText
         }
         // console.log(musics)
     }, []); // Bao gồm subtitles trong dependency array
+
+    const handleReorderSubs = (newSubs: any[]) => {
+        setSubtitles(newSubs);
+        // Reset chọn idxText nếu muốn hoặc giữ nguyên
+        setIdxText(0);
+    };
+
+    const handleReorderMusic = (newMusics: any[]) => {
+        setMusics(newMusics);
+        // Reset chọn idxText nếu muốn hoặc giữ nguyên
+        setIdxMusic(0);
+    };
+
+    const handleReorderSticker = (newStickers: any[]) => {
+        setStickers(newStickers);
+        // Reset chọn idxText nếu muốn hoặc giữ nguyên
+        setIdxSticker(0);
+    };
 
     const handleAddSubtitle = (text: string) => {
         const newSubtitle = AddNewSubtitle(text, subtitles);
@@ -139,10 +159,12 @@ export default function EditVideo({
     };
 
     const handleUpdateMusic = (updatedMusic: Music) => {
-        const updatedList = [...musics];
-        updatedList[idxMusic] = updatedMusic;
+        const updatedList = musics.map((m) =>
+            m.id === updatedMusic.id ? { ...m, ...updatedMusic } : m
+        );
         setMusics(updatedList);
     };
+
 
     const handleDeleteMusic = (index: number) => {
         const updatedList = musics.filter((_, i) => i !== index);
@@ -289,13 +311,13 @@ export default function EditVideo({
                         fontStyle: sub.style.fontStyle,
                         alignment: sub.style.alignment,
                         shadow: {
-                            color: sub.style.shadow.color,
-                            offsetX: sub.style.shadow.offsetX,
-                            offsetY: sub.style.shadow.offsetY,
+                            color: sub.style.shadow?.color,
+                            offsetX: sub.style.shadow?.offsetX,
+                            offsetY: sub.style.shadow?.offsetY,
                         },
                         outline: {
-                            color: sub.style.outline.color,
-                            width: sub.style.outline.width,
+                            color: sub.style.outline?.color,
+                            width: sub.style.outline?.width,
                         },
                     },
                 }))
@@ -359,78 +381,107 @@ export default function EditVideo({
     };
 
     return (
-        <div className="flex h-full w-full">
-            {/* <SideBar selected={selectedTool} onSelect={setSelectedTool} /> */}
-            <div className="bg-white w-[400px]">
-                {selectedTool === "subtitles" && (
-                    <SubtitleSetting
-                        subtitles={subtitles}
-                        onAdd={handleAddSubtitle}
-                        onUpdate={handleUpdateSubtitle}
-                        onDelete={handleDeleteSubtitle}
-                        idxText={idxText}
-                        setIdxText={setIdxText}
-                    />
-                )}
-                {selectedTool === "music" && (
-                    <MusicSetting
-                        musics={musics}
-                        onAdd={handleAddMusic}
-                        onUpdate={handleUpdateMusic}
-                        onDelete={handleDeleteMusic}
-                        idxMusic={idxMusic}
-                        setIdxMusic={setIdxMusic}
-                        setTab={setTab}
-                    />
-                )}
-                {selectedTool === "sticker" && (
-                    <StickerSetting
-                        stickers={stickers}
-                        onAdd={handleAddSticker}
-                        onUpdate={handleUpdateSticker}
-                        onDelete={handleDeleteSticker}
-                        idxSticker={idxSticker}
-                        setIdxSticker={setIdxSticker}
-                        setTab={setTab}
-                    />
-                )}
-            </div>
-            <div className="flex-1 h-full">
-                <div className="pl-4 text-2xl flex gap-4 pt-3">
-                    <div>
-                        <button
-                            onClick={handleExport}
-                            className="bg-blue-600 cursor-pointer text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-                        >
-                            Tạo video Edit(có tùy chọn lưu)
-                        </button>
+        <div>
+
+            <div className="flex h-full w-full">
+                <div>
+                    <div className="w-full mt-2 mb-[0px] flex justify-between">
+                        <h1 className="text-4xl font-bold mb-[10px]">Edit Video</h1>
+                        <div className="flex items-center gap-[10px]">
+                            <Button
+                                onClick={() => {
+                                    setWhichActive(2);
+                                    window.scrollTo({
+                                        top: 0,
+                                        behavior: "smooth",
+                                    });
+                                }}
+                                className="text-2xl p-6"
+                            >
+                                Quay lại trang trước
+                            </Button>
+                        </div>
                     </div>
-                    <div>
-                        <button
-                            onClick={handleSave}
-                            className="bg-blue-600 cursor-pointer    text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-                        >
-                            Lưu tiến trình
-                        </button>
+                    <div className="flex flex-row">
+                        <SideBar selected={selectedTool} onSelect={setSelectedTool} />
+                        <div className="bg-white w-[600px] h-[440px] custom-scroll">
+                            {selectedTool === "subtitles" && (
+                                <SubtitleSetting
+                                    subtitles={subtitles}
+                                    onAdd={handleAddSubtitle}
+                                    onUpdate={handleUpdateSubtitle}
+                                    onDelete={handleDeleteSubtitle}
+                                    onReorder={handleReorderSubs}
+                                    idxText={idxText}
+                                    setIdxText={setIdxText}
+                                />
+                            )}
+                            {selectedTool === "music" && (
+                                <MusicSetting
+                                    musics={musics}
+                                    onAdd={handleAddMusic}
+                                    onUpdate={handleUpdateMusic}
+                                    onDelete={handleDeleteMusic}
+                                    idxMusic={idxMusic}
+                                    setIdxMusic={setIdxMusic}
+                                    setTab={setTab}
+                                    onReorder={handleReorderMusic}
+                                />
+                            )}
+                            {selectedTool === "sticker" && (
+                                <StickerSetting
+                                    stickers={stickers}
+                                    onAdd={handleAddSticker}
+                                    onUpdate={handleUpdateSticker}
+                                    onDelete={handleDeleteSticker}
+                                    idxSticker={idxSticker}
+                                    setIdxSticker={setIdxSticker}
+                                    setTab={setTab}
+                                    onReorder={handleReorderSticker}
+                                />
+                            )}
+                        </div>
                     </div>
-                    {videoData.url_edit && (
+                </div>
+                <div className="flex-1 h-full">
+                    <div className="pl-4 text-2xl flex gap-4 pt-3">
                         <div>
                             <button
-                                onClick={handleOpenVideoExport}
-                                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+                                onClick={handleExport}
+                                className="bg-blue-600 cursor-pointer text-white px-4 py-2 rounded hover:bg-blue-700 transition"
                             >
-                                Video đã export
+                                Tạo video Edit (có tùy chọn lưu)
                             </button>
                         </div>
-                    )}
+                        <div>
+                            <button
+                                onClick={handleSave}
+                                className="bg-blue-600 cursor-pointer    text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                            >
+                                Lưu tiến trình Edit
+                            </button>
+                        </div>
+                        {videoData.url_edit && (
+                            <div>
+                                <button
+                                    onClick={handleOpenVideoExport}
+                                    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+                                >
+                                    Video đã export
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                    <VideoPreview
+                        url={url}
+                        subtitles={subtitles}
+                        stickers={stickers}
+                        musics={musics}
+                        text={text}
+                        onTimeUpdate={setCurrentTime}
+                    />
                 </div>
-                <VideoPreview
-                    url={url}
-                    subtitles={subtitles}
-                    stickers={stickers}
-                    musics={musics}
-                    text={text}
-                />
+
             </div>
             <div className="min-h-screen">
                 <FormatVideo

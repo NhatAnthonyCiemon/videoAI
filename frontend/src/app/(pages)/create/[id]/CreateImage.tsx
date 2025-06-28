@@ -12,6 +12,7 @@ import HttpMethod from "@/types/httpMethos";
 import LoadingOverlay from "@/components/ui/LoadingOverlay";
 import Mp3Uploader from "@/components/ui/upFileMP3";
 import uploadMp3ToCloud from "@/lib/uploadMp3ToCloud";
+import AnimationSelector from "@/components/ui/animation";
 
 function showErrorToast(message: string) {
   toast.error(message, {
@@ -82,7 +83,7 @@ export default function CreateImage({
       return newSet;
     });
   };
-  
+
   const handleCreateVideo = async () => {
     if (videoData.step === 2) {
       window.scrollTo({
@@ -130,7 +131,7 @@ export default function CreateImage({
       url: string;
       durations: number[];
       durationAll: number;
-      quality : string;
+      quality: string;
       bg_music: boolean;
       thumbnail: string;
     }>(`http://localhost:4000/content/createvideo`, HttpMethod.POST, {
@@ -143,7 +144,7 @@ export default function CreateImage({
         "url",
         res.data!!.url
       );
-      
+
       newVideoData.image_video.forEach((img, index) => {
         img.start_time = res.data!!.durations[index];
         if (index !== newVideoData.image_video.length - 1) {
@@ -164,7 +165,7 @@ export default function CreateImage({
         res.data!!.thumbnail
       );
       const newVideoData5 = videoClass.updateVideo(
-        newVideoData4 ,
+        newVideoData4,
         "quality",
         res.data!!.quality
       );
@@ -261,10 +262,12 @@ export default function CreateImage({
                                 "image_video",
                                 image_video
                               )
-
                             );
                             // In ra tên file để test
-                            console.log("File mp3 đã chọn:", videoData.image_video[index].file_mp3?.name);
+                            console.log(
+                              "File mp3 đã chọn:",
+                              videoData.image_video[index].file_mp3?.name
+                            );
                           }}
                         />
                       ) : (
@@ -290,7 +293,23 @@ export default function CreateImage({
                           }}
                         />
                       )}
+                      <AnimationSelector
+                        video={videoData}
+                        index={index}
+                        onChangeAnim={(animValue: number) => {
+                          const image_video = [...videoData.image_video];
+                          image_video[index].anim = animValue;
+                          setVideoData(
+                            videoClass.updateVideo(
+                              videoData,
+                              "image_video",
+                              image_video
+                            )
+                          );
+                        }}
+                      />
                     </div>
+
                     <div className="ml-[-5px]">
                       <p className="w-[150px] ml-[5px] relative font-semibold text-gray-800 text-xl">
                         Prompt (Description):

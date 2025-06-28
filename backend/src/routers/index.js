@@ -5,6 +5,7 @@ import videoRouter from "../app/video/route.js";
 import authRouter from "../app/auth/route.js";
 import userRouter from "../app/user/route.js";
 import editRouter from "../app/edit/route.js";
+import animRouter from "../app/animation/route.js";
 
 function route(app) {
     app.use("/trend", trendRouter);
@@ -19,6 +20,7 @@ function route(app) {
     app.use("/auth", authRouter);
     app.use("/user", userRouter);
     app.use("/edit", editRouter);
+    app.use("/anim", animRouter);
     app.use((req, res) => {
         res.status(404).json({ error: "Not Found" });
     });

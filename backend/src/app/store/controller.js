@@ -180,14 +180,14 @@ const storeController = {
             is_bg_music,
         } = req.body;
         console.log("Dữ liệu tuyền đi :", req.body);
+        console.log("Dữ liệu ảnh nhận được :", image_video);
         console.log("Saving video with the following details:");
         console.log("Duration:", duration);
         console.log("Thumbnail:", thumbnail);
         console.log("Quality:", quality);
         console.log("is_bg_music:", is_bg_music);
-           
-
         console.log("calll")
+        
         if (
             !id ||
             !user_id ||

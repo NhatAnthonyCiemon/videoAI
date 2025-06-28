@@ -13,6 +13,7 @@ const Video = {
                         start_time: true,
                         end_time: true,
                         url_mp3: true, // Include url_mp3 if it exists
+                        anim:true,
                     },
                 },
                 voice_info: {

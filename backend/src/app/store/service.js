@@ -111,6 +111,7 @@ const Store = {
                     url: item.url,
                     content: item.content,
                     prompt: item.prompt,
+                    anim :item.anim,
                 })),
             });
             await prisma.voice_info.update({
@@ -144,6 +145,7 @@ const Store = {
                 url: item.url,
                 content: item.content,
                 prompt: item.prompt,
+                anim:item.anim,
             })),
         });
         await prisma.voice_info.create({
@@ -207,6 +209,8 @@ const Store = {
                     start_time: item.start_time,
                     end_time: item.end_time,
                     url_mp3: item.url_mp3,
+                    image_video:item.image_video,
+                    anim:item.anim,
                 })),
             });
             await prisma.voice_info.update({
@@ -250,6 +254,7 @@ const Store = {
                 start_time: item.start_time,
                 end_time: item.end_time,
                 url_mp3: item.url_mp3,
+                anim:item.anim,
             })),
         });
         await prisma.voice_info.create({

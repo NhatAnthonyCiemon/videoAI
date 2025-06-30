@@ -4,12 +4,12 @@ import { createResponse, createErrorResponse } from "../../utils/responseAPI.js"
 import { createResponse, createErrorResponse } from "../../utils/responseAPI.js";
 
 const videoController = {
-  getVideoById: async (req, res) => {
-    const { id } = req.params;
-    const user = req.user;
-    try {
-      const video = await Video.getById(id);
-      console.log("Video ren ra ban đầu :", video);
+    getVideoById: async (req, res) => {
+        const { id } = req.params;
+        const user = req.user;
+        try {
+            const video = await Video.getById(id);
+            console.log("Video ren ra ban đầu :", video);
 
             if (!video) {
                 const newVideo = {
@@ -177,27 +177,27 @@ const videoController = {
         }
     },
 
-  searchVideos: async (req, res) => {
-    const query = req.query.q;
-    const user = req.user;
-    console.log("K");
-    try {
-      const suggestions = await Video.searchVideos(query, user.id);
-      console.log(suggestions);
-      res.json({
-        mes: "success",
-        status: 200,
-        data: suggestions,
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Internal server error" });
-    }
-  },
+    searchVideos: async (req, res) => {
+        const query = req.query.q;
+        const user = req.user;
+        console.log("K");
+        try {
+            const suggestions = await Video.searchVideos(query, user.id);
+            console.log(suggestions);
+            res.json({
+                mes: "success",
+                status: 200,
+                data: suggestions,
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    },
 
-  getVideoData: async (req, res) => {
-    const { page = 1, limit = 5, q, category, sort, status } = req.query;
-    const user = req.user;
+    getVideoData: async (req, res) => {
+        const { page = 1, limit = 5, q, category, sort, status } = req.query;
+        const user = req.user;
 
         try {
             const result = await Video.getVideoData(
@@ -245,22 +245,22 @@ const videoController = {
         }
     },
 
-  getSuggestions: async (req, res) => {
-    const { q } = req.query;
-    const user = req.user;
+    getSuggestions: async (req, res) => {
+        const { q } = req.query;
+        const user = req.user;
 
-    try {
-      const suggestions = await Video.getSuggestions(user.id, q);
-      res.json({
-        mes: "success",
-        status: 200,
-        data: { suggestions },
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Lỗi khi lấy gợi ý" });
-    }
-  },
+        try {
+            const suggestions = await Video.getSuggestions(user.id, q);
+            res.json({
+                mes: "success",
+                status: 200,
+                data: { suggestions },
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Lỗi khi lấy gợi ý" });
+        }
+    },
 
     getRandomVideos: async (req, res) => {
         try {
@@ -280,48 +280,48 @@ const videoController = {
         }
     },
 
-  renameVideo: async (req, res) => {
-    const { id } = req.params; // Lấy id từ URL params
-    const { name } = req.body; // Lấy tên mới từ body
-    const user = req.user; // Lấy thông tin user từ middleware
+    renameVideo: async (req, res) => {
+        const { id } = req.params; // Lấy id từ URL params
+        const { name } = req.body; // Lấy tên mới từ body
+        const user = req.user; // Lấy thông tin user từ middleware
 
-    try {
-      // Kiểm tra xem name có được cung cấp hay không
-      if (!name) {
-        return res.status(400).json({ message: "Tên video là bắt buộc" });
-      }
+        try {
+            // Kiểm tra xem name có được cung cấp hay không
+            if (!name) {
+                return res.status(400).json({ message: "Tên video là bắt buộc" });
+            }
 
-      // Gọi service để đổi tên video
-      await Video.renameVideo(user.id, id, name);
+            // Gọi service để đổi tên video
+            await Video.renameVideo(user.id, id, name);
 
-      res.json({
-        mes: "success",
-        status: 200,
-        message: "Đổi tên video thành công",
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: error.message || "Lỗi server nội bộ" });
-    }
-  },
+            res.json({
+                mes: "success",
+                status: 200,
+                message: "Đổi tên video thành công",
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: error.message || "Lỗi server nội bộ" });
+        }
+    },
 
-  deleteVideo: async (req, res) => {
-    const { id } = req.params;
-    const user = req.user;
+    deleteVideo: async (req, res) => {
+        const { id } = req.params;
+        const user = req.user;
 
-    try {
-      await Video.deleteVideo(user.id, id);
+        try {
+            await Video.deleteVideo(user.id, id);
 
-      res.json({
-        mes: "success",
-        status: 200,
-        message: "Xóa video thành công",
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: error.message || "Lỗi server nội bộ" });
-    }
-  },
+            res.json({
+                mes: "success",
+                status: 200,
+                message: "Xóa video thành công",
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: error.message || "Lỗi server nội bộ" });
+        }
+    },
 };
 
 export default videoController;

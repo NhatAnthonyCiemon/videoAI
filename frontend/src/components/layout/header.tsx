@@ -92,10 +92,10 @@ export default function Header() {
                             Video của tôi
                         </Link>
                         <Link
-                            href="#"
+                            href="/gallery"
                             className="hover:text-fuchsia-600 hover:scale-105 transition-all duration-300 ease-in-out"
                         >
-                            Hướng dẫn
+                            Thư viện
                         </Link>
                     </nav>
 

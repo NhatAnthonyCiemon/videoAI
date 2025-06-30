@@ -1,7 +1,27 @@
+"use client";
 import { useState } from "react";
 import { FaDownload, FaShareAlt, FaSave } from "react-icons/fa";
 import Notification from "@/components/ui/Notification";
 import LoadingOverlay from "@/components/ui/LoadingOverlay";
+import SharePlatformPopup from "@/components/ui/SharePlatformPopup";
+import fetchApi from "@/lib/api/fetch";
+import HttpMethod from "@/types/httpMethos";
+
+interface CheckYoutubeResponse {
+    isAuthenticated: boolean;
+}
+
+interface CheckFacebookResponse {
+    isAuthenticated: boolean;
+}
+
+interface YoutubeAuthResponse {
+    authUrl: string;
+}
+
+interface FacebookAuthResponse {
+    authUrl: string;
+}
 
 export default function VideoExportPopup({
     videoUrl,
@@ -18,6 +38,10 @@ export default function VideoExportPopup({
     const [showNot, setShowNot] = useState(false);
     const [mes, setMes] = useState("");
     const [isLoad, setIsLoad] = useState(false);
+    const [showSharePopup, setShowSharePopup] = useState(false);
+    const [selectedPlatform, setSelectedPlatform] = useState<
+        "youtube" | "facebook" | "tiktok" | null
+    >(null);
 
     const handleCopyLink = () => {
         navigator.clipboard.writeText(videoUrl);
@@ -62,7 +86,7 @@ export default function VideoExportPopup({
         try {
             const payload = {
                 video_id: videoid,
-                url_edit: videoUrl
+                url_edit: videoUrl,
             };
 
             setIsLoad(true);
@@ -85,18 +109,113 @@ export default function VideoExportPopup({
 
             setIsLoad(false);
             setShowNot(true);
-            setMes("Lưu video edit thành công!")
+            setMes("Lưu video edit thành công!");
         } catch (err) {
             console.error("Save error:", err);
+            setIsLoad(false);
             setShowNot(true);
-            setMes("Có lỗi xảy ra! Hãy thử lại!")
+            setMes("Có lỗi xảy ra! Hãy thử lại!");
         }
     };
 
-    const shareToPlatform = (platform: string) => {
-        const shareInfo = { title, description, videoUrl };
-        console.log(`📤 Chia sẻ lên ${platform}:`, shareInfo);
-        alert(`Đã chuẩn bị chia sẻ lên ${platform}!\nTiêu đề: ${title}\nMô tả: ${description}`);
+    const handleShareToPlatform = async (platform: "youtube" | "facebook" | "tiktok") => {
+        if (platform === "youtube") {
+            try {
+                console.log("Clicked YouTube");
+                const res = await fetchApi<CheckYoutubeResponse>(
+                    "http://localhost:4000/auth/youtube/check",
+                    HttpMethod.GET
+                );
+                if (!res.data?.isAuthenticated) {
+                    const authRes = await fetchApi<YoutubeAuthResponse>(
+                        "http://localhost:4000/auth/youtube",
+                        HttpMethod.GET
+                    );
+                    if (authRes.data?.authUrl) {
+                        const authWindow = window.open(authRes.data.authUrl, "_blank", "width=600,height=600");
+                        if (!authWindow) {
+                            setShowNot(true);
+                            setMes("Không thể mở cửa sổ xác thực. Vui lòng cho phép cửa sổ bật lên.");
+                            return;
+                        }
+                        const checkWindowClosed = setInterval(() => {
+                            if (authWindow.closed) {
+                                clearInterval(checkWindowClosed);
+                                checkAuthStatus("youtube");
+                            }
+                        }, 1000);
+                    } else {
+                        throw new Error("Không nhận được URL xác thực");
+                    }
+                } else {
+                    setSelectedPlatform(platform);
+                    setShowSharePopup(true);
+                }
+            } catch (error: any) {
+                setShowNot(true);
+                setMes("Lỗi kiểm tra xác thực YouTube: " + (error.message || "Không xác định"));
+            }
+        } else if (platform === "facebook") {
+            try {
+                console.log("Clicked Facebook");
+                const res = await fetchApi<CheckFacebookResponse>(
+                    "http://localhost:4000/auth/facebook/check",
+                    HttpMethod.GET
+                );
+                console.log(res)
+                if (!res.data?.isAuthenticated) {
+                    const authRes = await fetchApi<FacebookAuthResponse>(
+                        "http://localhost:4000/auth/facebook",
+                        HttpMethod.GET
+                    );
+                    if (authRes.data?.authUrl) {
+                        const authWindow = window.open(authRes.data.authUrl, "_blank", "width=600,height=600");
+                        if (!authWindow) {
+                            setShowNot(true);
+                            setMes("Không thể mở cửa sổ xác thực. Vui lòng cho phép cửa sổ bật lên.");
+                            return;
+                        }
+                        const checkWindowClosed = setInterval(() => {
+                            if (authWindow.closed) {
+                                clearInterval(checkWindowClosed);
+                                checkAuthStatus("facebook");
+                            }
+                        }, 1000);
+                    } else {
+                        throw new Error("Không nhận được URL xác thực");
+                    }
+                } else {
+                    setSelectedPlatform(platform);
+                    setShowSharePopup(true);
+                }
+            } catch (error: any) {
+                setShowNot(true);
+                setMes("Lỗi kiểm tra xác thực Facebook: " + (error.message || "Không xác định"));
+            }
+        } else {
+            const shareInfo = { title, description, videoUrl };
+            console.log(`📤 Chia sẻ lên ${platform}:`, shareInfo);
+            alert(`Đã chuẩn bị chia sẻ lên ${platform}!\nTiêu đề: ${title}\nMô tả: ${description}`);
+        }
+    };
+
+    const checkAuthStatus = async (platform: "youtube" | "facebook") => {
+        try {
+            const res = await fetchApi<CheckYoutubeResponse | CheckFacebookResponse>(
+                `http://localhost:4000/auth/${platform}/check`,
+                HttpMethod.GET
+            );
+            if (res.data?.isAuthenticated) {
+                setSelectedPlatform(platform);
+                setShowSharePopup(true);
+            } else {
+                setShowNot(true);
+                setMes(`Xác thực ${platform} không thành công. Vui lòng thử lại.`);
+            }
+        } catch (error: any) {
+            setShowNot(true);
+            setMes(`Lỗi kiểm tra xác thực ${platform}: ` + (error.message || "Không xác định"));
+        }
     };
 
     return (
@@ -107,7 +226,6 @@ export default function VideoExportPopup({
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* LEFT: Video Preview */}
                     <div className="flex flex-col h-full">
                         <video
                             controls
@@ -118,7 +236,6 @@ export default function VideoExportPopup({
                         </video>
                     </div>
 
-                    {/* RIGHT: Actions */}
                     <div className="flex flex-col justify-between h-full">
                         <div className="flex flex-col gap-3">
                             <button
@@ -160,19 +277,19 @@ export default function VideoExportPopup({
 
                             <div className="flex gap-3 mt-3 justify-between">
                                 <button
-                                    onClick={() => shareToPlatform("facebook")}
+                                    onClick={() => handleShareToPlatform("facebook")}
                                     className="bg-blue-800 text-white flex-1 py-2 rounded hover:bg-blue-900 transition"
                                 >
                                     Facebook
                                 </button>
                                 <button
-                                    onClick={() => shareToPlatform("youtube")}
+                                    onClick={() => handleShareToPlatform("youtube")}
                                     className="bg-red-600 text-white flex-1 py-2 rounded hover:bg-red-700 transition"
                                 >
                                     YouTube
                                 </button>
                                 <button
-                                    onClick={() => shareToPlatform("tiktok")}
+                                    onClick={() => handleShareToPlatform("tiktok")}
                                     className="bg-black text-white flex-1 py-2 rounded hover:bg-gray-800 transition"
                                 >
                                     TikTok
@@ -193,16 +310,23 @@ export default function VideoExportPopup({
             <LoadingOverlay isPreparing={isLoad} message="Đang xử lý..." />
 
             {showNot && (
-                <>
-                    <Notification
-                        message={mes}
-                        type="success"
-                        onClose={() => {
-                            // onClose();
-                            document.body.style.overflow = "auto";
-                        }}
-                    />
-                </>
+                <Notification
+                    message={mes}
+                    type="error"
+                    onClose={() => {
+                        setShowNot(false);
+                        document.body.style.overflow = "auto";
+                    }}
+                />
+            )}
+
+            {showSharePopup && selectedPlatform && (
+                <SharePlatformPopup
+                    videoId={videoid}
+                    platform={selectedPlatform}
+                    videoUrl={videoUrl}
+                    onClose={() => setShowSharePopup(false)}
+                />
             )}
         </div>
     );

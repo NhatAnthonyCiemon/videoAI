@@ -102,13 +102,18 @@ const VideoItem = ({
         <div className="rounded-xl overflow-hidden border shadow-sm bg-white">
             <div
                 className="relative h-[400px] w-full aspect-[9/16] bg-gray-300"
-                onClick={onClickVideo}
+                onClick={handleViewClick}
             >
                 <video
-                    src={url_edit && url && "/img/avatar_placeholder.png"} // Prioritize url_edit, fallback to url
+                    src={url_edit || url || "/img/avatar_placeholder.png"} // Prioritize url_edit, fallback to url, then placeholder
                     title={keyword}
                     className="absolute top-0 left-0 w-full h-full rounded-xl cursor-pointer"
                 />
+                {/* <video
+                    src={url_edit && url && "/img/avatar_placeholder.png"} // Prioritize url_edit, fallback to url
+                    title={keyword}
+                    className="absolute top-0 left-0 w-full h-full rounded-xl cursor-pointer"
+                /> */}
             </div>
 
             <div className="p-4 space-y-4">
@@ -159,10 +164,8 @@ const VideoItem = ({
                                     className="px-4 py-2 text-xl text-gray-700 hover:bg-gray-100 cursor-pointer"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        router.push(
-                                            url_edit ??
-                                                `http://localhost:3000/create/${id}`
-                                        ); // Prioritize url_edit, fallback to create URL
+                                        console.log("Triggering onClickVideo for edit");
+                                        onClickVideo(); // Sử dụng onClickVideo thay vì router.push
                                     }}
                                 >
                                     Chỉnh sửa

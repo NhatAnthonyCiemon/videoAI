@@ -3,6 +3,8 @@ import Crypto from "../../utils/crypto.js";
 import passport from "../../config/passport.js";
 import { sendEmail, sendResetPassword } from "../../utils/sendVerify.js";
 import jwt from "jsonwebtoken";
+import oauthConfig from "../../config/oauthConfig.js";
+
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
 // const {
 //     createResponse,
@@ -12,6 +14,7 @@ import {
     createResponse,
     createErrorResponse,
 } from "../../utils/responseAPI.js";
+
 const authController = {
     signupLocal: async (req, res) => {
         const { email, username, password } = req.body;
@@ -41,6 +44,266 @@ const authController = {
             res.status(400).json(createErrorResponse(400, error.message));
         }
     },
+
+    youtubeAuth: async (req, res) => {
+        try {
+            const userId = req.user?.id;
+            if (!userId) {
+                return res.status(401).json(createErrorResponse(401, "User not authenticated"));
+            }
+            const authUrl = oauthConfig.youtube.generateAuthUrl({
+                access_type: "offline",
+                scope: ["https://www.googleapis.com/auth/youtube.upload"],
+                prompt: "consent",
+                state: userId,
+            });
+            console.log("Generated authUrl:", authUrl); // Thêm log
+            res.json(createResponse(200, "success", { authUrl }));
+        } catch (error) {
+            console.error("Lỗi khi tạo URL xác thực YouTube:", error);
+            res.status(500).json(createErrorResponse(500, error.message));
+        }
+    },
+
+    youtubeCallback: async (req, res) => {
+        const { code, state } = req.query;
+        console.log("Callback received with query:", req.query);
+        try {
+            if (!state) {
+                return res.status(400).json(createErrorResponse(400, "Missing state parameter"));
+            }
+            const userId = state;
+            console.log("User ID from state:", userId);
+
+            const { tokens } = await oauthConfig.youtube.getToken(code);
+            console.log("OAuth tokens:", tokens);
+            oauthConfig.youtube.setCredentials(tokens);
+
+            await User.updateYoutubeTokens(userId, {
+                accessToken: tokens.access_token,
+                refreshToken: tokens.refresh_token,
+                expiryDate: tokens.expiry_date ? new Date(tokens.expiry_date) : null,
+            });
+
+            // Trả về trang HTML với script để đóng cửa sổ
+            res.send(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Xác thực YouTube</title>
+            </head>
+            <body>
+                <p>Xác thực thành công! Cửa sổ sẽ tự động đóng...</p>
+                <script>
+                    setTimeout(() => {
+                        window.close();
+                    }, 1000);
+                </script>
+            </body>
+            </html>
+        `);
+        } catch (error) {
+            console.error("Lỗi trong callback YouTube:", error);
+            res.send(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Lỗi xác thực YouTube</title>
+            </head>
+            <body>
+                <p>Có lỗi xảy ra trong quá trình xác thực. Vui lòng thử lại.</p>
+                <script>
+                    setTimeout(() => {
+                        window.close();
+                    }, 3000);
+                </script>
+            </body>
+            </html>
+        `);
+        }
+    },
+
+    checkYoutubeAuth: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const user = await User.findUserById(userId);
+
+            if (!user || !user.youtubeaccesstoken) {
+                return res.json(createResponse(200, "success", { isAuthenticated: false }));
+            }
+
+            // Kiểm tra xem token có hết hạn hay không
+            if (user.youtubetokenexpiry && new Date() >= new Date(user.youtubetokenexpiry)) {
+                try {
+                    // Làm mới token nếu đã hết hạn
+                    const newAccessToken = await User.refreshYoutubeToken(userId);
+                    return res.json(createResponse(200, "success", { isAuthenticated: true }));
+                } catch (error) {
+                    console.error("Lỗi khi làm mới token YouTube:", error);
+                    return res.json(createResponse(200, "success", { isAuthenticated: false }));
+                }
+            }
+
+            // Token còn hiệu lực
+            return res.json(createResponse(200, "success", { isAuthenticated: true }));
+        } catch (error) {
+            console.error("Lỗi khi kiểm tra xác thực YouTube:", error);
+            return res.status(500).json(createErrorResponse(500, error.message));
+        }
+    },
+
+    facebookAuth: async (req, res) => {
+        try {
+            const userId = req.user.id;
+            const authUrl = `https://www.facebook.com/v23.0/dialog/oauth?client_id=${oauthConfig.facebook.clientId}&redirect_uri=${encodeURIComponent(oauthConfig.facebook.redirectUri)}&scope=${oauthConfig.facebook.scope.join(",")}&state=${jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "1h" })}`;
+            console.log("Facebook auth URL 1:", authUrl);
+            res.json(createResponse(200, "success", { authUrl: authUrl }));
+        } catch (error) {
+            console.error("Error generating Facebook auth URL:", error);
+            res.status(500).json(createErrorResponse(500, "Failed to generate auth URL"));
+        }
+    },
+
+    facebookCallback: async (req, res) => {
+        const { code, state } = req.query;
+        console.log("Facebook callback received with query:", req.query);
+        try {
+            if (!state) {
+                return res.status(400).json(createErrorResponse(400, "Missing state parameter"));
+            }
+
+            // Giải mã JWT
+            let decoded;
+            try {
+                decoded = jwt.verify(state, process.env.JWT_SECRET);
+            } catch (jwtError) {
+                console.error("JWT verification error:", jwtError);
+                return res.status(400).json(createErrorResponse(400, "Invalid state token"));
+            }
+            const userId = decoded.userId;
+            console.log("User ID from decoded state:", userId);
+
+            // Kiểm tra userId
+            if (!userId || isNaN(parseInt(userId))) {
+                return res.status(400).json(createErrorResponse(400, "Invalid userId in state"));
+            }
+
+            // Lấy access token
+            const tokenResponse = await fetch(
+                `https://graph.facebook.com/v23.0/oauth/access_token?client_id=${oauthConfig.facebook.clientId}&client_secret=${oauthConfig.facebook.clientSecret}&redirect_uri=${encodeURIComponent(oauthConfig.facebook.redirectUri)}&code=${code}`
+            );
+            if (!tokenResponse.ok) {
+                const errorData = await tokenResponse.json();
+                throw new Error(`Lỗi khi lấy access token: ${errorData.error?.message || "Unknown error"}`);
+            }
+            const tokenData = await tokenResponse.json();
+            console.log("Facebook OAuth tokens:", JSON.stringify(tokenData, null, 2));
+
+            if (!tokenData.access_token) {
+                throw new Error("Không thể lấy access token từ Facebook");
+            }
+
+            let accessToken = tokenData.access_token;
+            let expiresIn = tokenData.expires_in ? new Date(Date.now() + tokenData.expires_in * 1000) : null;
+
+            // Kiểm tra token để lấy thời gian hết hạn
+            const debugResponse = await fetch(
+                `https://graph.facebook.com/v23.0/debug_token?input_token=${accessToken}&access_token=${oauthConfig.facebook.clientId}|${oauthConfig.facebook.clientSecret}`
+            );
+            const debugData = await debugResponse.json();
+            console.log("Token debug:", JSON.stringify(debugData, null, 2));
+
+            if (debugData.data && debugData.data.data_access_expires_at) {
+                expiresIn = new Date(debugData.data.data_access_expires_at * 1000);
+            } else if (debugData.data && debugData.data.expires_at && debugData.data.expires_at !== 0) {
+                expiresIn = new Date(debugData.data.expires_at * 1000);
+            }
+
+            await User.updateFacebookTokens(userId, {
+                accessToken,
+                expiresIn,
+            });
+
+            res.send(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Xác thực Facebook</title>
+                </head>
+                <body>
+                    <p>Xác thực thành công! Cửa sổ sẽ tự động đóng...</p>
+                    <script>
+                        setTimeout(() => {
+                            window.close();
+                        }, 1000);
+                    </script>
+                </body>
+                </html>
+            `);
+        } catch (error) {
+            console.error("Lỗi trong callback Facebook:", error);
+            res.send(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Lỗi xác thực Facebook</title>
+                </head>
+                <body>
+                    <p>Có lỗi xảy ra trong quá trình xác thực. Vui lòng thử lại.</p>
+                    <script>
+                        setTimeout(() => {
+                            window.close();
+                        }, 3000);
+                    </script>
+                </body>
+                </html>
+            `);
+        }
+    },
+
+    checkFacebookAuth: async (req, res) => {
+        try {
+            const userId = req.user.id; // Giả sử userId từ middleware xác thực
+            const user = await User.findUserById(userId);
+            if (!user || !user.facebookaccesstoken) {
+                return res.status(200).json({
+                    status: 200,
+                    mes: "success",
+                    data: { isAuthenticated: false, isExpired: false },
+                });
+            }
+
+            const isExpired = user.facebooktokenexpiry && new Date() >= new Date(user.facebooktokenexpiry);
+            if (isExpired) {
+                try {
+                    // Thử làm mới token
+                    const newAccessToken = await User.refreshFacebookToken(userId);
+                    return res.status(200).json({
+                        status: 200,
+                        mes: "success",
+                        data: { isAuthenticated: true, isExpired: false },
+                    });
+                } catch (refreshError) {
+                    console.error("Failed to refresh Facebook token:", refreshError);
+                    return res.status(200).json({
+                        status: 200,
+                        mes: "success",
+                        data: { isAuthenticated: false, isExpired: true },
+                    });
+                }
+            }
+
+            return res.status(200).json({
+                status: 200,
+                mes: "success",
+                data: { isAuthenticated: true, isExpired: false },
+            });
+        } catch (error) {
+            console.error("Error checking Facebook auth:", error);
+            res.status(500).json(createErrorResponse(500, `Lỗi kiểm tra xác thực Facebook: ${error.message}`));
+        }
+    },
+
     verify: async (req, res) => {
         const Token = req.params.token;
         const user = await User.verifyUser(Token);

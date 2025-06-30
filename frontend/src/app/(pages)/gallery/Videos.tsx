@@ -19,7 +19,7 @@ function Videos() {
         id: string;
         url: string;
         subtitle: string;
-        url_edit?: string; // Add url_edit to the type
+        url_edit?: string;
     } | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -31,7 +31,7 @@ function Videos() {
 
             const params = new URLSearchParams({
                 page: page.toString(),
-                limit: "2",
+                limit: "6",
                 ...(search && { q: search }),
                 ...(category !== "Tất cả danh mục" && { category }),
                 ...(sort && { sort: sort === "Mới nhất" ? "desc" : "asc" }),
@@ -41,7 +41,7 @@ function Videos() {
                 }),
             });
 
-            const url = `http://localhost:4000/video/getVideoData?${params.toString()}`;
+            const url = `http://localhost:4000/video/getVideoDataFull?${params.toString()}`;
 
             const res = await fetchApi<InforVideo[] & { totalPages: number }>(
                 url,
@@ -131,6 +131,7 @@ function Videos() {
                     url={popupVideo.url_edit ?? popupVideo.url} // Use url_edit if available, otherwise use url
                     subtitle={popupVideo.subtitle}
                     onClose={() => setPopupVideo(null)}
+                    fromGallery={true}
                 />
             )}
         </>

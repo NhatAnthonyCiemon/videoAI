@@ -177,12 +177,5 @@ model animation {
   id_anim     Int           @id
   name        String?
   describe    String?
-  url_anim    String?
   image_video image_video[]
-}
-
-model config {
-  code     String  @id
-  value    String?
-  describe String?
 }

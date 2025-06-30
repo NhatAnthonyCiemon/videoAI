@@ -60,8 +60,8 @@ export default function HomePage() {
     };
 
     const [selected, setSelected] = useState<Platform>("TikTok");
-    const [videos, setVideos] = useState<{ url: string; url_edit?: string; subtitle: string; step: string }[]>([]);
-    const [popupVideo, setPopupVideo] = useState<{ url: string; url_edit?: string; subtitle: string; step: string } | null>(null);
+    const [videos, setVideos] = useState<{ id: string; url: string; url_edit?: string; subtitle: string; step: string }[]>([]);
+    const [popupVideo, setPopupVideo] = useState<{ id: string; url: string; url_edit?: string; subtitle: string; step: string } | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -74,7 +74,7 @@ export default function HomePage() {
 
                 const url = `http://localhost:4000/video/getRandomVideos?status=completed`;
                 const res = await fetchApi<{
-                    data: { url: string; url_edit?: string; subtitle: string; step: string }[];
+                    data: { id: string; url: string; url_edit?: string; subtitle: string; step: string }[];
                 }>(url, HttpMethod.GET);
 
                 if (res.message === "success" && res.status === 200) {
@@ -128,10 +128,11 @@ export default function HomePage() {
                                 Bắt đầu ngay
                             </Button>
                             <Button
+                                onClick={() => router.push("/gallery")}
                                 variant="link"
                                 className="text-white text-2xl p-9 cursor-pointer"
                             >
-                                Xem thử video mẫu
+                                Xem video mẫu
                             </Button>
                         </div>
                     </div>
@@ -283,7 +284,8 @@ export default function HomePage() {
                     <input
                         type="text"
                         placeholder="Gõ từ khóa: tiktok, giới thiệu, bán hàng..."
-                        className="w-full border border-gray-300 rounded-full py-6 px-8 text-3xl focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
+                        className="w-full border border-gray-300 rounded-full کوتاه
+                        full py-6 px-8 text-3xl focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
                     />
 
                     {/* Tabs */}
@@ -327,15 +329,15 @@ export default function HomePage() {
                     )}
                     {!loading && videos.length > 0 && (
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                            {videos.map(({ url, url_edit, subtitle }, i) => (
+                            {videos.map(({ id, url, url_edit, subtitle }, i) => (
                                 <div
                                     className="aspect-video bg-gray-50 rounded-2xl overflow-hidden shadow-lg relative cursor-pointer"
-                                    key={i}
-                                    onClick={() => setPopupVideo({ url, url_edit, subtitle, step: "completed" })}
+                                    key={id}
+                                    onClick={() => setPopupVideo({ id, url, url_edit, subtitle, step: "completed" })}
                                 >
                                     <video
                                         src={url_edit ?? url}
-                                        title={`Video ${i}`}
+                                        title={`Video ${id}`}
                                         className="w-full h-full object-cover"
                                     />
                                 </div>
@@ -343,7 +345,9 @@ export default function HomePage() {
                         </div>
                     )}
 
-                    <Button className="px-12 py-8 bg-fuchsia-600 hover:bg-fuchsia-700 text-white rounded-full cursor-pointer text-xl hover:scale-105 transition-all duration-300 ease-in-out">
+                    <Button className="px-12 py-8 bg-fuchsia-600 hover:bg-fuchsia-700 text-white rounded-full cursor-pointer text-xl hover:scale-105 transition-all duration-300 ease-in-out"
+                        onClick={() => router.push("/gallery")}
+                    >
                         Xem thêm video
                     </Button>
                 </div>
@@ -352,9 +356,11 @@ export default function HomePage() {
             {/* Popup video */}
             {popupVideo && (
                 <VideoPopup
+                    id={popupVideo.id}
                     url={popupVideo.url_edit ?? popupVideo.url}
                     subtitle={popupVideo.subtitle}
                     onClose={() => setPopupVideo(null)}
+                    fromHome={true}
                 />
             )}
 

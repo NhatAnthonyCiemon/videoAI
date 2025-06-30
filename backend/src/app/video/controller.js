@@ -1,8 +1,6 @@
 import Video from "./service.js";
 import { createResponse, createErrorResponse } from "../../utils/responseAPI.js";
 
-import { createResponse, createErrorResponse } from "../../utils/responseAPI.js";
-
 const videoController = {
     getVideoById: async (req, res) => {
         const { id } = req.params;

@@ -160,9 +160,11 @@ export default function CreateImage({
             quality: string;
             bg_music: boolean;
             thumbnail: string;
+            socketID: string;
         }>(`http://localhost:4000/content/createvideo`, HttpMethod.POST, {
             ...videoData,
             image_video, // Đảm bảo truyền image_video đã có url mp3
+            socketID: socket.id, // Truyền socket ID để nhận thông báo
         });
         if (res.mes === "success") {
             const newVideoData = videoClass.updateVideo(

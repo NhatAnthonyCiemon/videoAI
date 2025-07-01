@@ -346,7 +346,9 @@ const contentController = {
     },
     handleVideoController: async (req, res) => {
         try {
-            const { image_video, voice_info, is_custom_voice } = req.body;
+            const { image_video, voice_info, is_custom_voice, socketID } =
+                req.body;
+            const socketClient = io.sockets.sockets.get(socketID);
             console.log(
                 "🔊 Bắt đầu xử lý video với các thông tin sau:",
                 is_custom_voice
@@ -397,7 +399,7 @@ const contentController = {
             console.log("🔊 Danh sách URL âm thanh:", audioUrls);
 
             //gửi thông báo đến client để bắt đầu quá trình tạo video
-            io.emit("createVideo", "Đang tạo video... [2/4]");
+            socketClient.emit("createVideo", "Đang tạo âm thanh... [2/4]");
 
             const durations = await getDurations(audioUrls);
             console.log("⏱️ Thời gian các file âm thanh:", durations);
@@ -417,7 +419,7 @@ const contentController = {
             console.log("🔊 Merge xong:", mergedAudio);
 
             // Gửi thông báo đến client để tiếp tục quá trình tạo video
-            io.emit("createVideo", "Đang tạo video... [3/4]");
+            socketClient.emit("createVideo", "Đang tạo video... [3/4]");
             // // Tiếp tục xử lý logic tạo video với  audioUrls và images
             const finalVideo = await createFullVideo(
                 images,
@@ -426,7 +428,7 @@ const contentController = {
                 mergedAudio
             );
             // Gửi thông báo đến client để hoàn thành quá trình tạo video
-            io.emit("createVideo", "Gần xong video... [4/4]");
+            socketClient.emit("createVideo", "Gần xong video... [4/4]");
 
             const urlVideo = await uploadVideo(finalVideo);
             console.log("✅ URL video :", urlVideo);
@@ -448,7 +450,7 @@ const contentController = {
                 console.log(`✅ Đã xóa file video : ${finalVideo}`);
             }
 
-            // Gửi URL video về client
+            //Gửi URL video về client
         } catch (err) {
             console.error("❌ Server error:", err);
             res.status(500).json({

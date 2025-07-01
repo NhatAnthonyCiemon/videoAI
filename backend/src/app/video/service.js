@@ -21,7 +21,7 @@ const Video = {
                         start_time: true,
                         end_time: true,
                         url_mp3: true, // Include url_mp3 if it exists
-                        anim:true,
+                        anim: true,
                     },
                 },
                 voice_info: {
@@ -46,7 +46,7 @@ const Video = {
             };
 
             // Lọc theo từ khóa tìm kiếm (q)
-            if (search) {
+            if (search && search.trim() !== '') {
                 where.OR = [
                     { name: { contains: search, mode: 'insensitive' } },
                     { content: { contains: search, mode: 'insensitive' } },
@@ -578,11 +578,43 @@ const Video = {
                 throw new Error('Bạn không có quyền xóa video này');
             }
 
-            await prisma.videos.delete({
-                where: { id: videoId },
+            await prisma.$transaction(async (prisma) => {
+                await prisma.image_video.deleteMany({
+                    where: { video_id: videoId },
+                });
+
+                await prisma.music.deleteMany({
+                    where: { video_id: videoId },
+                });
+
+                await prisma.subtitles.deleteMany({
+                    where: { video_id: videoId },
+                });
+
+                await prisma.ticker.deleteMany({
+                    where: { video_id: videoId },
+                });
+
+                await prisma.video_info.deleteMany({
+                    where: { video_id: videoId },
+                });
+
+                await prisma.voice_info.deleteMany({
+                    where: { video_id: videoId },
+                });
+
+                await prisma.share_url.deleteMany({
+                    where: { id: videoId },
+                });
+
+                await prisma.videos.delete({
+                    where: { id: videoId },
+                });
             });
+
+            return { message: `Video ${videoId} đã được xóa thành công` };
         } catch (error) {
-            console.error(error);
+            console.error('Lỗi khi xóa video:', error);
             throw new Error(error.message || 'Lỗi khi xóa video');
         }
     },

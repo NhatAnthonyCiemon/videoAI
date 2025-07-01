@@ -30,7 +30,7 @@ const Notification2 = ({ isOpen, message, onClose }: Notification2Props) => {
             role="dialog"
             aria-labelledby="notification-dialog-title"
         >
-            <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl p-8 shadow-2xl w-full max-w-lg sm:max-w-3xl mx-auto transform transition-all duration-300 scale-100 min-h-[200px] flex flex-col justify-between">
+            <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl p-8 shadow-2xl w-full max-w-lg sm:max-w-3xl mx-auto transform transition-all duration-300 scale-100 flex flex-col justify-between">
                 <h2
                     id="notification-dialog-title"
                     className="text-4xl sm:text-4xl font-bold text-gray-900 mb-8 text-center max-w-[90%] mx-auto break-words"

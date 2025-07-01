@@ -6,6 +6,7 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import RenameDialog from "./RenameDialog";
 import DeleteDialog from "./DeleteDialog";
 import IncompleteVideoDialog from "./IncompleteVideoDialog";
+import Notification2 from "@/components/ui/Notification2";
 import fetchApi from "@/lib/api/fetch";
 import HttpMethod from "@/types/httpMethos";
 
@@ -28,6 +29,10 @@ const VideoItem = ({
     const [isIncompleteDialogOpen, setIsIncompleteDialogOpen] = useState(false);
     const [newName, setNewName] = useState(name);
     const [displayName, setDisplayName] = useState(name);
+    const [notification, setNotification] = useState<{
+        message: string;
+        type: "success" | "error";
+    } | null>(null);
 
     const handleRename = async () => {
         try {
@@ -41,12 +46,19 @@ const VideoItem = ({
             if (res.mes === "success" && res.status === 200) {
                 setDisplayName(newName);
                 setIsRenameDialogOpen(false);
+                setNotification({
+                    message: `Đổi tên video thành công: ${newName}`,
+                    type: "success",
+                });
             } else {
                 throw new Error(res.message || "Không thể đổi tên video");
             }
         } catch (error: any) {
             console.error("Error renaming video:", error.message);
-            alert(error.message);
+            setNotification({
+                message: error.message || "Không thể đổi tên video",
+                type: "error",
+            });
             setIsRenameDialogOpen(false);
         }
     };
@@ -68,13 +80,19 @@ const VideoItem = ({
 
             if (res.mes === "success" && res.status === 200) {
                 setIsDeleteDialogOpen(false);
-                router.refresh();
+                setNotification({
+                    message: res.message || `Video ${displayName} đã được xóa thành công`,
+                    type: "success",
+                });
             } else {
                 throw new Error(res.message || "Không thể xóa video");
             }
         } catch (error: any) {
             console.error("Error deleting video:", error.message);
-            alert(error.message);
+            setNotification({
+                message: error.message || "Không thể xóa video",
+                type: "error",
+            });
             setIsDeleteDialogOpen(false);
         }
     };
@@ -82,6 +100,13 @@ const VideoItem = ({
     const handleDeleteCancel = () => {
         console.log("Closing delete dialog via Cancel button");
         setIsDeleteDialogOpen(false);
+    };
+
+    const handleNotificationClose = () => {
+        if (notification?.type === "success") {
+            router.push(`/dashboard`);
+        }
+        setNotification(null);
     };
 
     const handleViewClick = () => {
@@ -105,15 +130,10 @@ const VideoItem = ({
                 onClick={handleViewClick}
             >
                 <video
-                    src={url_edit || url || "/img/avatar_placeholder.png"} // Prioritize url_edit, fallback to url, then placeholder
+                    src={url_edit || url || "/img/avatar_placeholder.png"}
                     title={keyword}
                     className="absolute top-0 left-0 w-full h-full rounded-xl cursor-pointer"
                 />
-                {/* <video
-                    src={url_edit && url && "/img/avatar_placeholder.png"} // Prioritize url_edit, fallback to url
-                    title={keyword}
-                    className="absolute top-0 left-0 w-full h-full rounded-xl cursor-pointer"
-                /> */}
             </div>
 
             <div className="p-4 space-y-4">
@@ -165,7 +185,7 @@ const VideoItem = ({
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         console.log("Triggering onClickVideo for edit");
-                                        onClickVideo(); // Sử dụng onClickVideo thay vì router.push
+                                        onClickVideo();
                                     }}
                                 >
                                     Chỉnh sửa
@@ -229,6 +249,14 @@ const VideoItem = ({
                 onOpenChange={setIsIncompleteDialogOpen}
                 onOk={handleIncompleteDialogOk}
             />
+
+            {notification && (
+                <Notification2
+                    isOpen={!!notification}
+                    message={notification.message}
+                    onClose={handleNotificationClose}
+                />
+            )}
         </div>
     );
 };

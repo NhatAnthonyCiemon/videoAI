@@ -157,43 +157,50 @@ const SharePlatformPopup: React.FC<SharePlatformPopupProps> = ({
         onClose();
     };
 
+    const handleNotificationClose = () => {
+        setNotification(null);
+        if (notification?.type === "success") {
+            onClose(); // Chỉ đóng popup khi notification là thành công
+        }
+    };
+
     return (
         <div className="fixed inset-0 bg-[#201f1f86] flex items-center justify-center z-50">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-[500px] p-6 mx-4">
-                <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">
+            <div className="bg-white rounded-2xl shadow-xl w-full h-full max-h-[400px] max-w-[600px] p-8 mx-4">
+                <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
                     Đăng video lên {platform.charAt(0).toUpperCase() + platform.slice(1)}
                 </h2>
-                <div className="mb-4">
-                    <label className="block text-gray-700 font-semibold mb-2">Tiêu đề</label>
+                <div className="mb-6">
+                    <label className="block text-gray-700 font-semibold text-xl mb-3">Tiêu đề</label>
                     <input
                         type="text"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
-                        className="w-full p-2 border rounded-lg focus:outline-none focus-ring-2 focus:ring-blue-500"
+                        className="w-full p-3 border rounded-lg text-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="Nhập tiêu đề video"
                     />
                 </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 font-semibold mb-2">Mô tả</label>
+                <div className="mb-6">
+                    <label className="block text-gray-700 font-semibold text-xl mb-3">Mô tả</label>
                     <textarea
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                        className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full p-3 border rounded-lg text-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="Nhập mô tả video"
-                        rows={4}
+                        rows={9}
                     />
                 </div>
-                <div className="flex justify-end space-x-4">
+                <div className="flex justify-end space-x-6">
                     <button
                         onClick={handleCancel}
-                        className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400"
+                        className="px-6 py-3 bg-gray-300 text-gray-800 rounded-lg text-lg hover:bg-gray-400"
                         disabled={loading}
                     >
                         Hủy
                     </button>
                     <button
                         onClick={handleUpload}
-                        className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                        className="px-6 py-3 bg-blue-500 text-white rounded-lg text-lg hover:bg-blue-600"
                         disabled={loading}
                     >
                         {loading ? "Đang đăng..." : "OK"}
@@ -204,7 +211,7 @@ const SharePlatformPopup: React.FC<SharePlatformPopupProps> = ({
                 <Notification2
                     isOpen={!!notification}
                     message={notification?.message || ""}
-                    onClose={() => setNotification(null)}
+                    onClose={handleNotificationClose}
                 />
             )}
         </div>

@@ -85,7 +85,6 @@ function Videos() {
     }, [curpage, search, category, sort, status]);
 
     const handleVideoClick = (id: string) => {
-        console.log("k")
         router.push(`/create/${id}`);
     };
 

@@ -10,6 +10,7 @@ const Store = {
         content,
         keyword,
         voice_info,
+        style_video,
         url = "",
         view = 0
     ) => {
@@ -25,6 +26,7 @@ const Store = {
                         step: step,
                         content: content,
                         keyword: keyword || "",
+                        style_video: style_video,
                     },
                 });
                 await prisma.voice_info.update({
@@ -49,6 +51,7 @@ const Store = {
                 content: content,
                 url: url,
                 keyword: keyword,
+                style_video: style_video,
             };
             await prisma.videos.create({
                 data: data,
@@ -84,7 +87,8 @@ const Store = {
         content,
         keyword,
         image_video,
-        voice_info
+        voice_info,
+        style_video
     ) => {
         const video = await prisma.videos.findUnique({
             where: { id: id },
@@ -97,6 +101,7 @@ const Store = {
                     step: step,
                     content: content,
                     keyword: keyword,
+                    style_video: style_video,
                 },
             });
             //xóa ảnh cũ
@@ -111,7 +116,7 @@ const Store = {
                     url: item.url,
                     content: item.content,
                     prompt: item.prompt,
-                    anim :item.anim,
+                    anim: item.anim,
                 })),
             });
             await prisma.voice_info.update({
@@ -134,6 +139,7 @@ const Store = {
             step: step,
             content: content,
             keyword: keyword,
+            style_video: style_video,
         };
         await prisma.videos.create({
             data: data,
@@ -145,7 +151,7 @@ const Store = {
                 url: item.url,
                 content: item.content,
                 prompt: item.prompt,
-                anim:item.anim,
+                anim: item.anim,
             })),
         });
         await prisma.voice_info.create({
@@ -173,7 +179,8 @@ const Store = {
         duration,
         thumbnail,
         quality,
-        is_bg_music
+        is_bg_music,
+        style_video
     ) => {
         const video = await prisma.videos.findUnique({
             where: { id: id },
@@ -189,9 +196,10 @@ const Store = {
                     url: url,
                     is_custom_voice: is_voice_ai,
                     duration: duration,
-                    thumbnail: thumbnail, 
+                    thumbnail: thumbnail,
                     quality: quality,
                     is_bg_music: is_bg_music,
+                    style_video: style_video,
                 },
             });
             //xóa ảnh cũ
@@ -209,8 +217,8 @@ const Store = {
                     start_time: item.start_time,
                     end_time: item.end_time,
                     url_mp3: item.url_mp3,
-                    image_video:item.image_video,
-                    anim:item.anim,
+                    image_video: item.image_video,
+                    anim: item.anim,
                 })),
             });
             await prisma.voice_info.update({
@@ -240,6 +248,7 @@ const Store = {
             thumbnail: thumbnail,
             quality: quality,
             is_bg_music: is_bg_music,
+            style_video: style_video,
         };
         await prisma.videos.create({
             data: data,
@@ -254,7 +263,7 @@ const Store = {
                 start_time: item.start_time,
                 end_time: item.end_time,
                 url_mp3: item.url_mp3,
-                anim:item.anim,
+                anim: item.anim,
             })),
         });
         await prisma.voice_info.create({

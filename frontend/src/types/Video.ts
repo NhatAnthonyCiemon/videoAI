@@ -18,6 +18,7 @@ type Video = {
     thumbnail: string;
     quality: string;
     is_bg_music: boolean;
+    style_video: string;
 };
 
 type Image_video = {
@@ -106,7 +107,13 @@ interface Sticker_System {
     name: string;
 }
 
-function AddNewSubtitle(text: string, currentList: Subtitle[] = [], start_time: number = -1, end_time: number = -1, id = -1): Subtitle {
+function AddNewSubtitle(
+    text: string,
+    currentList: Subtitle[] = [],
+    start_time: number = -1,
+    end_time: number = -1,
+    id = -1
+): Subtitle {
     const lastSubtitle = currentList[currentList.length - 1];
     const startTime = lastSubtitle ? lastSubtitle.end : 0;
 
@@ -133,13 +140,17 @@ function AddNewSubtitle(text: string, currentList: Subtitle[] = [], start_time: 
             //     color: "#000000",
             //     width: 1,
             // },
-            
         },
         status: true,
     };
 }
 
-function AddNewMusic(id: number, name: string, data: string, currentList: Music[] = []): Music {
+function AddNewMusic(
+    id: number,
+    name: string,
+    data: string,
+    currentList: Music[] = []
+): Music {
     const lastMusic = currentList[currentList.length - 1];
     const startTime = lastMusic ? lastMusic.end : 0;
 
@@ -155,7 +166,12 @@ function AddNewMusic(id: number, name: string, data: string, currentList: Music[
     };
 }
 
-function AddNewSticker(id: number, name: string, data: string, currentList: Sticker[] = []): Sticker {
+function AddNewSticker(
+    id: number,
+    name: string,
+    data: string,
+    currentList: Sticker[] = []
+): Sticker {
     const lastSticker = currentList[currentList.length - 1];
     const startTime = lastSticker ? lastSticker.end : 0;
 
@@ -180,5 +196,13 @@ function AddNewSticker(id: number, name: string, data: string, currentList: Stic
 
 // Export all types for use in other modules
 export default Video;
-export type { Music, Sticker, Subtitle, Image_video, Voice_info, Music_System, Sticker_System };
+export type {
+    Music,
+    Sticker,
+    Subtitle,
+    Image_video,
+    Voice_info,
+    Music_System,
+    Sticker_System,
+};
 export { AddNewSubtitle, AddNewMusic, AddNewSticker };

@@ -1,6 +1,13 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import useDebounce from "@/hooks/useDebounce";
 import * as Popover from "@radix-ui/react-popover";
 import fetchApi from "@/lib/api/fetch";
@@ -26,15 +33,20 @@ const voices = [
     "en-US-EmmaNeural (en-US, Female)",
 ];
 
+const styles = [
+    "Tự do",
+    "Nhà viết truyện chuyên nghiệp",
+    "Nghiệp dư",
+    "Nhà lí luận chính trị",
+];
 export default function CreateScript({
     setWhichActive,
     videoData,
     setVideoData,
     isPreparing,
     setIsPreparing,
-
     isCustomVoice,
-    setIsCustomVoice
+    setIsCustomVoice,
 }: {
     setWhichActive: (Active: number) => void;
     videoData: Video;
@@ -101,6 +113,7 @@ export default function CreateScript({
         setDisabled(true);
         fetchApi<string>(`http://localhost:4000/content`, HttpMethod.POST, {
             topic: videoData.keyword,
+            style: videoData.style_video,
         })
             .then((res: APIResponse<string>) => {
                 if (res.mes === "success") {
@@ -207,6 +220,48 @@ export default function CreateScript({
                                         {platform}
                                     </button>
                                 ))}
+                            </div>
+                            <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+                                Chọn phong cách
+                            </h2>
+
+                            <div className="mt-4 mb-6">
+                                <Select
+                                    onValueChange={(value) => {
+                                        setVideoData(
+                                            videoClass.updateVideo(
+                                                videoData,
+                                                "style_video",
+                                                value
+                                            )
+                                        );
+                                    }}
+                                >
+                                    <SelectTrigger
+                                        className="!w-[100%] !h-[40px] py-5 text-xl focus:outline-none focus-visible:outline-none 
+             focus:ring-0 focus-visible:ring-0 
+             ring-0 shadow-none"
+                                    >
+                                        <SelectValue
+                                            placeholder={
+                                                videoData.style_video ||
+                                                "Chọn phong cách"
+                                            }
+                                        />
+                                    </SelectTrigger>
+
+                                    <SelectContent className="p-0">
+                                        {styles.map((category) => (
+                                            <SelectItem
+                                                key={category}
+                                                value={category}
+                                                className="py-4 px-3 text-2xl"
+                                            >
+                                                {category}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                             </div>
                             <div className="mb-6">
                                 <div className="flex items-center justify-between mb-2">
@@ -330,7 +385,6 @@ export default function CreateScript({
                                         setVideoData={setVideoData}
                                         setDisabled={setDisabled}
                                         setIsLoading={setIsLoading}
-                                        
                                     />
                                     <Button
                                         onClick={handleGenerateScript}
@@ -370,7 +424,7 @@ export default function CreateScript({
                         </div>
 
                         {/* Right Section */}
-                        
+
                         <div className="border border-gray-300 rounded-3xl p-4">
                             <VoiceSelector
                                 voices={voices}

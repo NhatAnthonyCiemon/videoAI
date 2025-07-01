@@ -17,12 +17,12 @@ model users {
   image                String?
   verificationtoken    String?          @unique(map: "unique_verificationtoken")
   type                 String?
-  youtubeaccesstoken   String?
-  youtuberefreshtoken  String?
-  youtubetokenexpiry   DateTime?        @db.Timestamp(6)
   facebookaccesstoken  String?
   facebookrefreshtoken String?
   facebooktokenexpiry  DateTime?        @db.Timestamp(6)
+  youtubeaccesstoken   String?
+  youtuberefreshtoken  String?
+  youtubetokenexpiry   DateTime?        @db.Timestamp(6)
   music_system         music_system[]
   share_url            share_url[]
   sticker_system       sticker_system[]
@@ -127,6 +127,7 @@ model videos {
   thumbnail       String?
   quality         String?
   is_bg_music     Boolean?      @default(false)
+  style_video     String?
   image_video     image_video[]
   music           music[]
   share_url       share_url?

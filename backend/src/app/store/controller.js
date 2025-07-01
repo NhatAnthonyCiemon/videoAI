@@ -12,6 +12,7 @@ const storeController = {
             content,
             keyword,
             voice_info,
+            style_video,
         } = req.body;
         if (
             !id ||
@@ -20,7 +21,8 @@ const storeController = {
             !category ||
             step === undefined ||
             !content ||
-            !voice_info
+            !voice_info ||
+            !style_video
         ) {
             console.log("Missing required fields in saveFullContentData");
             return res.status(400).json({
@@ -57,7 +59,8 @@ const storeController = {
                 step,
                 content,
                 newkeyword,
-                voice_info
+                voice_info,
+                style_video
             );
             if (!result) {
                 return res.status(500).json({
@@ -186,8 +189,8 @@ const storeController = {
         console.log("Thumbnail:", thumbnail);
         console.log("Quality:", quality);
         console.log("is_bg_music:", is_bg_music);
-        console.log("calll")
-        
+        console.log("calll");
+
         if (
             !id ||
             !user_id ||
@@ -197,7 +200,7 @@ const storeController = {
             !content ||
             image_video === undefined ||
             !voice_info ||
-            !url 
+            !url
         ) {
             console.log("Missing required fields in saveVideo");
             return res.status(400).json({
@@ -228,7 +231,7 @@ const storeController = {
                     data: null,
                 });
             }
-           
+
             const result = await store.saveDataWithVideo(
                 id,
                 user_id,
@@ -246,7 +249,7 @@ const storeController = {
                 quality,
                 is_bg_music
             );
-            
+
             if (!result) {
                 return res.status(500).json({
                     mes: "Error saving data",

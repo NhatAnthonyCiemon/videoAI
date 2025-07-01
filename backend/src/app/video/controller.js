@@ -1,5 +1,8 @@
 import Video from "./service.js";
-import { createResponse, createErrorResponse } from "../../utils/responseAPI.js";
+import {
+    createResponse,
+    createErrorResponse,
+} from "../../utils/responseAPI.js";
 
 const videoController = {
     getVideoById: async (req, res) => {
@@ -31,6 +34,7 @@ const videoController = {
                     thumbnail: "",
                     quality: "",
                     is_bg_music: false,
+                    style_video: "Tự do",
                 };
                 res.json({
                     mes: "success",
@@ -93,8 +97,8 @@ const videoController = {
                     thumbnail: video.thumbnail,
                     quality: video.quality,
                     is_bg_music: video.is_bg_music,
+                    style_video: video.style_video || "Tự do",
                 };
-
 
                 res.json({
                     mes: "success",
@@ -115,7 +119,9 @@ const videoController = {
         try {
             const video = await Video.getVideoInfo(id, user.id);
             if (!video) {
-                return res.status(404).json(createErrorResponse(404, "Video không tồn tại"));
+                return res
+                    .status(404)
+                    .json(createErrorResponse(404, "Video không tồn tại"));
             }
             res.json(createResponse(200, "success", video));
         } catch (error) {
@@ -131,11 +137,23 @@ const videoController = {
         try {
             // Validate required fields
             if (!videoUrl || !cloudinaryPublicId || !title) {
-                return res.status(400).json(createErrorResponse(400, "Thiếu videoUrl, cloudinaryPublicId hoặc title"));
+                return res
+                    .status(400)
+                    .json(
+                        createErrorResponse(
+                            400,
+                            "Thiếu videoUrl, cloudinaryPublicId hoặc title"
+                        )
+                    );
             }
 
             // Đăng video lên YouTube
-            const youtubeResponse = await Video.uploadVideo(videoUrl, title, description, user.id);
+            const youtubeResponse = await Video.uploadVideo(
+                videoUrl,
+                title,
+                description,
+                user.id
+            );
 
             // Tạo URL YouTube từ videoId
             const youtubeUrl = `https://www.youtube.com/watch?v=${youtubeResponse.id}`;
@@ -147,7 +165,12 @@ const videoController = {
             );
         } catch (error) {
             console.error(error);
-            res.status(500).json(createErrorResponse(500, error.message || "Lỗi khi đăng video lên YouTube"));
+            res.status(500).json(
+                createErrorResponse(
+                    500,
+                    error.message || "Lỗi khi đăng video lên YouTube"
+                )
+            );
         }
     },
 
@@ -157,10 +180,22 @@ const videoController = {
 
         try {
             if (!videoUrl || !cloudinaryPublicId || !title) {
-                return res.status(400).json(createErrorResponse(400, "Thiếu videoUrl, cloudinaryPublicId hoặc title"));
+                return res
+                    .status(400)
+                    .json(
+                        createErrorResponse(
+                            400,
+                            "Thiếu videoUrl, cloudinaryPublicId hoặc title"
+                        )
+                    );
             }
 
-            const facebookResponse = await Video.uploadVideoToFacebook(videoUrl, title, description, user.id);
+            const facebookResponse = await Video.uploadVideoToFacebook(
+                videoUrl,
+                title,
+                description,
+                user.id
+            );
 
             const facebookUrl = `https://www.facebook.com/${facebookResponse.id}`;
 
@@ -171,7 +206,12 @@ const videoController = {
             );
         } catch (error) {
             console.error(error);
-            res.status(500).json(createErrorResponse(500, error.message || "Lỗi khi đăng video lên Facebook"));
+            res.status(500).json(
+                createErrorResponse(
+                    500,
+                    error.message || "Lỗi khi đăng video lên Facebook"
+                )
+            );
         }
     },
 
@@ -208,14 +248,14 @@ const videoController = {
                 status
             );
             res.json({
-                mes: 'success',
+                mes: "success",
                 status: 200,
                 data: result.data,
                 totalPages: result.totalPages,
             });
         } catch (error) {
             console.error(error);
-            res.status(500).json({ message: 'Lỗi server nội bộ' });
+            res.status(500).json({ message: "Lỗi server nội bộ" });
         }
     },
 
@@ -232,14 +272,14 @@ const videoController = {
                 status
             );
             res.json({
-                mes: 'success',
+                mes: "success",
                 status: 200,
                 data: result.data,
                 totalPages: result.totalPages,
             });
         } catch (error) {
             console.error(error);
-            res.status(500).json({ message: 'Lỗi server nội bộ' });
+            res.status(500).json({ message: "Lỗi server nội bộ" });
         }
     },
 
@@ -262,7 +302,7 @@ const videoController = {
 
     getRandomVideos: async (req, res) => {
         try {
-            const { status = 'completed' } = req.query; // Default to 'completed'
+            const { status = "completed" } = req.query; // Default to 'completed'
             const limit = 12; // Lấy 12 video ngẫu nhiên
             const result = await Video.getRandomVideos(limit, status);
             res.json({
@@ -270,11 +310,11 @@ const videoController = {
                 id: result.id,
                 data: result.data,
                 status: 200,
-                message: 'success',
+                message: "success",
             });
         } catch (error) {
             console.error(error);
-            res.status(500).json({ message: 'Lỗi server nội bộ' });
+            res.status(500).json({ message: "Lỗi server nội bộ" });
         }
     },
 
@@ -286,7 +326,9 @@ const videoController = {
         try {
             // Kiểm tra xem name có được cung cấp hay không
             if (!name) {
-                return res.status(400).json({ message: "Tên video là bắt buộc" });
+                return res
+                    .status(400)
+                    .json({ message: "Tên video là bắt buộc" });
             }
 
             // Gọi service để đổi tên video
@@ -299,7 +341,9 @@ const videoController = {
             });
         } catch (error) {
             console.error(error);
-            res.status(500).json({ message: error.message || "Lỗi server nội bộ" });
+            res.status(500).json({
+                message: error.message || "Lỗi server nội bộ",
+            });
         }
     },
 
@@ -317,7 +361,9 @@ const videoController = {
             });
         } catch (error) {
             console.error(error);
-            res.status(500).json({ message: error.message || "Lỗi server nội bộ" });
+            res.status(500).json({
+                message: error.message || "Lỗi server nội bộ",
+            });
         }
     },
 };

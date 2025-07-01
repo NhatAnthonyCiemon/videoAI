@@ -14,6 +14,7 @@ import { getDurations } from "../../utils/duration.js";
 import { mergeMp3Files } from "../../utils/mergeVoice.js";
 import { uploadVideo } from "../../utils/uploadVideo.js";
 import animService from "../animation/service.js";
+import { io } from "../../app.js";
 
 import fs from "fs";
 
@@ -395,6 +396,9 @@ const contentController = {
 
             console.log("🔊 Danh sách URL âm thanh:", audioUrls);
 
+            //gửi thông báo đến client để bắt đầu quá trình tạo video
+            io.emit("createVideo", "Đang tạo video... [2/4]");
+
             const durations = await getDurations(audioUrls);
             console.log("⏱️ Thời gian các file âm thanh:", durations);
             const startTimeEachImage = [];
@@ -412,6 +416,8 @@ const contentController = {
             const mergedAudio = await mergeMp3Files(audioUrls);
             console.log("🔊 Merge xong:", mergedAudio);
 
+            // Gửi thông báo đến client để tiếp tục quá trình tạo video
+            io.emit("createVideo", "Đang tạo video... [3/4]");
             // // Tiếp tục xử lý logic tạo video với  audioUrls và images
             const finalVideo = await createFullVideo(
                 images,
@@ -419,6 +425,8 @@ const contentController = {
                 durations,
                 mergedAudio
             );
+            // Gửi thông báo đến client để hoàn thành quá trình tạo video
+            io.emit("createVideo", "Gần xong video... [4/4]");
 
             const urlVideo = await uploadVideo(finalVideo);
             console.log("✅ URL video :", urlVideo);

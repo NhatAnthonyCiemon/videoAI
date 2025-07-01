@@ -33,6 +33,7 @@
         "react-router-dom": "^7.6.2",
         "react-scrollbars-custom": "^4.1.1",
         "sass": "^1.87.0",
+        "socket.io-client": "^4.8.1",
         "sonner": "^2.0.3",
         "tailwind-merge": "^3.2.0"
     },
@@ -45,6 +46,7 @@
         "@types/react-color": "^3.0.13",
         "@types/react-dom": "^19",
         "@types/react-router-dom": "^5.3.3",
+        "@types/socket.io-client": "^1.4.36",
         "eslint": "^9",
         "eslint-config-next": "15.3.1",
         "tailwindcss": "^4",

@@ -220,12 +220,12 @@ export default function VideoExportPopup({
 
     return (
         <div className="fixed inset-0 bg-[#201f1f86] flex items-center justify-center z-50 text-2xl">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-[900px] p-6 mx-4 animate-fade-in">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-[800px] p-10 mx-4 animate-fade-in">
                 <h2 className="text-4xl font-bold mb-10 mt-3 text-center text-gray-800">
                     🎉 Video đã xuất thành công!
                 </h2>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="w-full flex  gap-6">
                     <div className="flex flex-col h-full">
                         <video
                             controls
@@ -235,73 +235,31 @@ export default function VideoExportPopup({
                             Trình duyệt của bạn không hỗ trợ video.
                         </video>
                     </div>
-
-                    <div className="flex flex-col justify-between h-full">
-                        <div className="flex flex-col gap-3">
-                            <button
-                                onClick={handleCopyLink}
-                                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-2"
-                            >
-                                <FaShareAlt /> {isCopied ? "Đã sao chép!" : "Sao chép link"}
-                            </button>
-                            <button
-                                onClick={handleDownload}
-                                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center gap-2"
-                            >
-                                <FaDownload /> Tải xuống
-                            </button>
-                            <button
-                                onClick={handleSave}
-                                className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition flex items-center justify-center gap-2"
-                            >
-                                <FaSave /> Lưu thông tin
-                            </button>
-                        </div>
-
-                        <div className="mt-6">
-                            <h3 className="text-2xl font-semibold mb-2">📤 Chia sẻ video</h3>
-                            <input
-                                type="text"
-                                placeholder="Tiêu đề"
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                                className="w-full border border-gray-300 rounded px-3 py-2 mb-2 focus:outline-none focus:ring focus:ring-blue-300"
-                            />
-                            <textarea
-                                placeholder="Mô tả"
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                                rows={4}
-                                className="w-full border border-gray-300 rounded px-3 py-2 resize-none focus:outline-none focus:ring focus:ring-blue-300"
-                            ></textarea>
-
-                            <div className="flex gap-3 mt-3 justify-between">
-                                <button
-                                    onClick={() => handleShareToPlatform("facebook")}
-                                    className="bg-blue-800 text-white flex-1 py-2 rounded hover:bg-blue-900 transition"
-                                >
-                                    Facebook
-                                </button>
-                                <button
-                                    onClick={() => handleShareToPlatform("youtube")}
-                                    className="bg-red-600 text-white flex-1 py-2 rounded hover:bg-red-700 transition"
-                                >
-                                    YouTube
-                                </button>
-                                <button
-                                    onClick={() => handleShareToPlatform("tiktok")}
-                                    className="bg-black text-white flex-1 py-2 rounded hover:bg-gray-800 transition"
-                                >
-                                    TikTok
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                </div>
+                <div className="flex justify-between items-center w-full gap-4 mt-6">
+                    <button
+                        onClick={handleCopyLink}
+                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-2 flex-1"
+                    >
+                        <FaShareAlt /> {isCopied ? "Đã sao chép!" : "Sao chép link"}
+                    </button>
+                    <button
+                        onClick={handleDownload}
+                        className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center gap-2 flex-1"
+                    >
+                        <FaDownload /> Tải xuống
+                    </button>
+                    <button
+                        onClick={handleSave}
+                        className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition flex items-center justify-center gap-2 flex-1"
+                    >
+                        <FaSave /> Lưu thông tin
+                    </button>
                 </div>
 
                 <button
                     onClick={onClose}
-                    className="mt-10 mb-4 bg-gray-600 text-white px-4 py-3 rounded-lg hover:bg-gray-700 transition w-full"
+                    className=" my-4 bg-gray-600 text-white px-4 py-3 rounded-lg hover:bg-gray-700 transition w-full"
                 >
                     Đóng
                 </button>

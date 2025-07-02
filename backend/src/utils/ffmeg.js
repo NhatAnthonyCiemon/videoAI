@@ -190,7 +190,7 @@ async function overlayVideo({ videoPath, scripts = [], stickers = [], audioConfi
         let audioInputs = [];
         let currentVideoStream = '[0:v]';
 
-        const fontRegular = path.join(__dirname, '../app/edit/fonts', 'Roboto-VariableFont_wdth_wght.ttf').replace(/\\/g, '/');
+        const fontRegular = path.join(__dirname, '../app/edit/fonts', 'Roboto-VariableFont_wdth,wght.ttf').replace(/\\/g, '/');
         for (let i = 0; i < scripts.length; i++) {
             const { text, start = 0, end = 1, style = {} } = scripts[i];
             console.log(`Style for subtitle ${i}:`, style);

@@ -6,6 +6,8 @@ const nextConfig: NextConfig = {
     eslint: {
         ignoreDuringBuilds: true, // ✅ Tắt lint khi build
     },
+    experimental: {
+    }
 };
 
 export default nextConfig;

@@ -13,7 +13,7 @@ type PageProps = {
 };
 
 async function Create({ params }: PageProps) {
-    const { id } = await params;
+    const { id } = params;
     if (!id || id.length !== 10) {
         redirect("/");
     }
